@@ -36,6 +36,15 @@ export default async function SalesHistoryPage() {
         `)
         .order("created_at", { ascending: false })
 
+    // Fetch warehouse info
+    const { data: warehouse } = await supabase
+        .from("warehouses")
+        .select("name")
+        .limit(1)
+        .maybeSingle();
+
+    const warehouseName = warehouse?.name || "System Ledger";
+
     return (
         <div className="flex-1 space-y-10 animate-in fade-in duration-700">
             {/* Page Header */}
@@ -46,7 +55,7 @@ export default async function SalesHistoryPage() {
                         <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest border border-primary/20">
                             Audited Sales History
                         </span>
-                        <span className="text-muted-foreground/40 text-xs font-medium tracking-tight">Monitoring all terminal transactions across North Silo A.</span>
+                        <span className="text-muted-foreground/40 text-xs font-medium tracking-tight">Monitoring all transactions across {warehouseName}.</span>
                     </div>
                 </div>
 

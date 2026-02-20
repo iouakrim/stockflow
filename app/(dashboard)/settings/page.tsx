@@ -35,17 +35,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 export default async function SettingsPage() {
     const supabase = createClient()
 
-    // Mock data for the UI based on Stitch design
-    const employees = [
-        { name: "Liam Henderson", email: "l.henderson@stockflowpro.com", role: "Manager", status: "Active", lastActive: "Today, 10:24 AM" },
-        { name: "Sarah Jenkins", email: "s.jenkins@stockflowpro.com", role: "Clerk", status: "Active", lastActive: "2 hours ago" },
-        { name: "Marcus Vane", email: "m.vane@stockflowpro.com", role: "Viewer", status: "Inactive", lastActive: "Dec 12, 2023" },
-    ]
+    // Fetch real profiles
+    const { data: profiles, error: profileError } = await supabase
+        .from("profiles")
+        .select("*")
+        .order("created_at", { ascending: false })
+
+    const personnelCount = profiles?.length || 0;
 
     const roles = [
-        { title: "Administrator", desc: "Unrestricted access to all warehouse zones, financial logs, and system configuration settings.", users: 2, icon: ShieldCheck, color: "text-red-500", bg: "bg-red-500/10" },
-        { title: "Warehouse Manager", desc: "Manage stock entries, approve bulk transfers, and view audit trails. No billing access.", users: 4, icon: ClipboardList, color: "text-primary", bg: "bg-primary/10" },
-        { title: "Inventory Clerk", desc: "Input daily stock weights and harvest moisture data. Read-only access to historical logs.", users: 6, icon: FilePenLine, color: "text-blue-500", bg: "bg-blue-500/10" },
+        { title: "Admin", desc: "Unrestricted access to all warehouse zones, financial logs, and system configuration settings.", users: profiles?.filter(p => p.role === 'admin').length || 0, icon: ShieldCheck, color: "text-red-500", bg: "bg-red-500/10" },
+        { title: "Manager", desc: "Manage stock entries, approve bulk transfers, and view audit trails. No billing access.", users: profiles?.filter(p => p.role === 'manager').length || 0, icon: ClipboardList, color: "text-primary", bg: "bg-primary/10" },
+        { title: "Cashier", desc: "Input daily transactions and manage POS terminal. Limited access to inventory settings.", users: profiles?.filter(p => p.role === 'cashier').length || 0, icon: FilePenLine, color: "text-blue-500", bg: "bg-blue-500/10" },
     ]
 
     return (
@@ -58,7 +59,7 @@ export default async function SettingsPage() {
                         <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest border border-primary/20">
                             System Configuration & Access
                         </span>
-                        <span className="text-muted-foreground/40 text-xs font-medium tracking-tight">Managing 12 verified personnel access points.</span>
+                        <span className="text-muted-foreground/40 text-xs font-medium tracking-tight">Managing {personnelCount} verified personnel access nodes.</span>
                     </div>
                 </div>
 
@@ -114,48 +115,54 @@ export default async function SettingsPage() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {employees.map((e, i) => (
-                            <TableRow key={i} className="border-b border-primary/5 hover:bg-primary/[0.02] transition-colors group">
-                                <TableCell className="py-6 px-8">
-                                    <div className="flex items-center gap-4">
-                                        <div className="size-10 rounded-full bg-primary/10 border border-primary/10 flex items-center justify-center text-primary font-black text-xs uppercase overflow-hidden">
-                                            {e.name.split(' ').map(n => n[0]).join('')}
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="font-black text-sm tracking-tight group-hover:text-primary transition-colors">{e.name}</span>
-                                            <span className="text-[10px] text-muted-foreground font-medium">{e.email}</span>
-                                        </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <span className={`text-[9px] px-3 py-1.5 rounded-full font-black uppercase tracking-widest border border-primary/5 ${e.role === 'Manager' ? 'bg-primary/10 text-primary border-primary/20' :
-                                        e.role === 'Clerk' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
-                                            'bg-amber-500/10 text-amber-500 border-amber-500/20'
-                                        }`}>
-                                        {e.role}
-                                    </span>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex items-center gap-2">
-                                        <span className={`size-1.5 rounded-full ${e.status === 'Active' ? 'bg-primary animate-pulse' : 'bg-muted-foreground/30'}`} />
-                                        <span className="text-xs font-bold tracking-tight text-muted-foreground">{e.status}</span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="text-xs font-medium text-muted-foreground opacity-60">
-                                    {e.lastActive}
-                                </TableCell>
-                                <TableCell className="text-right px-8">
-                                    <Button variant="ghost" size="icon" className="size-10 rounded-xl text-muted-foreground hover:bg-accent transition-all shrink-0">
-                                        <MoreHorizontal className="h-4 w-4" />
-                                    </Button>
-                                </TableCell>
+                        {(!profiles || profiles.length === 0) ? (
+                            <TableRow>
+                                <TableCell colSpan={5} className="py-12 text-center text-muted-foreground/50 font-medium">No personnel found.</TableCell>
                             </TableRow>
-                        ))}
+                        ) : (
+                            profiles.map((p, i) => (
+                                <TableRow key={p.id} className="border-b border-primary/5 hover:bg-primary/[0.02] transition-colors group">
+                                    <TableCell className="py-6 px-8">
+                                        <div className="flex items-center gap-4">
+                                            <div className="size-10 rounded-full bg-primary/10 border border-primary/10 flex items-center justify-center text-primary font-black text-xs uppercase overflow-hidden">
+                                                {p.full_name?.split(' ').map(n => n[0]).join('') || 'U'}
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="font-black text-sm tracking-tight group-hover:text-primary transition-colors">{p.full_name || 'Anonymous'}</span>
+                                                <span className="text-[10px] text-muted-foreground font-medium">{p.email}</span>
+                                            </div>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <span className={`text-[9px] px-3 py-1.5 rounded-full font-black uppercase tracking-widest border border-primary/5 ${p.role === 'admin' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
+                                            p.role === 'manager' ? 'bg-primary/10 text-primary border-primary/20' :
+                                                'bg-blue-500/10 text-blue-500 border-blue-500/20'
+                                            }`}>
+                                            {p.role}
+                                        </span>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-2">
+                                            <span className={`size-1.5 rounded-full bg-primary animate-pulse`} />
+                                            <span className="text-xs font-bold tracking-tight text-muted-foreground">Active</span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="text-xs font-medium text-muted-foreground opacity-60">
+                                        {new Date(p.created_at).toLocaleDateString()}
+                                    </TableCell>
+                                    <TableCell className="text-right px-8">
+                                        <Button variant="ghost" size="icon" className="size-10 rounded-xl text-muted-foreground hover:bg-accent transition-all shrink-0">
+                                            <MoreHorizontal className="h-4 w-4" />
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
                     </TableBody>
                 </Table>
 
                 <div className="px-8 py-5 border-t border-primary/5 bg-primary/[0.02] flex items-center justify-between">
-                    <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-60">Displaying Protocol Matrix: 3 / 12 Access Points</p>
+                    <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-60">Displaying Protocol Matrix: {personnelCount} Access Nodes Found</p>
                     <div className="flex items-center gap-2">
                         <Button variant="outline" size="sm" className="h-9 w-9 p-0 rounded-xl border-primary/10 bg-primary/10 text-primary font-black text-xs">1</Button>
                         <Button variant="ghost" size="sm" className="h-9 w-9 p-0 rounded-xl text-muted-foreground font-black text-xs hover:bg-primary/5">2</Button>

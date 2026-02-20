@@ -31,6 +31,15 @@ export default async function ProductsPage() {
         .select("*")
         .order("created_at", { ascending: false })
 
+    // Fetch warehouse info
+    const { data: warehouse } = await supabase
+        .from("warehouses")
+        .select("name")
+        .limit(1)
+        .maybeSingle();
+
+    const warehouseName = warehouse?.name || "Inventory Base";
+
     // Stats calculation
     const totalSkus = products?.length || 0
     const lowStockCount = products?.filter(p => p.stock_quantity <= p.low_stock_threshold).length || 0
@@ -46,7 +55,7 @@ export default async function ProductsPage() {
                         <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest border border-primary/20">
                             Centralized Stock Control
                         </span>
-                        <span className="text-muted-foreground/40 text-xs font-medium tracking-tight">Managing {totalSkus} specialized agricultural products.</span>
+                        <span className="text-muted-foreground/40 text-xs font-medium tracking-tight">Managing {totalSkus} specialized products at {warehouseName}.</span>
                     </div>
                 </div>
 
@@ -175,7 +184,7 @@ export default async function ProductsPage() {
                                             <TableCell>
                                                 <div className="flex flex-col gap-1.5">
                                                     <span className={`font-black text-sm tracking-tighter ${isLow ? 'text-destructive decoration-destructive/20' : 'text-foreground'}`}>
-                                                        {product.stock_quantity.toLocaleString()} KG
+                                                        {product.stock_quantity.toLocaleString()} <span className="text-[10px] opacity-60 uppercase">{product.unit || 'unit'}</span>
                                                     </span>
                                                     <div className="w-20 h-1 bg-accent rounded-full overflow-hidden">
                                                         <div

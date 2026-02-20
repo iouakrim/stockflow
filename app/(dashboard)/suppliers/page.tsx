@@ -34,22 +34,22 @@ export default async function SuppliersPage() {
     const categories = Array.from(new Set(suppliers?.map(s => s.category).filter(Boolean))) || []
 
     return (
-        <div className="flex-1 space-y-10 animate-in fade-in duration-700">
+        <div className="flex-1 space-y-10 animate-in fade-in duration-700 pb-20">
             {/* Page Header */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2">
                 <div>
                     <h1 className="text-4xl font-black tracking-tighter text-foreground leading-none">Supply Chain Matrix</h1>
                     <div className="flex items-center gap-3 mt-3">
                         <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest border border-primary/20">
-                            Supplier Network Management
+                            Logistics Partner Network
                         </span>
-                        <span className="text-muted-foreground/40 text-xs font-medium tracking-tight">Monitoring {totalSuppliers} verified logistics partners.</span>
+                        <span className="text-muted-foreground/40 text-xs font-medium tracking-tight">Monitoring {totalSuppliers} verified supplier nodes.</span>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-3">
                     <Button variant="outline" className="border-primary/10 bg-card/40 backdrop-blur rounded-2xl h-12 px-6 font-bold text-xs gap-2 transition-all hover:bg-primary/5 active:scale-95">
-                        <Download className="h-4 w-4 text-primary" /> DOWNLOAD DIRECTORY
+                        <Download className="h-4 w-4 text-primary" /> EXPORT REPORTS
                     </Button>
                     <Link href="/suppliers/new">
                         <Button className="bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-xl shadow-primary/20 rounded-2xl gap-2 h-12 px-8 transition-all hover:scale-[1.02] active:scale-[0.98]">
@@ -201,9 +201,11 @@ export default async function SuppliersPage() {
                                         </TableCell>
                                         <TableCell className="text-right px-8">
                                             <div className="flex items-center justify-end gap-3">
-                                                <Button variant="ghost" size="sm" className="h-9 px-4 rounded-xl text-[9px] font-black uppercase tracking-widest bg-primary/5 text-primary opacity-0 group-hover:opacity-100 transition-all hover:bg-primary/20 border border-primary/10">
-                                                    Logistics <ArrowUpRight className="ml-1 h-3 w-3" />
-                                                </Button>
+                                                <Link href={`/suppliers/${supplier.id}`}>
+                                                    <Button variant="ghost" size="sm" className="h-9 px-4 rounded-xl text-[9px] font-black uppercase tracking-widest bg-primary/5 text-primary opacity-0 group-hover:opacity-100 transition-all hover:bg-primary/20 border border-primary/10">
+                                                        Logistics <ArrowUpRight className="ml-1 h-3 w-3" />
+                                                    </Button>
+                                                </Link>
                                                 <Button variant="ghost" size="icon" className="size-10 rounded-xl text-muted-foreground hover:bg-accent transition-all shrink-0">
                                                     <MoreVertical className="h-4 w-4" />
                                                 </Button>
