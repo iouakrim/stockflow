@@ -7,7 +7,7 @@ interface RecentSale {
     created_at: string;
     customers: {
         name: string;
-    } | null;
+    } | { name: string }[] | null;
 }
 import {
     TrendingUp,
@@ -280,7 +280,7 @@ export default async function DashboardPage() {
                                                 <span className="text-[10px] font-black text-primary">${Number(sale.total).toLocaleString()}</span>
                                             </div>
                                             <p className="text-xs text-muted-foreground font-medium mt-0.5 truncate opacity-70">
-                                                {sale.customers?.name || 'Standard Client'}
+                                                {(Array.isArray(sale.customers) ? sale.customers[0]?.name : sale.customers?.name) || 'Standard Client'}
                                             </p>
                                             <p className="text-[9px] text-muted-foreground/40 font-black mt-2 uppercase tracking-tighter" suppressHydrationWarning>
                                                 {new Date(sale.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • Processed

@@ -9,7 +9,7 @@ interface SaleWithCustomer {
     created_at: string;
     customers: {
         name: string;
-    } | null;
+    } | { name: string }[] | null;
 }
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -123,73 +123,78 @@ export default async function SalesHistoryPage() {
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            sales.map((sale: SaleWithCustomer) => (
-                                <TableRow key={sale.id} className="border-b border-primary/5 hover:bg-primary/[0.02] transition-colors group">
-                                    <TableCell className="py-6 px-8 select-all">
-                                        <div className="flex items-center gap-3">
-                                            <div className="size-8 rounded-lg bg-accent/50 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-background transition-all border border-primary/5">
-                                                <Receipt className="h-4 w-4" />
+                            sales.map((sale: SaleWithCustomer) => {
+                                const customerName = Array.isArray(sale.customers)
+                                    ? sale.customers[0]?.name
+                                    : sale.customers?.name;
+                                return (
+                                    <TableRow key={sale.id} className="border-b border-primary/5 hover:bg-primary/[0.02] transition-colors group">
+                                        <TableCell className="py-6 px-8 select-all">
+                                            <div className="flex items-center gap-3">
+                                                <div className="size-8 rounded-lg bg-accent/50 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-background transition-all border border-primary/5">
+                                                    <Receipt className="h-4 w-4" />
+                                                </div>
+                                                <span className="font-mono text-[11px] font-black tracking-tight text-muted-foreground/80 group-hover:text-foreground transition-colors uppercase">
+                                                    {sale.receipt_number}
+                                                </span>
                                             </div>
-                                            <span className="font-mono text-[11px] font-black tracking-tight text-muted-foreground/80 group-hover:text-foreground transition-colors uppercase">
-                                                {sale.receipt_number}
-                                            </span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell suppressHydrationWarning>
-                                        <div className="flex flex-col">
-                                            <span className="text-sm font-black tracking-tighter">{new Date(sale.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                                            <span className="text-[10px] text-muted-foreground/40 font-black uppercase tracking-widest mt-0.5 whitespace-nowrap">
-                                                {new Date(sale.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                            </span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex items-center gap-3">
-                                            <div className="size-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-black text-xs border border-primary/5">
-                                                {sale.customers?.name ? sale.customers.name[0] : 'W'}
+                                        </TableCell>
+                                        <TableCell suppressHydrationWarning>
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-black tracking-tighter">{new Date(sale.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                                                <span className="text-[10px] text-muted-foreground/40 font-black uppercase tracking-widest mt-0.5 whitespace-nowrap">
+                                                    {new Date(sale.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                </span>
                                             </div>
-                                            <div className="flex flex-col min-w-0">
-                                                <span className="text-sm font-black tracking-tight truncate group-hover:text-primary transition-colors">{sale.customers?.name || "Anonymous Walk-in"}</span>
-                                                <span className="text-[10px] text-muted-foreground/50 font-medium uppercase tracking-[0.1em]">Client Profile</span>
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center gap-3">
+                                                <div className="size-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-black text-xs border border-primary/5">
+                                                    {customerName ? customerName[0] : 'W'}
+                                                </div>
+                                                <div className="flex flex-col min-w-0">
+                                                    <span className="text-sm font-black tracking-tight truncate group-hover:text-primary transition-colors">{customerName || "Anonymous Walk-in"}</span>
+                                                    <span className="text-[10px] text-muted-foreground/50 font-medium uppercase tracking-[0.1em]">Client Profile</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <div className="flex flex-col items-end">
-                                            <span className="text-base font-black tracking-tighter text-primary">
-                                                ${Number(sale.total).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                                            </span>
-                                            <span className="text-[9px] text-primary/40 font-black uppercase tracking-widest">Captured Balance</span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex items-center gap-2">
-                                            {sale.payment_method === 'cash' ? <Banknote className="h-3.5 w-3.5 text-muted-foreground" /> : <CreditCard className="h-3.5 w-3.5 text-muted-foreground" />}
-                                            <span className="px-2 py-0.5 rounded-lg bg-accent/80 text-[10px] font-black uppercase tracking-tighter text-muted-foreground/80">
-                                                {sale.payment_method}
-                                            </span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex items-center justify-center gap-2 text-primary text-[10px] font-black uppercase tracking-[0.15em] bg-primary/10 py-1.5 px-4 rounded-xl border border-primary/20">
-                                            <div className="size-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_#11d473]" />
-                                            Processed
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="text-right px-8">
-                                        <div className="flex items-center justify-end gap-3 translate-x-2 group-hover:translate-x-0 transition-transform">
-                                            <Link href={`/receipt/${sale.id}`} target="_blank">
-                                                <Button variant="ghost" size="sm" className="h-10 gap-2 text-xs font-black uppercase text-primary hover:bg-primary/10 hover:text-primary transition-all border border-primary/10 rounded-xl px-4 shadow-sm opacity-0 group-hover:opacity-100">
-                                                    <FileText className="h-4 w-4" /> RECEIPT
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <div className="flex flex-col items-end">
+                                                <span className="text-base font-black tracking-tighter text-primary">
+                                                    ${Number(sale.total).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                                </span>
+                                                <span className="text-[9px] text-primary/40 font-black uppercase tracking-widest">Captured Balance</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center gap-2">
+                                                {sale.payment_method === 'cash' ? <Banknote className="h-3.5 w-3.5 text-muted-foreground" /> : <CreditCard className="h-3.5 w-3.5 text-muted-foreground" />}
+                                                <span className="px-2 py-0.5 rounded-lg bg-accent/80 text-[10px] font-black uppercase tracking-tighter text-muted-foreground/80">
+                                                    {sale.payment_method}
+                                                </span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center justify-center gap-2 text-primary text-[10px] font-black uppercase tracking-[0.15em] bg-primary/10 py-1.5 px-4 rounded-xl border border-primary/20">
+                                                <div className="size-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_#11d473]" />
+                                                Processed
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="text-right px-8">
+                                            <div className="flex items-center justify-end gap-3 translate-x-2 group-hover:translate-x-0 transition-transform">
+                                                <Link href={`/receipt/${sale.id}`} target="_blank">
+                                                    <Button variant="ghost" size="sm" className="h-10 gap-2 text-xs font-black uppercase text-primary hover:bg-primary/10 hover:text-primary transition-all border border-primary/10 rounded-xl px-4 shadow-sm opacity-0 group-hover:opacity-100">
+                                                        <FileText className="h-4 w-4" /> RECEIPT
+                                                    </Button>
+                                                </Link>
+                                                <Button variant="ghost" size="icon" className="size-10 rounded-xl text-muted-foreground hover:bg-accent transition-all shrink-0">
+                                                    <MoreVertical className="h-4 w-4" />
                                                 </Button>
-                                            </Link>
-                                            <Button variant="ghost" size="icon" className="size-10 rounded-xl text-muted-foreground hover:bg-accent transition-all shrink-0">
-                                                <MoreVertical className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            })
                         )}
                     </TableBody>
                 </Table>
