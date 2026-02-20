@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button"
 import {
     Check,
-    Boxes,
     ArrowRight,
     Zap,
     ShieldCheck,

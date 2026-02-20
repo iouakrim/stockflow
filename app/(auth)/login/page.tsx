@@ -2,14 +2,12 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import {
     Boxes,
     Lock,
     Mail,
     ArrowRight,
     ShieldCheck,
-    ChevronRight,
     Loader2
 } from "lucide-react"
 import Link from "next/link"
@@ -35,7 +33,7 @@ export default function LoginPage() {
             } else {
                 window.location.href = "/dashboard"
             }
-        } catch (err) {
+        } catch {
             setError("Authentication failed. Please check your credentials.")
             setIsLoading(false)
         }
@@ -81,7 +79,7 @@ export default function LoginPage() {
                                     className="w-full bg-[#102219] border-white/5 rounded-2xl h-14 pl-12 pr-4 text-sm font-bold text-white focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-white/10 outline-none border"
                                     required
                                     value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                                 />
                             </div>
                         </div>
@@ -99,7 +97,7 @@ export default function LoginPage() {
                                     className="w-full bg-[#102219] border-white/5 rounded-2xl h-14 pl-12 pr-4 text-sm font-bold text-white focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-white/10 outline-none border"
                                     required
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                                 />
                             </div>
                         </div>

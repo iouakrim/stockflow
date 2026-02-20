@@ -4,19 +4,15 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
     Boxes,
-    Upload,
     Palette,
-    FileText,
     ArrowRight,
     CheckCircle2,
     Building2,
     Globe,
     Check,
     CloudUpload,
-    ImageIcon,
     Plus
 } from "lucide-react"
-import Link from "next/link"
 
 import { updateOnboardingData } from "./actions"
 import { Loader2 } from "lucide-react"
@@ -54,7 +50,7 @@ export default function OnboardingPage() {
                 } else {
                     window.location.href = "/dashboard"
                 }
-            } catch (err) {
+            } catch {
                 setError("An unexpected error occurred. Please try again.")
                 setIsSubmitting(false)
             }
@@ -105,7 +101,7 @@ export default function OnboardingPage() {
                                     { s: 1, label: "Business Identity", icon: Building2 },
                                     { s: 2, label: "Brand Customization", icon: Palette },
                                     { s: 3, label: "Logistics Parameters", icon: Globe }
-                                ].map((item) => (
+                                ].map((item: { s: number; label: string; icon: React.ElementType }) => (
                                     <div key={item.s} className={`flex items-center gap-4 transition-all duration-500 ${step >= item.s ? 'opacity-100' : 'opacity-30'}`}>
                                         <div className={`size-10 rounded-2xl flex items-center justify-center border transition-all ${step === item.s ? 'bg-primary border-primary text-[#102219] shadow-lg shadow-primary/20 scale-110' : step > item.s ? 'bg-primary/20 border-primary/20 text-primary' : 'bg-white/5 border-white/10 text-white'}`}>
                                             {step > item.s ? <Check className="size-5 stroke-[3px]" /> : <item.icon className="size-5" />}

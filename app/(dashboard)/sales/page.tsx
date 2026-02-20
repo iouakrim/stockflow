@@ -1,15 +1,23 @@
 import { createClient } from "@/lib/supabase/server"
 import Link from "next/link"
+
+interface SaleWithCustomer {
+    id: string;
+    receipt_number: string;
+    total: number;
+    payment_method: string;
+    created_at: string;
+    customers: {
+        name: string;
+    } | null;
+}
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
-    ShoppingCart,
     Plus,
     Search,
     Calendar,
-    Filter,
     MoreVertical,
-    ArrowUpRight,
     FileText,
     Receipt,
     History,
@@ -22,7 +30,7 @@ import {
 export default async function SalesHistoryPage() {
     const supabase = createClient()
 
-    const { data: sales, error } = await supabase
+    const { data: sales } = await supabase
         .from("sales")
         .select(`
             id,
@@ -115,7 +123,7 @@ export default async function SalesHistoryPage() {
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            sales.map((sale: any) => (
+                            sales.map((sale: SaleWithCustomer) => (
                                 <TableRow key={sale.id} className="border-b border-primary/5 hover:bg-primary/[0.02] transition-colors group">
                                     <TableCell className="py-6 px-8 select-all">
                                         <div className="flex items-center gap-3">

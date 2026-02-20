@@ -1,23 +1,28 @@
 import { createClient } from "@/lib/supabase/server"
+
+interface RecentSale {
+    id: string;
+    receipt_number: string;
+    total: number;
+    created_at: string;
+    customers: {
+        name: string;
+    } | null;
+}
 import {
     TrendingUp,
-    Package,
     AlertTriangle,
     Wallet,
     Plus,
     FileOutput,
-    Search,
-    CheckCircle2,
-    Clock,
     ArrowUpRight,
-    ArrowDownRight,
-    Activity,
     Boxes,
     ShoppingCart,
     Calendar,
     ChevronDown,
     Users,
     Zap,
+    Activity,
     Shield
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -264,7 +269,7 @@ export default async function DashboardPage() {
                                     <p className="text-xs font-black uppercase tracking-widest italic">No Transactional Data</p>
                                 </div>
                             ) : (
-                                recentSales.map((sale: any) => (
+                                recentSales.map((sale: RecentSale) => (
                                     <div key={sale.id} className="relative flex gap-5 group items-start">
                                         <div className="size-9 rounded-xl glass-card flex items-center justify-center text-primary z-10 transition-transform group-hover:scale-110 shadow-lg shadow-black/20 group-hover:border-primary/40 group-hover:text-foreground group-hover:bg-primary">
                                             <ArrowUpRight className="h-4 w-4 stroke-[3px]" />

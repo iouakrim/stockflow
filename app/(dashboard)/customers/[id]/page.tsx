@@ -1,4 +1,12 @@
 import { createClient } from "@/lib/supabase/server"
+
+interface Payment {
+    id: string;
+    amount: number;
+    payment_method: string;
+    notes: string | null;
+    created_at: string;
+}
 import { notFound } from "next/navigation"
 import { CustomerPaymentForm } from "@/components/customers/CustomerPaymentForm"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
@@ -12,9 +20,7 @@ import {
     Phone,
     MapPin,
     History,
-    Wallet,
-    CheckCircle2,
-    AlertCircle
+    CheckCircle2
 } from "lucide-react"
 
 export default async function CustomerDetailsPage({ params }: { params: { id: string } }) {
@@ -158,7 +164,7 @@ export default async function CustomerDetailsPage({ params }: { params: { id: st
                                         </TableCell>
                                     </TableRow>
                                 ) : (
-                                    payments.map((p: any) => (
+                                    payments.map((p: Payment) => (
                                         <TableRow key={p.id} className="border-b border-primary/5 hover:bg-primary/5 transition-colors">
                                             <TableCell className="py-4 pl-6 text-xs font-bold text-muted-foreground uppercase" suppressHydrationWarning>
                                                 {new Date(p.created_at).toLocaleDateString()}

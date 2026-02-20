@@ -29,7 +29,7 @@ export function DangerZone() {
                 window.location.href = "/"
             }
         } catch (err) {
-            setError("Wipe protocol failed. Direct manual intervention required.")
+            setError("Wipe protocol failed. Direct manual intervention required. " + err)
         } finally {
             setIsDeleting(false)
         }

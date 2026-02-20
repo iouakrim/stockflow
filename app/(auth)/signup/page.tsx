@@ -54,7 +54,7 @@ export default function SignupPage() {
             } else {
                 window.location.href = "/onboarding"
             }
-        } catch (err) {
+        } catch {
             setError("An unexpected error occurred. Please try again.")
             setIsSubmitting(false)
         }
@@ -85,7 +85,7 @@ export default function SignupPage() {
                             <ShieldCheck className="size-6 text-primary" />
                         </div>
                         <p className="text-white/60 font-medium italic leading-relaxed text-lg">
-                            "StockFlow Pro transformed how we manage our grain silos. The transition was seamless and the real-time tracking is a game changer for our dispatch team."
+                            &quot;StockFlow Pro transformed how we manage our grain silos. The transition was seamless and the real-time tracking is a game changer for our dispatch team.&quot;
                         </p>
                         <div className="mt-8 flex items-center gap-4">
                             <div className="size-12 rounded-full bg-primary/20 border border-primary/20 flex items-center justify-center font-black text-primary">MT</div>
@@ -150,7 +150,7 @@ export default function SignupPage() {
                                             className="w-full bg-[#102219] border-white/5 rounded-2xl h-14 pl-12 pr-4 text-sm font-bold text-white focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-white/10 outline-none border"
                                             required
                                             value={facilityName}
-                                            onChange={(e) => setFacilityName(e.target.value)}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFacilityName(e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -164,7 +164,7 @@ export default function SignupPage() {
                                             className="w-full bg-[#102219] border-white/5 rounded-2xl h-14 pl-12 pr-4 text-sm font-bold text-white focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-white/10 outline-none border"
                                             required
                                             value={address}
-                                            onChange={(e) => setAddress(e.target.value)}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddress(e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -181,7 +181,7 @@ export default function SignupPage() {
                                             className="w-full bg-[#102219] border-white/5 rounded-2xl h-14 pl-12 pr-4 text-sm font-bold text-white focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-white/10 outline-none border"
                                             required
                                             value={fullName}
-                                            onChange={(e) => setFullName(e.target.value)}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFullName(e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -195,7 +195,7 @@ export default function SignupPage() {
                                             className="w-full bg-[#102219] border-white/5 rounded-2xl h-14 pl-12 pr-4 text-sm font-bold text-white focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-white/10 outline-none border"
                                             required
                                             value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -209,7 +209,7 @@ export default function SignupPage() {
                                             className="w-full bg-[#102219] border-white/5 rounded-2xl h-14 pl-12 pr-4 text-sm font-bold text-white focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-white/10 outline-none border"
                                             required
                                             value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -242,7 +242,7 @@ export default function SignupPage() {
                             )}
 
                             <p className="text-center text-[10px] font-medium text-white/30 leading-relaxed px-10">
-                                By continuing, you agree to StockFlow Pro's <Link href="#" className="underline hover:text-primary">Terms of Service</Link> and <Link href="#" className="underline hover:text-primary">Privacy Protocol</Link>.
+                                By continuing, you agree to StockFlow Pro&apos;s <Link href="#" className="underline hover:text-primary">Terms of Service</Link> and <Link href="#" className="underline hover:text-primary">Privacy Protocol</Link>.
                             </p>
                         </div>
                     </form>

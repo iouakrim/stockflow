@@ -5,19 +5,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import {
     Package,
     Plus,
-    Search,
-    Filter,
     Download,
     MoreVertical,
     AlertCircle,
-    CheckCircle2,
     Boxes,
-    ShoppingCart,
+    BarChart2,
     ArrowUpRight,
-    TrendingUp,
-    ChevronDown,
     ListFilter,
-    BarChart2
+    Search
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Product } from "@/types"
@@ -26,7 +21,7 @@ export default async function ProductsPage() {
     const supabase = createClient()
 
     // Fetch real products
-    const { data: products, error } = await supabase
+    const { data: products } = await supabase
         .from("products")
         .select("*")
         .order("created_at", { ascending: false })

@@ -1,10 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import {
-    BarChart3,
     TrendingUp,
-    TrendingDown,
-    PieChart,
-    Activity,
     ArrowUpRight,
     ArrowDownRight,
     Calendar,
@@ -12,11 +8,8 @@ import {
     Download,
     FileText,
     Calculator,
-    Target,
     Zap,
-    Layers,
-    ShoppingCart,
-    Boxes
+    Layers
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"

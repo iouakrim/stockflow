@@ -16,11 +16,9 @@ import {
     ArrowLeft,
     Save,
     Tag,
-    Barcode,
     DollarSign,
     Layers,
     AlertCircle,
-    FileText,
     Boxes,
     Truck
 } from "lucide-react"

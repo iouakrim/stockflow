@@ -9,12 +9,8 @@ import {
     Package,
     Users,
     Settings,
-    Menu,
-    X,
     Bell,
-    Search,
     ChevronDown,
-    LogOut,
     Warehouse,
     BarChart3,
     Leaf,
@@ -37,7 +33,6 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
     const pathname = usePathname();
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [userProfile, setUserProfile] = useState<{ full_name: string; role: string } | null>(null);
     const [warehouseInfo, setWarehouseInfo] = useState<{ name: string; id: string } | null>(null);
     const supabase = createClient();
@@ -71,7 +66,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             }
         }
         getInitialData();
-    }, []);
+    }, [supabase]);
 
     const navItems = [
         { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },

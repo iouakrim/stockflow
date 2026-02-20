@@ -35,7 +35,7 @@ export default function ForgotPasswordPage() {
                 setIsLoading(false)
                 setIsSent(true)
             }
-        } catch (err) {
+        } catch {
             setError("Request failed. Please try again.")
             setIsLoading(false)
         }
@@ -67,7 +67,7 @@ export default function ForgotPasswordPage() {
                                     <ShieldAlert className="size-7" />
                                 </div>
                                 <h2 className="text-2xl font-black tracking-tight text-white">Security Recovery</h2>
-                                <p className="text-sm font-medium text-white/40 leading-relaxed px-4">Enter your registered email and we'll send a system recovery protocol link.</p>
+                                <p className="text-sm font-medium text-white/40 leading-relaxed px-4">Enter your registered email and we&apos;ll send a system recovery protocol link.</p>
                             </div>
 
                             {error && (

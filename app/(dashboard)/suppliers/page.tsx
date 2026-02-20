@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
+import { Supplier } from "@/types"
 import {
-    Users,
     Plus,
     Search,
     Download,
@@ -24,14 +24,13 @@ export default async function SuppliersPage() {
     const supabase = createClient()
 
     // Fetch suppliers (using a fallback since the table might not exist in the DB yet until user runs migration)
-    const { data: suppliers, error } = await supabase
+    const { data: suppliers } = await supabase
         .from("suppliers")
         .select("*")
         .order("name", { ascending: true })
 
     // Calculations for header stats
     const totalSuppliers = suppliers?.length || 0
-    const categories = Array.from(new Set(suppliers?.map(s => s.category).filter(Boolean))) || []
 
     return (
         <div className="flex-1 space-y-10 animate-in fade-in duration-700 pb-20">
@@ -152,7 +151,7 @@ export default async function SuppliersPage() {
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                suppliers.map((supplier: any) => (
+                                suppliers.map((supplier: Supplier) => (
                                     <TableRow key={supplier.id} className="border-b border-primary/5 hover:bg-primary/[0.02] transition-colors group">
                                         <TableCell className="py-6 px-8">
                                             <Link href={`/suppliers/${supplier.id}`} className="flex items-center gap-4 block w-full hover:opacity-80 transition-opacity">

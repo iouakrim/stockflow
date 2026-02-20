@@ -19,11 +19,10 @@ import {
     Wallet,
     Smartphone,
     CheckCircle2,
-    AlertCircle,
     FileText
 } from "lucide-react"
 
-export function CustomerPaymentForm({ customer }: { customer: any }) {
+export function CustomerPaymentForm({ customer }: { customer: { id: string; name: string } }) {
     const [amount, setAmount] = useState<string>("")
     const [paymentMethod, setPaymentMethod] = useState<'cash' | 'bank_transfer' | 'mobile_money'>('cash')
     const [notes, setNotes] = useState("")
@@ -50,8 +49,8 @@ export function CustomerPaymentForm({ customer }: { customer: any }) {
             } else {
                 alert("Payment recording failed: " + res.error)
             }
-        } catch (error: any) {
-            alert("Error: " + error.message)
+        } catch (error: unknown) {
+            alert("Error: " + (error instanceof Error ? error.message : String(error)))
         } finally {
             setIsSubmitting(false)
         }
@@ -98,10 +97,10 @@ export function CustomerPaymentForm({ customer }: { customer: any }) {
                                 <button
                                     key={method.id}
                                     type="button"
-                                    onClick={() => setPaymentMethod(method.id as any)}
+                                    onClick={() => setPaymentMethod(method.id as 'cash' | 'bank_transfer' | 'mobile_money')}
                                     className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all ${paymentMethod === method.id
-                                            ? 'border-primary bg-primary/10 text-primary shadow-lg shadow-primary/5'
-                                            : 'border-primary/5 bg-accent/50 text-muted-foreground hover:border-primary/20 hover:bg-accent'
+                                        ? 'border-primary bg-primary/10 text-primary shadow-lg shadow-primary/5'
+                                        : 'border-primary/5 bg-accent/50 text-muted-foreground hover:border-primary/20 hover:bg-accent'
                                         }`}
                                 >
                                     <method.icon className={`h-6 w-6 ${paymentMethod === method.id ? 'animate-bounce' : ''}`} />

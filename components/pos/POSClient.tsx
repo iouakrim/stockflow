@@ -15,47 +15,22 @@ import {
     ShoppingCart,
     User,
     CheckCircle2,
-    CreditCard,
-    Banknote,
-    Smartphone,
     ChevronRight,
-    Printer,
     ChevronDown,
-    Package,
     Terminal,
-    ScanBarcode,
-    ListFilter,
-    Boxes,
     Zap,
     X,
-    ArrowRight,
-    HandCoins,
     Loader2,
-    Phone,
-    UserRound
+    Phone
 } from "lucide-react"
 
 import {
     Sheet,
     SheetContent,
-    SheetHeader,
-    SheetTitle,
     SheetTrigger,
     SheetClose
 } from "@/components/ui/sheet"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-} from "@/components/ui/select"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+
 import {
     Popover,
     PopoverContent,
@@ -117,6 +92,7 @@ export function POSClient({ products, customers }: POSClientProps) {
         }
         window.addEventListener('keydown', handleKeyDown)
         return () => window.removeEventListener('keydown', handleKeyDown)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [items])
 
     const categories = useMemo(() => {
@@ -167,8 +143,8 @@ export function POSClient({ products, customers }: POSClientProps) {
             } else {
                 alert("Checkout failed: " + res.error)
             }
-        } catch (error: any) {
-            alert("Error: " + error.message)
+        } catch (error: unknown) {
+            alert("Error: " + (error instanceof Error ? error.message : String(error)))
         } finally {
             setIsProcessing(false)
         }

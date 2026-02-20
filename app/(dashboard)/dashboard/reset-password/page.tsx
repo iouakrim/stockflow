@@ -31,7 +31,7 @@ export default function ResetPasswordPage() {
                 setIsSuccess(true)
             }
         } catch (err) {
-            setError("Update failed. Please try again.")
+            setError(`Update failed. Please try again. ${err}`)
         } finally {
             setIsLoading(false)
         }

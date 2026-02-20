@@ -1,16 +1,13 @@
 import { createClient } from "@/lib/supabase/server"
+import { Customer } from "@/types"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
-    Users,
     UserPlus,
     Search,
     Download,
-    Filter,
     MoreVertical,
-    Wallet,
-    CreditCard,
     ArrowRight
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
@@ -126,7 +123,7 @@ export default async function CustomersPage() {
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            customers.map((customer) => (
+                            customers.map((customer: Customer) => (
                                 <TableRow key={customer.id} className="border-b border-primary/5 hover:bg-primary/[0.02] transition-colors group">
                                     <TableCell className="py-6 px-8">
                                         <div className="flex items-center gap-4">

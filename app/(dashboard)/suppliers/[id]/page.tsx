@@ -5,13 +5,11 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
     ArrowLeft,
-    Building2,
     Truck,
     Package,
     Phone,
     Mail,
     MapPin,
-    Calendar,
     Star,
     ShieldCheck,
     ArrowUpRight,

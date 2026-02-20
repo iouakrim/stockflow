@@ -1,24 +1,14 @@
 import { createClient } from "@/lib/supabase/server"
 import {
-    Settings,
-    Users,
     ShieldCheck,
-    History,
     Plus,
     Search,
     Filter,
     MoreHorizontal,
-    ShieldAlert,
     FilePenLine,
     ClipboardList,
-    UserPlus,
-    Bell,
-    Key,
-    UserCircle,
     Info,
     ArrowUpRight,
-    Settings2,
-    Lock
 } from "lucide-react"
 import { DangerZone } from "./DangerZone"
 import { Button } from "@/components/ui/button"
@@ -30,13 +20,13 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 
 export default async function SettingsPage() {
     const supabase = createClient()
 
     // Fetch real profiles
-    const { data: profiles, error: profileError } = await supabase
+    const { data: profiles } = await supabase
         .from("profiles")
         .select("*")
         .order("created_at", { ascending: false })
@@ -120,12 +110,12 @@ export default async function SettingsPage() {
                                 <TableCell colSpan={5} className="py-12 text-center text-muted-foreground/50 font-medium">No personnel found.</TableCell>
                             </TableRow>
                         ) : (
-                            profiles.map((p, i) => (
+                            profiles.map((p) => (
                                 <TableRow key={p.id} className="border-b border-primary/5 hover:bg-primary/[0.02] transition-colors group">
                                     <TableCell className="py-6 px-8">
                                         <div className="flex items-center gap-4">
                                             <div className="size-10 rounded-full bg-primary/10 border border-primary/10 flex items-center justify-center text-primary font-black text-xs uppercase overflow-hidden">
-                                                {p.full_name?.split(' ').map(n => n[0]).join('') || 'U'}
+                                                {p.full_name?.split(' ').map((n: string) => n[0]).join('') || 'U'}
                                             </div>
                                             <div className="flex flex-col">
                                                 <span className="font-black text-sm tracking-tight group-hover:text-primary transition-colors">{p.full_name || 'Anonymous'}</span>
