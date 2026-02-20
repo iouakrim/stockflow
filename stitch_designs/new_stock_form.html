@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>New Stock Entry - StockFlow Pro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#11d473",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .form-input-focus:focus {
+            border-color: #11d473 !important;
+            ring-color: #11d473 !important;
+            outline: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="border-b border-slate-200 dark:border-primary/20 bg-white dark:bg-background-dark/50 backdrop-blur-md sticky top-0 z-50">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-16">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-1.5 rounded-lg">
+<span class="material-symbols-outlined text-background-dark font-bold">inventory_2</span>
+</div>
+<h1 class="text-xl font-extrabold tracking-tight">StockFlow <span class="text-primary font-medium">Pro</span></h1>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-semibold text-primary" href="#">Inventory</a>
+<a class="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Reports</a>
+<a class="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Suppliers</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="bg-slate-100 dark:bg-primary/10 border-none rounded-full py-1.5 pl-9 pr-4 text-sm w-64 focus:ring-2 focus:ring-primary/50 transition-all" placeholder="Quick search..." type="text"/>
+</div>
+<button class="p-2 text-slate-500 hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjwRQy5yr_9LGdyh22hhkixLE4sK4yHOiTriueqF-0Q2gF75Cxr3524aXs71C-5lUPcxAIUQXMecJ32b-_FzLCTD2eWW9R4fOdk1EF7Ay51VjdaUyOjDRQB-BMnCIz8tSniGcuRjMHHpDJDkq2Q4Z63IwJj1oXcH_RmKg2xaMO16cbPdaKFLHVM-9C9IyE4dgm0B-tsLc_soJX2FAhEr1WwDWJVTRE_XHdmmToiOnUlwmr9t-4bhGxuSVV96IQ3Loy6XcYlpH401o"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1 py-10 px-4">
+<div class="max-w-3xl mx-auto">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6">
+<a class="hover:text-primary transition-colors" href="#">Inventory</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-slate-900 dark:text-slate-200 font-medium">New Stock Entry</span>
+</nav>
+<!-- Page Header -->
+<div class="mb-10">
+<h2 class="text-3xl font-black text-slate-900 dark:text-white mb-2">New Stock Entry</h2>
+<p class="text-slate-600 dark:text-slate-400">Log bulk agricultural arrivals and update your warehouse levels.</p>
+</div>
+<!-- Form Container -->
+<div class="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-primary/10 rounded-xl shadow-xl overflow-hidden">
+<form class="p-8 space-y-8">
+<!-- Section: Product Information -->
+<section>
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">potted_plant</span>
+<h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Product Information</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="col-span-full">
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Select Product</label>
+<div class="relative">
+<select class="w-full bg-slate-50 dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-lg py-3 px-4 appearance-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all text-slate-900 dark:text-slate-100">
+<option disabled="" selected="" value="">Choose a bulk product...</option>
+<option value="wheat">Organic Hard Red Winter Wheat</option>
+<option value="corn">Yellow Dent Bulk Corn</option>
+<option value="soy">Non-GMO Soybeans</option>
+<option value="barley">Malt Quality Barley</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Quantity Received</label>
+<div class="relative">
+<input class="w-full bg-slate-50 dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-lg py-3 px-4 focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all text-slate-900 dark:text-slate-100" placeholder="0.00" step="0.01" type="number"/>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center border-l border-slate-200 dark:border-primary/20 pl-4 h-6">
+<select class="bg-transparent border-none text-sm font-medium text-slate-500 focus:ring-0 p-0 pr-6">
+<option>Tons</option>
+<option>KG</option>
+<option>Bags (50kg)</option>
+</select>
+</div>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Unit Price (USD)</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">$</span>
+<input class="w-full bg-slate-50 dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-lg py-3 pl-8 pr-4 focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all text-slate-900 dark:text-slate-100" placeholder="0.00" step="0.01" type="number"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Divider -->
+<div class="border-t border-slate-200 dark:border-primary/10"></div>
+<!-- Section: Logistics & Supplier -->
+<section>
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">local_shipping</span>
+<h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Logistics &amp; Supplier</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Supplier</label>
+<div class="relative">
+<select class="w-full bg-slate-50 dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-lg py-3 px-4 appearance-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all text-slate-900 dark:text-slate-100">
+<option disabled="" selected="" value="">Select active supplier...</option>
+<option>Green Valley Farms Ltd.</option>
+<option>Midwest Grain Co-op</option>
+<option>Heritage Seed Distributors</option>
+<option>+ Add New Supplier</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Warehouse Location</label>
+<div class="relative">
+<select class="w-full bg-slate-50 dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-lg py-3 px-4 appearance-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all text-slate-900 dark:text-slate-100">
+<option>Silo A-104 (Primary)</option>
+<option>Cold Storage 2</option>
+<option>Main Hangar North</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">warehouse</span>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Batch / Lot Number</label>
+<input class="w-full bg-slate-50 dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-lg py-3 px-4 focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all text-slate-900 dark:text-slate-100" placeholder="e.g., BN-2023-08-WHT" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Reception Date</label>
+<input class="w-full bg-slate-50 dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-lg py-3 px-4 focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all text-slate-900 dark:text-slate-100" type="date"/>
+</div>
+</div>
+</section>
+<!-- Summary Area -->
+<div class="bg-primary/5 dark:bg-primary/5 border border-primary/20 rounded-xl p-6">
+<div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+<div>
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Calculated Total Value</p>
+<p class="text-3xl font-black text-primary">$0.00</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-6 py-3 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors" type="button">
+                                    Discard Entry
+                                </button>
+<button class="bg-primary hover:bg-primary/90 text-background-dark px-10 py-3 rounded-lg font-bold shadow-lg shadow-primary/20 transition-all flex items-center gap-2" type="submit">
+<span class="material-symbols-outlined font-bold">save</span>
+                                    Save Stock Entry
+                                </button>
+</div>
+</div>
+</div>
+</form>
+</div>
+<!-- Footer Help -->
+<div class="mt-8 flex items-center justify-center gap-8 text-slate-500 dark:text-slate-500 text-xs font-medium uppercase tracking-widest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">security</span>
+<span>Secure Audit Log Enabled</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">inventory</span>
+<span>Real-time Sync Active</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Map Preview for context (Optional minimal element) -->
+<div class="fixed bottom-4 right-4 group">
+<div class="w-12 h-12 bg-slate-800 rounded-full border border-primary/30 flex items-center justify-center cursor-pointer shadow-2xl transition-all group-hover:w-48 group-hover:h-32 group-hover:rounded-xl overflow-hidden relative">
+<span class="material-symbols-outlined text-primary group-hover:hidden">location_on</span>
+<div class="hidden group-hover:block w-full h-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<img class="w-full h-full object-cover" data-alt="Warehouse location map preview" data-location="Chicago, IL" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWvVHAVLjrmfElw3H9TG736yKAalI_NncYrjCMwK0ASwqRsgLLWkKDld1kVHMKUZ1hFRsJuELqMsVKFMeIKrVAmn4_l4XCldWun8a2CME-_lVL9jzI4-PG3tYXN2Oq3O3Sh5a8Z_zE30CyBiKAlU0gjk8-lvuT2MYs_uNngOM85JFyZcjNQZZEfdor7xXoqdAh7jKDyqOCZyrxueBANm5hU0HzSbFj6x8adWJbsM-Felt10V-LeH5mtWgcjz4K6HXAaH6XJCkValg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-2">
+<span class="text-[10px] text-white font-bold">Chicago Logistics Hub</span>
+</div>
+</div>
+</div>
+</div>
+</body></html>

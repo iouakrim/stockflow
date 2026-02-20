@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Access &amp; Roles Settings | StockFlow Pro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0fbd66",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#0a110d",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(15, 189, 102, 0.2);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="flex h-screen overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-64 flex-shrink-0 border-r border-primary/10 bg-background-light dark:bg-background-dark flex flex-col">
+<div class="p-6 flex items-center gap-3">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined">agriculture</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">StockFlow Pro</h1>
+</div>
+<nav class="flex-1 px-4 py-4 space-y-1 custom-scrollbar overflow-y-auto">
+<div class="pb-4">
+<p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Workspace</p>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span class="text-sm font-medium">Inventory Management</span>
+</a>
+</div>
+<div class="pt-4 border-t border-primary/10">
+<p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Settings</p>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="text-sm font-medium">General Settings</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">account_circle</span>
+<span class="text-sm font-medium">Account Info</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 bg-primary/10 text-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="text-sm font-medium">Users &amp; Roles</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">shield_person</span>
+<span class="text-sm font-medium">Security</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">notifications_active</span>
+<span class="text-sm font-medium">Notifications</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">api</span>
+<span class="text-sm font-medium">API Keys</span>
+</a>
+</div>
+</nav>
+<div class="p-4 border-t border-primary/10">
+<div class="flex items-center gap-3 p-2 bg-slate-100 dark:bg-primary/5 rounded-xl border border-primary/10">
+<img class="size-10 rounded-full border border-primary/20" data-alt="User profile photo of a male manager" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHuUCLygsWzSBef4mLO4SqNnvul8kiF12133BqPRbFEVX-RPhha0HSNDwmVnMmR1-w6Wkof9Fvg6Wa-8FdVYENyW9NB-4GOSFo6FnxtlGGONBR2UnMRgdlMQWytzHEAw-N1LqAOztltQupkCM6qlftDQEnoN7bw6C65jym9U7axFVlKHvEChrDXa35mpu0-EMdP34yFhzzgJQls_nP7bHwSSpvseQyr11AZDNaMgNfdIb_samsMqjMEPH2385sRb7C8-pksIqAI50"/>
+<div class="flex-1 min-w-0">
+<p class="text-xs font-bold truncate">Julian Thorne</p>
+<p class="text-[10px] text-slate-500 truncate">System Admin</p>
+</div>
+<button class="text-slate-400 hover:text-primary">
+<span class="material-symbols-outlined">logout</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col overflow-hidden">
+<!-- Header Bar -->
+<header class="h-16 border-b border-primary/10 flex items-center justify-between px-8 bg-background-light dark:bg-background-dark/50 backdrop-blur-md">
+<div class="flex items-center gap-4">
+<h2 class="text-lg font-bold">Settings</h2>
+<span class="text-slate-400">/</span>
+<span class="text-sm font-medium text-slate-500">Users &amp; Roles</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-primary rounded-full ring-2 ring-background-dark"></span>
+</button>
+<div class="h-6 w-px bg-primary/10"></div>
+<button class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+                        Add New User
+                    </button>
+</div>
+</header>
+<!-- Scrollable Workspace -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-8">
+<div class="max-w-6xl mx-auto space-y-8">
+<!-- Title Section -->
+<div class="flex flex-col gap-2">
+<h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">User Access &amp; Roles</h1>
+<p class="text-slate-500 dark:text-slate-400 max-w-2xl text-base">Control who can access your bulk agricultural stock and manage their permission levels across the warehouse management system.</p>
+</div>
+<!-- Tabs & Filters -->
+<div class="space-y-6">
+<div class="flex items-center justify-between border-b border-primary/10">
+<div class="flex gap-8">
+<button class="pb-4 text-sm font-bold border-b-2 border-primary text-primary transition-all">
+                                    Users
+                                </button>
+<button class="pb-4 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-300 transition-all">
+                                    Roles &amp; Permissions
+                                </button>
+<button class="pb-4 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-300 transition-all">
+                                    Activity Logs
+                                </button>
+</div>
+<div class="flex items-center gap-3 pb-4">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors">search</span>
+<input class="pl-10 pr-4 py-2 bg-slate-100 dark:bg-primary/5 border border-primary/10 rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-all w-64 placeholder:text-slate-500" placeholder="Search by name or email..." type="text"/>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-primary/5 border border-primary/10 rounded-lg text-sm font-medium hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+                                    Filters
+                                </button>
+</div>
+</div>
+<!-- Users Table Section -->
+<div class="bg-background-light dark:bg-primary/5 rounded-xl border border-primary/10 overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-slate-50 dark:bg-primary/10 border-b border-primary/10">
+<tr>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Employee Name</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Assigned Role</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Status</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Last Active</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-primary/5">
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img class="size-10 rounded-full border border-primary/10" data-alt="Portrait of a male warehouse employee" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqfIr_IbE9knmEjrxK_2qEMsxPz9i48wzW36xuk67h2Xu7dJJGEuBDA6u3E408rfR191UK5uflJYJc1f0cWU_Dk7aDS1UT7zUuhBsfa6rUY_rtDYQo0Dd1k0rIWyOo18g7eHpQjHfAvj74YOFYyepOblHLwRaInN7LjxU8C3FXWH2lnPW4rNhXt_UQWCvAygQx-jIAAURs35R89p9-79VD0pf_aFjI5L5QdCuZpuJP7zBpTJV9Xm5_FGhcPfJVObrzE04HHcz1YFo"/>
+<div>
+<p class="text-sm font-bold">Liam Henderson</p>
+<p class="text-xs text-slate-500">l.henderson@stockflowpro.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded-full text-[10px] font-bold uppercase bg-primary/20 text-primary border border-primary/20">Manager</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="size-2 bg-primary rounded-full animate-pulse"></span>
+<span class="text-xs font-medium text-slate-600 dark:text-slate-300">Active</span>
+</div>
+</td>
+<td class="px-6 py-4 text-xs text-slate-500">Today, 10:24 AM</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img class="size-10 rounded-full border border-primary/10" data-alt="Portrait of a female warehouse administrator" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBySUNlsn-PM4GnumT4jjqPCrOmexU5Vlj4IBf_gxj__tP_3ICo--35Hl5exIRojufxdmECvR4XvvJe3QvZWzXglggU44FhC3iyh2kpvolIcj-pLjxuPPw94hfdfQdcxaQYFgwmU4NvOsdzKTqi3-q9VeUER9a31BAaWjjNTvhMtsKntg39W5fj30ydZ85uwqBpAI7lBvIj_BOMEOTw4yDBL-bTIUOQx3LM__-NgrD_PnHVWV8ITNB_cZzlKCM4_UOIqwO5MOrPW5M"/>
+<div>
+<p class="text-sm font-bold">Sarah Jenkins</p>
+<p class="text-xs text-slate-500">s.jenkins@stockflowpro.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded-full text-[10px] font-bold uppercase bg-blue-500/10 text-blue-400 border border-blue-500/20">Clerk</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="size-2 bg-primary rounded-full"></span>
+<span class="text-xs font-medium text-slate-600 dark:text-slate-300">Active</span>
+</div>
+</td>
+<td class="px-6 py-4 text-xs text-slate-500">2 hours ago</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img class="size-10 rounded-full border border-primary/10" data-alt="Portrait of a professional woman" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQIC_nfyDq4gAl4N8VXPPgzkgHe2M1WZVR7vjG5IhOx0dif35AAyY8fla-y0pXETbfRBmD5pC5DtcMCB4IaTaIkteKLyj00IKEWaOIYKDGVkXf1O4MEqVKgupo45SPb0u5f8fdgPQQPdVyggnt9-SLHHs_VNn2Oizfv4cgJjf7KFJpBt0xavOhYcxI7Yt2o-e2Df2dtPazb5wvjz5XCzbeRK_-w3l1_wmLaf0vdbzsLZq7vyJqTOITBj4I3H_ShdlTk_YJ1P_QkMg"/>
+<div>
+<p class="text-sm font-bold">Marcus Vane</p>
+<p class="text-xs text-slate-500">m.vane@stockflowpro.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded-full text-[10px] font-bold uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">Viewer</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="size-2 bg-slate-500 rounded-full"></span>
+<span class="text-xs font-medium text-slate-500">Inactive</span>
+</div>
+</td>
+<td class="px-6 py-4 text-xs text-slate-500">Dec 12, 2023</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="px-6 py-4 bg-slate-50 dark:bg-primary/5 flex items-center justify-between border-t border-primary/10">
+<p class="text-xs text-slate-500">Showing 1-3 of 12 employees</p>
+<div class="flex gap-2">
+<button class="px-3 py-1 rounded border border-primary/20 text-xs font-bold opacity-50 cursor-not-allowed">Prev</button>
+<button class="px-3 py-1 rounded border border-primary/20 bg-primary/10 text-primary text-xs font-bold">1</button>
+<button class="px-3 py-1 rounded border border-primary/20 text-xs font-bold hover:bg-primary/10">2</button>
+<button class="px-3 py-1 rounded border border-primary/20 text-xs font-bold hover:bg-primary/10">3</button>
+<button class="px-3 py-1 rounded border border-primary/20 text-xs font-bold hover:bg-primary/10">Next</button>
+</div>
+</div>
+</div>
+<!-- Role Cards Section -->
+<div class="pt-8">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-bold">Permission Presets</h3>
+<button class="text-primary text-sm font-bold flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+                                    Create New Role
+                                </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Role Card: Admin -->
+<div class="bg-background-light dark:bg-primary/5 border border-primary/10 p-6 rounded-xl hover:border-primary/40 transition-all flex flex-col group">
+<div class="flex items-start justify-between mb-4">
+<div class="p-3 bg-red-500/10 text-red-500 rounded-lg group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[32px]">admin_panel_settings</span>
+</div>
+<span class="text-xs font-bold text-slate-500">2 Users</span>
+</div>
+<h4 class="text-lg font-bold mb-2">Administrator</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400 flex-1 mb-6">Unrestricted access to all warehouse zones, financial logs, and system configuration settings.</p>
+<button class="w-full py-2 rounded-lg bg-slate-200 dark:bg-primary/10 text-sm font-bold hover:bg-primary text-slate-700 dark:text-slate-100 dark:hover:text-white transition-all">Manage Permissions</button>
+</div>
+<!-- Role Card: Warehouse Manager -->
+<div class="bg-background-light dark:bg-primary/5 border border-primary/10 p-6 rounded-xl hover:border-primary/40 transition-all flex flex-col group">
+<div class="flex items-start justify-between mb-4">
+<div class="p-3 bg-primary/10 text-primary rounded-lg group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[32px]">assignment</span>
+</div>
+<span class="text-xs font-bold text-slate-500">4 Users</span>
+</div>
+<h4 class="text-lg font-bold mb-2">Warehouse Manager</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400 flex-1 mb-6">Manage stock entries, approve bulk transfers, and view audit trails. No billing access.</p>
+<button class="w-full py-2 rounded-lg bg-slate-200 dark:bg-primary/10 text-sm font-bold hover:bg-primary text-slate-700 dark:text-slate-100 dark:hover:text-white transition-all">Manage Permissions</button>
+</div>
+<!-- Role Card: Warehouse Clerk -->
+<div class="bg-background-light dark:bg-primary/5 border border-primary/10 p-6 rounded-xl hover:border-primary/40 transition-all flex flex-col group">
+<div class="flex items-start justify-between mb-4">
+<div class="p-3 bg-blue-500/10 text-blue-500 rounded-lg group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[32px]">edit_note</span>
+</div>
+<span class="text-xs font-bold text-slate-500">6 Users</span>
+</div>
+<h4 class="text-lg font-bold mb-2">Inventory Clerk</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400 flex-1 mb-6">Input daily stock weights and harvest moisture data. Read-only access to historical logs.</p>
+<button class="w-full py-2 rounded-lg bg-slate-200 dark:bg-primary/10 text-sm font-bold hover:bg-primary text-slate-700 dark:text-slate-100 dark:hover:text-white transition-all">Manage Permissions</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -23,12 +23,12 @@ export default async function NewSalePage() {
     // Fetch products
     const { data: products } = await supabase.from("products").select("*").order("name", { ascending: true })
 
+    // Fetch customers
+    const { data: customers } = await supabase.from("customers").select("id, name, phone").order("name", { ascending: true })
+
     return (
-        <div className="h-full flex flex-col">
-            <div className="md:mb-4 mb-2 flex items-center justify-between">
-                <h1 className="text-xl md:text-2xl font-bold">New Sale (POS)</h1>
-            </div>
-            <POSClient products={products || []} />
+        <div className="h-full flex flex-col p-4 md:p-6 lg:p-8">
+            <POSClient products={products || []} customers={customers || []} />
         </div>
     )
 }

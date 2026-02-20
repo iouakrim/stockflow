@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StockFlow Pro Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#11d473",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(17, 212, 115, 0.2);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="flex h-screen overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-64 flex-shrink-0 border-r border-primary/10 bg-white dark:bg-[#0a140f] flex flex-col">
+<div class="p-6 flex items-center gap-3">
+<div class="size-10 rounded-lg bg-primary flex items-center justify-center text-background-dark">
+<span class="material-symbols-outlined font-bold">potted_plant</span>
+</div>
+<div class="flex flex-col">
+<h1 class="text-slate-900 dark:text-slate-100 text-base font-bold leading-tight">StockFlow Pro</h1>
+<p class="text-primary text-xs font-medium uppercase tracking-wider">Agri-Logistics</p>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1 py-4 overflow-y-auto custom-scrollbar">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary border border-primary/20" href="#">
+<span class="material-symbols-outlined text-[22px]">dashboard</span>
+<span class="text-sm font-semibold">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">receipt_long</span>
+<span class="text-sm font-medium">Sales</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">inventory_2</span>
+<span class="text-sm font-medium">Products</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">warehouse</span>
+<span class="text-sm font-medium">Stock Control</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">group</span>
+<span class="text-sm font-medium">Customers</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">bar_chart</span>
+<span class="text-sm font-medium">Reports</span>
+</a>
+</nav>
+<div class="p-4 border-t border-primary/10">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col overflow-hidden">
+<!-- Top Header -->
+<header class="h-16 flex items-center justify-between px-8 bg-white/50 dark:bg-background-dark/50 backdrop-blur-md border-b border-primary/10">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 text-slate-900 dark:text-slate-100">
+<span class="material-symbols-outlined text-primary">location_on</span>
+<h2 class="text-lg font-bold leading-tight">North Silo A</h2>
+</div>
+<div class="relative w-72">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
+<input class="w-full bg-slate-100 dark:bg-primary/5 border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-primary placeholder:text-slate-400" placeholder="Search orders or stock..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="size-10 rounded-lg flex items-center justify-center bg-slate-100 dark:bg-primary/10 text-slate-600 dark:text-slate-100 hover:bg-primary/20 transition-all">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+</button>
+<div class="h-8 w-[1px] bg-primary/20 mx-1"></div>
+<div class="flex items-center gap-3 pl-2">
+<div class="text-right hidden sm:block">
+<p class="text-sm font-bold leading-none">Alex Rivera</p>
+<p class="text-[10px] text-primary font-medium uppercase mt-1">Silo Manager</p>
+</div>
+<div class="size-10 rounded-full border-2 border-primary p-0.5">
+<img alt="Profile" class="rounded-full w-full h-full object-cover" data-alt="Portrait of a male warehouse manager" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFB391sJLHP_fxGCSw72eRJnoizSArgmeOImzWuTImn8cP15SHAWlUQB-mUDjqJSJr22AQiWjm0K15lBrVs_pHcn6EywUi3Kh0uEEW09MuWsq_clk8_oUdw58UkvVijdmeHTpe2IgOZfde0xnrYAGahmoshZ7GvyFEfrXRhYBXQ6-q73VZK0UNeq86gczDDwYBlAp-2Irt-YyRhLjnDyINY_CypVIsI5CHPUF6fYFzxaO67OUrB2mI0XHGxjjtKpvsmSRfknExz3E"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="flex-1 overflow-y-auto p-8 custom-scrollbar space-y-8">
+<!-- KPI Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="bg-white dark:bg-[#1a2b22] p-6 rounded-xl border border-primary/10 shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<div class="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<span class="text-[12px] font-bold text-primary bg-primary/10 px-2 py-1 rounded-full">+12.5%</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Today's Revenue</p>
+<h3 class="text-2xl font-extrabold">$12,840.00</h3>
+</div>
+<div class="bg-white dark:bg-[#1a2b22] p-6 rounded-xl border border-primary/10 shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<div class="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">database</span>
+</div>
+<span class="text-[12px] font-bold text-primary bg-primary/10 px-2 py-1 rounded-full">+2.1%</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Current Stock</p>
+<h3 class="text-2xl font-extrabold">4,250 Tons</h3>
+</div>
+<div class="bg-white dark:bg-[#1a2b22] p-6 rounded-xl border border-amber-500/20 shadow-sm group">
+<div class="flex items-center justify-between mb-4">
+<div class="size-10 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<span class="text-[12px] font-bold text-amber-500 bg-amber-500/10 px-2 py-1 rounded-full">ACTION REQ.</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Low Stock Alerts</p>
+<h3 class="text-2xl font-extrabold text-amber-500">12 Items</h3>
+</div>
+<div class="bg-white dark:bg-[#1a2b22] p-6 rounded-xl border border-primary/10 shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<div class="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</div>
+<span class="text-[12px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-full">STABLE</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Outstanding Credits</p>
+<h3 class="text-2xl font-extrabold">$3,150.00</h3>
+</div>
+</div>
+<!-- Main Analytics Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Weekly Revenue Performance Chart -->
+<div class="lg:col-span-2 bg-white dark:bg-[#1a2b22] rounded-xl border border-primary/10 p-6 flex flex-col">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h4 class="text-lg font-bold">Revenue Performance</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400">Weekly trend analysis</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="flex items-center gap-1.5 text-xs font-semibold text-primary">
+<span class="size-2 rounded-full bg-primary"></span> Current Week
+                                </span>
+</div>
+</div>
+<div class="flex-1 min-h-[300px] relative">
+<!-- SVG Chart Simulation -->
+<svg class="w-full h-full" viewbox="0 0 1000 300">
+<defs>
+<lineargradient id="gradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:#11d473;stop-opacity:0.2"></stop>
+<stop offset="100%" style="stop-color:#11d473;stop-opacity:0"></stop>
+</lineargradient>
+</defs>
+<!-- Grid Lines -->
+<line class="text-slate-200 dark:text-primary/5" stroke="currentColor" stroke-dasharray="4" x1="0" x2="1000" y1="50" y2="50"></line>
+<line class="text-slate-200 dark:text-primary/5" stroke="currentColor" stroke-dasharray="4" x1="0" x2="1000" y1="150" y2="150"></line>
+<line class="text-slate-200 dark:text-primary/5" stroke="currentColor" stroke-dasharray="4" x1="0" x2="1000" y1="250" y2="250"></line>
+<!-- Area -->
+<path d="M0,250 L100,220 L250,260 L400,120 L550,180 L700,80 L850,110 L1000,50 L1000,300 L0,300 Z" fill="url(#gradient)"></path>
+<!-- Line -->
+<path d="M0,250 L100,220 L250,260 L400,120 L550,180 L700,80 L850,110 L1000,50" fill="none" stroke="#11d473" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"></path>
+<!-- Data Points -->
+<circle class="fill-primary" cx="100" cy="220" r="5"></circle>
+<circle class="fill-primary" cx="400" cy="120" r="5"></circle>
+<circle class="fill-primary" cx="700" cy="80" r="5"></circle>
+<circle class="fill-primary stroke-white dark:stroke-[#1a2b22] stroke-2" cx="1000" cy="50" r="6"></circle>
+</svg>
+</div>
+<div class="flex justify-between mt-4 px-2">
+<span class="text-xs font-bold text-slate-400 uppercase">Mon</span>
+<span class="text-xs font-bold text-slate-400 uppercase">Tue</span>
+<span class="text-xs font-bold text-slate-400 uppercase">Wed</span>
+<span class="text-xs font-bold text-slate-400 uppercase">Thu</span>
+<span class="text-xs font-bold text-slate-400 uppercase">Fri</span>
+<span class="text-xs font-bold text-slate-400 uppercase">Sat</span>
+<span class="text-xs font-bold text-slate-400 uppercase">Sun</span>
+</div>
+</div>
+<!-- Recent Activity Feed -->
+<div class="bg-white dark:bg-[#1a2b22] rounded-xl border border-primary/10 p-6">
+<div class="flex items-center justify-between mb-6">
+<h4 class="text-lg font-bold">Recent Activity</h4>
+<button class="text-primary text-xs font-bold hover:underline">View All</button>
+</div>
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">add_task</span>
+</div>
+<div>
+<p class="text-sm font-bold">500kg Wheat Received</p>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Incoming delivery from AgriCorp Inc.</p>
+<p class="text-[10px] text-primary/60 font-medium mt-1">12 minutes ago</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="size-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span>
+</div>
+<div>
+<p class="text-sm font-bold">Order #452 Shipped</p>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">2.4 Tons of Premium Corn dispatched.</p>
+<p class="text-[10px] text-primary/60 font-medium mt-1">1 hour ago</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="size-8 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">inventory</span>
+</div>
+<div>
+<p class="text-sm font-bold">Stock Adjustment: Corn</p>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Manual audit correction by A. Rivera.</p>
+<p class="text-[10px] text-primary/60 font-medium mt-1">3 hours ago</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+</div>
+<div>
+<p class="text-sm font-bold">New Distributor Added</p>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Global Grains LLC joined the platform.</p>
+<p class="text-[10px] text-primary/60 font-medium mt-1">Yesterday</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Quick Actions -->
+<div class="flex items-center justify-between pt-4 border-t border-primary/10">
+<div class="flex gap-4">
+<button class="bg-primary hover:bg-primary/90 text-background-dark px-5 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                            New Stock Intake
+                        </button>
+<button class="bg-slate-100 dark:bg-primary/10 hover:bg-primary/20 text-slate-900 dark:text-slate-100 px-5 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all">
+<span class="material-symbols-outlined text-[20px]">ios_share</span>
+                            Export Report
+                        </button>
+</div>
+<p class="text-xs text-slate-500 dark:text-slate-400 font-medium">System Status: <span class="text-primary">Fully Operational</span> • v2.4.0</p>
+</div>
+</div>
+</main>
+</div>
+</body></html>

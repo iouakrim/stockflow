@@ -1,18 +1,356 @@
-export default function DashboardPage() {
+import { createClient } from "@/lib/supabase/server"
+import {
+    TrendingUp,
+    Package,
+    AlertTriangle,
+    Wallet,
+    Plus,
+    FileOutput,
+    Search,
+    CheckCircle2,
+    Clock,
+    ArrowUpRight,
+    ArrowDownRight,
+    Activity,
+    Boxes,
+    ShoppingCart,
+    Calendar,
+    ChevronDown,
+    Users
+} from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
+
+export default async function DashboardPage() {
+    const supabase = createClient()
+
+    // 1. Today's Revenue
+    const todayStart = new Date()
+    todayStart.setHours(0, 0, 0, 0)
+
+    const { data: todaySales } = await supabase
+        .from("sales")
+        .select("total")
+        .gte("created_at", todayStart.toISOString())
+
+    const totalRevenue = todaySales?.reduce((acc, sale) => acc + Number(sale.total), 0) || 0
+
+    // 2. Current Stock
+    const { count: productCount } = await supabase
+        .from("products")
+        .select("*", { count: "exact", head: true })
+
+    // 3. Low Stock Alerts
+    const { data: lowStockItems } = await supabase
+        .from("products")
+        .select("id")
+        .lte("stock_quantity", 5)
+
+    const lowStockCount = lowStockItems?.length || 0
+
+    // 4. Outstanding Credits
+    const { data: customers } = await supabase
+        .from("customers")
+        .select("credit_balance")
+
+    const totalCredits = customers?.reduce((acc, c) => acc + Number(c.credit_balance), 0) || 0
+
+    // 5. Recent Activity
+    const { data: recentSales } = await supabase
+        .from("sales")
+        .select(`
+            id, 
+            receipt_number, 
+            total, 
+            created_at,
+            customers ( name )
+        `)
+        .order("created_at", { ascending: false })
+        .limit(5)
+
     return (
-        <div className="space-y-4">
-            <h1 className="text-2xl font-bold">Dashboard</h1>
-            <p className="text-muted-foreground">Welcome to StockFlow Pro</p>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <div className="p-4 border rounded-lg bg-card text-card-foreground shadow-sm">
-                    <h3 className="font-semibold text-sm">Total Sales</h3>
-                    <p className="text-2xl font-bold mt-2">$0.00</p>
+        <div className="flex-1 space-y-10 animate-in fade-in duration-700">
+            {/* Page Header Section */}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2">
+                <div>
+                    <h1 className="text-4xl font-black tracking-tighter text-foreground leading-none">Global Silo Overview</h1>
+                    <div className="flex items-center gap-3 mt-3">
+                        <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest border border-primary/20" suppressHydrationWarning>
+                            <div className="size-1.5 rounded-full bg-primary animate-pulse" /> Live System • {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </span>
+                        <span className="text-muted-foreground/40 text-xs font-medium tracking-tight">Real-time agricultural logistics monitored.</span>
+                    </div>
                 </div>
-                <div className="p-4 border rounded-lg bg-card text-card-foreground shadow-sm">
-                    <h3 className="font-semibold text-sm">Products</h3>
-                    <p className="text-2xl font-bold mt-2">0</p>
+
+                <div className="flex items-center gap-3">
+                    <Button variant="outline" className="border-primary/10 bg-card/40 backdrop-blur rounded-2xl h-12 px-6 font-bold text-xs gap-2 transition-all hover:bg-primary/5 hover:border-primary/30 active:scale-95 group">
+                        <Calendar className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" /> Last 30 Days <ChevronDown className="h-3.5 w-3.5 opacity-40 ml-1" />
+                    </Button>
+                    <Link href="/sales/new">
+                        <Button className="bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-xl shadow-primary/20 rounded-2xl gap-2 h-12 px-8 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                            <Plus className="h-5 w-5 stroke-[3px]" /> NEW TRANSACTION
+                        </Button>
+                    </Link>
+                </div>
+            </div>
+
+            {/* KPI Section with Enhanced Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Revenue Card */}
+                <Card className="glass-card overflow-hidden group hover:scale-[1.02] transition-all duration-300">
+                    <CardContent className="p-7">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:shadow-[0_0_20px_rgba(17,212,115,0.2)] transition-all">
+                                <TrendingUp className="h-6 w-6" />
+                            </div>
+                            <div className="flex flex-col items-end">
+                                <span className="text-[10px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-lg border border-primary/20 flex items-center gap-1">
+                                    <ArrowUpRight className="h-3 w-3" /> +12%
+                                </span>
+                            </div>
+                        </div>
+                        <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1.5">Terminal Revenue</p>
+                        <div className="flex items-baseline gap-1">
+                            <h3 className="text-3xl font-black tracking-tighter">${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+                            <span className="text-xs font-bold text-primary/40 leading-none">USD</span>
+                        </div>
+                    </CardContent>
+                    <div className="h-1 bg-primary/10 w-full overflow-hidden">
+                        <div className="h-full bg-primary w-1/3 rounded-full opacity-60 shadow-[0_0_10px_#11d473]" />
+                    </div>
+                </Card>
+
+                {/* Stock Card */}
+                <Card className="glass-card overflow-hidden group hover:scale-[1.02] transition-all duration-300">
+                    <CardContent className="p-7">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="size-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.2)] transition-all">
+                                <Boxes className="h-6 w-6" />
+                            </div>
+                            <div className="flex flex-col items-end">
+                                <span className="text-[10px] font-black text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded-lg border border-blue-500/20">LIVE UNIT</span>
+                            </div>
+                        </div>
+                        <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1.5">Inventory Count</p>
+                        <div className="flex items-baseline gap-1">
+                            <h3 className="text-3xl font-black tracking-tighter">{productCount || 0}</h3>
+                            <span className="text-xs font-bold text-blue-500/40 leading-none">SKUS</span>
+                        </div>
+                    </CardContent>
+                    <div className="h-1 bg-blue-500/10 w-full overflow-hidden">
+                        <div className="h-full bg-blue-500 w-2/3 rounded-full opacity-60" />
+                    </div>
+                </Card>
+
+                {/* Alerts Card */}
+                <Card className={`glass-card overflow-hidden group hover:scale-[1.02] transition-all duration-300 border-l-4 ${lowStockCount > 0 ? 'border-l-destructive/50' : 'border-l-primary/50'}`}>
+                    <CardContent className="p-7">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className={`size-12 rounded-2xl flex items-center justify-center ${lowStockCount > 0 ? 'bg-destructive/10 text-destructive' : 'bg-primary/10 text-primary'} transition-all`}>
+                                <AlertTriangle className="h-6 w-6" />
+                            </div>
+                            <span className={`text-[10px] font-black px-2 py-1 rounded-lg border uppercase tracking-widest ${lowStockCount > 0 ? 'bg-destructive/10 text-destructive border-destructive/20 animate-pulse' : 'bg-primary/10 text-primary border-primary/20'}`}>
+                                {lowStockCount > 0 ? 'Immediate Action' : 'Optimal'}
+                            </span>
+                        </div>
+                        <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1.5">Critical Alerts</p>
+                        <div className="flex items-baseline gap-1">
+                            <h3 className={`text-3xl font-black tracking-tighter ${lowStockCount > 0 ? 'text-destructive' : ''}`}>{lowStockCount}</h3>
+                            <span className="text-xs font-bold opacity-30 leading-none">ITEMS</span>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Credit Card */}
+                <Card className="glass-card overflow-hidden group hover:scale-[1.02] transition-all duration-300">
+                    <CardContent className="p-7">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="size-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 transition-all">
+                                <Wallet className="h-6 w-6" />
+                            </div>
+                            <span className="text-[10px] font-black text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-lg border border-amber-500/20">STABLE</span>
+                        </div>
+                        <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1.5">Outstanding Debt</p>
+                        <div className="flex items-baseline gap-1">
+                            <h3 className="text-3xl font-black tracking-tighter">${totalCredits.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+                            <span className="text-xs font-bold text-amber-500/40 leading-none">USD</span>
+                        </div>
+                    </CardContent>
+                    <div className="h-1 bg-amber-500/10 w-full overflow-hidden">
+                        <div className="h-full bg-amber-500 w-[15%] rounded-full opacity-60" />
+                    </div>
+                </Card>
+            </div>
+
+            {/* Visual Analytics Hub */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-10">
+                {/* Revenue Visualization */}
+                <Card className="lg:col-span-2 glass-card overflow-hidden">
+                    <CardHeader className="flex flex-row items-center justify-between border-b border-primary/5 pb-6 p-7">
+                        <div>
+                            <CardTitle className="text-xl font-black flex items-center gap-2">
+                                <Activity className="h-5 w-5 text-primary" /> Performance Matrix
+                            </CardTitle>
+                            <p className="text-xs text-muted-foreground mt-1 font-bold uppercase tracking-wider opacity-60">Revenue trend analysis • Weekly window</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-accent/50 border border-primary/10">
+                                <span className="size-2 rounded-full bg-primary animate-pulse" />
+                                <span className="text-[10px] font-black uppercase tracking-tighter">Live Traffic</span>
+                            </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="p-8 pt-10">
+                        <div className="h-[320px] w-full relative group">
+                            <svg className="w-full h-full overflow-visible" viewBox="0 0 1000 300" preserveAspectRatio="none">
+                                <defs>
+                                    <linearGradient id="premium-gradient" x1="0%" x2="0%" y1="0%" y2="100%">
+                                        <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.25" />
+                                        <stop offset="40%" stopColor="hsl(var(--primary))" stopOpacity="0.1" />
+                                        <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
+                                    </linearGradient>
+                                    <filter id="glow">
+                                        <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+                                        <feMerge>
+                                            <feMergeNode in="coloredBlur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                {/* Professional Grid */}
+                                {[0, 100, 200, 300].map(y => (
+                                    <line key={y} x1="0" y1={y} x2="1000" y2={y} stroke="currentColor" strokeOpacity="0.03" strokeWidth="1" />
+                                ))}
+
+                                <path
+                                    d="M0,240 C100,230 150,260 250,220 C350,180 400,100 500,140 C600,180 700,60 850,90 C950,110 980,40 1000,30 L1000,300 L0,300 Z"
+                                    fill="url(#premium-gradient)"
+                                    className="transition-all duration-1000 ease-in-out"
+                                />
+
+                                <path
+                                    d="M0,240 C100,230 150,260 250,220 C350,180 400,100 500,140 C600,180 700,60 850,90 C950,110 980,40 1000,30"
+                                    fill="none"
+                                    stroke="hsl(var(--primary))"
+                                    strokeWidth="5"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    filter="url(#glow)"
+                                    className="transition-all duration-1000 ease-in-out"
+                                />
+
+                                {/* Interactive Points */}
+                                {[
+                                    { x: 250, y: 220 }, { x: 500, y: 140 }, { x: 850, y: 90 }, { x: 1000, y: 30 }
+                                ].map((p, i) => (
+                                    <circle key={i} cx={p.x} cy={p.y} r="6" fill="hsl(var(--primary))" stroke="hsl(var(--background))" strokeWidth="3" className="hover:r-8 transition-all cursor-crosshair shadow-xl" />
+                                ))}
+                            </svg>
+
+                            <div className="flex justify-between mt-8 items-center border-t border-primary/5 pt-6">
+                                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+                                    <span key={day} className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{day}</span>
+                                ))}
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Pro Activity Center */}
+                <Card className="glass-card overflow-hidden border-t-4 border-t-primary/20 bg-gradient-to-b from-card/80 to-card/40">
+                    <CardHeader className="border-b border-primary/5 pb-5 p-7">
+                        <div className="flex items-center justify-between">
+                            <CardTitle className="text-xl font-black tracking-tight flex items-center gap-3">
+                                <Activity className="h-5 w-5 text-primary" /> Global Activity
+                            </CardTitle>
+                            <Link href="/sales">
+                                <Button variant="ghost" size="sm" className="h-8 rounded-lg text-[10px] font-black uppercase bg-primary/5 text-primary hover:bg-primary/20">
+                                    Full Feed <ArrowUpRight className="ml-1 h-3 w-3" />
+                                </Button>
+                            </Link>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="p-7 custom-scrollbar max-h-[460px] overflow-y-auto">
+                        <div className="relative space-y-6 before:absolute before:left-[17px] before:top-2 before:bottom-2 before:w-0.5 before:bg-primary/5">
+                            {(!recentSales || recentSales.length === 0) ? (
+                                <div className="py-20 text-center flex flex-col items-center gap-4 opacity-30">
+                                    <ShoppingCart className="h-10 w-10" />
+                                    <p className="text-xs font-black uppercase tracking-widest italic">No Transactional Data</p>
+                                </div>
+                            ) : (
+                                recentSales.map((sale: any) => (
+                                    <div key={sale.id} className="relative flex gap-5 group items-start">
+                                        <div className="size-9 rounded-xl glass-card flex items-center justify-center text-primary z-10 transition-transform group-hover:scale-110 shadow-lg shadow-black/20 group-hover:border-primary/40 group-hover:text-foreground group-hover:bg-primary">
+                                            <ArrowUpRight className="h-4 w-4 stroke-[3px]" />
+                                        </div>
+                                        <div className="flex-1 min-w-0 pr-2">
+                                            <div className="flex items-center justify-between gap-2">
+                                                <h4 className="text-sm font-black truncate tracking-tight group-hover:text-primary transition-colors">#{sale.receipt_number}</h4>
+                                                <span className="text-[10px] font-black text-primary">${Number(sale.total).toLocaleString()}</span>
+                                            </div>
+                                            <p className="text-xs text-muted-foreground font-medium mt-0.5 truncate opacity-70">
+                                                {sale.customers?.name || 'Standard Client'}
+                                            </p>
+                                            <p className="text-[9px] text-muted-foreground/40 font-black mt-2 uppercase tracking-tighter" suppressHydrationWarning>
+                                                {new Date(sale.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • Processed
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </CardContent>
+
+                    {/* Status Meter */}
+                    <div className="p-5 border-t border-primary/5 bg-primary/[0.02] flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <div className="size-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_#11d473]" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">System Synchronized</span>
+                        </div>
+                        <span className="text-[10px] font-bold text-muted-foreground/30">ID: SF-PRO-001</span>
+                    </div>
+                </Card>
+            </div>
+
+            {/* Quick Management Section */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-primary/5 pb-12">
+                <Link href="/products/new" className="group">
+                    <div className="glass-card hover:bg-primary/5 p-5 rounded-3xl flex items-center gap-5 transition-all cursor-pointer border-dashed">
+                        <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-background transition-all">
+                            <Plus className="h-6 w-6 stroke-[3px]" />
+                        </div>
+                        <div>
+                            <h4 className="font-black text-sm tracking-tight group-hover:translate-x-1 transition-transform">Stock Intake</h4>
+                            <p className="text-[10px] text-muted-foreground font-medium">Add new agricultural inventory</p>
+                        </div>
+                    </div>
+                </Link>
+
+                <div className="group hidden md:flex">
+                    <div className="glass-card hover:bg-blue-500/5 p-5 rounded-3xl flex items-center gap-5 transition-all w-full cursor-pointer border-dashed">
+                        <div className="size-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-background transition-all">
+                            <FileOutput className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <h4 className="font-black text-sm tracking-tight group-hover:translate-x-1 transition-transform">Market Reports</h4>
+                            <p className="text-[10px] text-muted-foreground font-medium">Export current pricing & analysis</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="group hidden md:flex">
+                    <div className="glass-card hover:bg-amber-500/5 p-5 rounded-3xl flex items-center gap-5 transition-all w-full cursor-pointer border-dashed">
+                        <div className="size-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-background transition-all">
+                            <Users className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <h4 className="font-black text-sm tracking-tight group-hover:translate-x-1 transition-transform">Client Hub</h4>
+                            <p className="text-[10px] text-muted-foreground font-medium">Manage farmers & distributors</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    );
+    )
 }

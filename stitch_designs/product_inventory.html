@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Product Inventory List - StockFlow Pro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#11d473",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #1a3325;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display transition-colors duration-200">
+<div class="flex h-screen overflow-hidden">
+<!-- Side Navigation -->
+<aside class="w-64 flex flex-col bg-white dark:bg-[#0d1a13] border-r border-slate-200 dark:border-primary/10">
+<div class="p-6 flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center text-background-dark">
+<span class="material-symbols-outlined text-lg font-bold">agriculture</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50">StockFlow Pro</h1>
+</div>
+<nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto custom-scrollbar">
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                    Dashboard
+                </a>
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg bg-primary/10 text-primary" href="#">
+<span class="material-symbols-outlined text-fill-1">inventory_2</span>
+                    Inventory
+                </a>
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/10 transition-colors" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+                    Orders
+                </a>
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/10 transition-colors" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+                    Reports
+                </a>
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/10 transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+                    Suppliers
+                </a>
+</nav>
+<div class="p-4 border-t border-slate-200 dark:border-primary/10">
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/10 transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+                    Settings
+                </a>
+<div class="mt-4 flex items-center gap-3 px-3 py-2">
+<img alt="User Profile" class="w-8 h-8 rounded-full border border-primary/30" data-alt="Professional warehouse manager portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAB2k5O0ePbl_neNCmg-GxG3a3BK98wYMK-XohLpJf9C5OsKuE8g_K7vQn-LOzSNaoLnKPjL-T_GJjU64LJRoCuMH-Hmqge9l1FsZhslDlNKD60D5ZpUfLtEjSn_TrLPOKRI5gSvcqXKyWF02n_2WKrCzUta-psV5K3MdIj9k2bv9YAtOYrSBr1BKQbEtMoH3Gu2xc2wg3c-fBgGRcmOrjfo0MKX7ATh7eyjiDje0wxxxJscyCvFTU6nrgTRsUW8TNRMKUCwwM14do"/>
+<div class="flex-1 min-w-0">
+<p class="text-xs font-semibold truncate">Alex Henderson</p>
+<p class="text-[10px] text-slate-500 uppercase tracking-wider">Manager</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col overflow-hidden">
+<!-- Header Section -->
+<header class="h-16 flex items-center justify-between px-8 bg-white dark:bg-[#0d1a13] border-b border-slate-200 dark:border-primary/10 shrink-0">
+<div class="flex items-center gap-4 flex-1 max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+<input class="w-full bg-slate-50 dark:bg-background-dark/50 border border-slate-200 dark:border-primary/20 rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="Search inventory (e.g. Wheat, SKU, Category)..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-3 ml-4">
+<button class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/10 rounded-lg transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-amber-500 rounded-full border-2 border-white dark:border-[#0d1a13]"></span>
+</button>
+<button class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-background-dark font-bold py-2 px-4 rounded-lg text-sm transition-all shadow-lg shadow-primary/10">
+<span class="material-symbols-outlined text-lg">add_circle</span>
+                        Add New Product
+                    </button>
+</div>
+</header>
+<!-- Dashboard Body -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-8">
+<!-- Stats Overview -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="bg-white dark:bg-[#0d1a13] p-5 rounded-xl border border-slate-200 dark:border-primary/10 shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-2xl">inventory</span>
+</div>
+<div>
+<p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Total SKUs</p>
+<p class="text-2xl font-bold">1,284</p>
+</div>
+</div>
+<div class="bg-white dark:bg-[#0d1a13] p-5 rounded-xl border border-slate-200 dark:border-primary/10 shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500">
+<span class="material-symbols-outlined text-2xl text-fill-1">warning</span>
+</div>
+<div>
+<p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Low Stock Items</p>
+<p class="text-2xl font-bold">12</p>
+</div>
+</div>
+<div class="bg-white dark:bg-[#0d1a13] p-5 rounded-xl border border-slate-200 dark:border-primary/10 shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
+<span class="material-symbols-outlined text-2xl">warehouse</span>
+</div>
+<div>
+<p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Storage Capacity</p>
+<p class="text-2xl font-bold">85%</p>
+</div>
+</div>
+</div>
+<!-- Filters -->
+<div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+<div class="flex items-center gap-2">
+<button class="px-4 py-1.5 rounded-full text-xs font-semibold bg-primary text-background-dark transition-all">All Products</button>
+<button class="px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-[#0d1a13] border border-slate-200 dark:border-primary/20 text-slate-600 dark:text-slate-400 hover:border-primary hover:text-primary transition-all">Grains</button>
+<button class="px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-[#0d1a13] border border-slate-200 dark:border-primary/20 text-slate-600 dark:text-slate-400 hover:border-primary hover:text-primary transition-all">Legumes</button>
+<button class="px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-[#0d1a13] border border-slate-200 dark:border-primary/20 text-slate-600 dark:text-slate-400 hover:border-primary hover:text-primary transition-all">Feed</button>
+<button class="px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-[#0d1a13] border border-slate-200 dark:border-primary/20 text-slate-600 dark:text-slate-400 hover:border-primary hover:text-primary transition-all">Seeds</button>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 text-xs font-semibold bg-white dark:bg-[#0d1a13] border border-slate-200 dark:border-primary/20 px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                            Filter By
+                        </button>
+<button class="flex items-center gap-2 text-xs font-semibold bg-white dark:bg-[#0d1a13] border border-slate-200 dark:border-primary/20 px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined text-sm">download</span>
+                            Export
+                        </button>
+</div>
+</div>
+<!-- Data Table -->
+<div class="bg-white dark:bg-[#0d1a13] rounded-xl border border-slate-200 dark:border-primary/10 shadow-sm overflow-hidden overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 dark:bg-primary/5 text-slate-600 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">
+<th class="px-6 py-4 border-b border-slate-200 dark:border-primary/10">Product Name</th>
+<th class="px-6 py-4 border-b border-slate-200 dark:border-primary/10">SKU</th>
+<th class="px-6 py-4 border-b border-slate-200 dark:border-primary/10">Category</th>
+<th class="px-6 py-4 border-b border-slate-200 dark:border-primary/10">Current Stock</th>
+<th class="px-6 py-4 border-b border-slate-200 dark:border-primary/10">Unit</th>
+<th class="px-6 py-4 border-b border-slate-200 dark:border-primary/10 text-center">Alert Status</th>
+<th class="px-6 py-4 border-b border-slate-200 dark:border-primary/10 text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-primary/5">
+<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-3 font-semibold text-sm">Wheat Bran</td>
+<td class="px-6 py-3 text-xs text-slate-500 dark:text-slate-400 font-mono">WB-001</td>
+<td class="px-6 py-3">
+<span class="text-xs px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 font-medium">Grains</span>
+</td>
+<td class="px-6 py-3 font-bold text-sm">450</td>
+<td class="px-6 py-3">
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">50kg Bag</span>
+</td>
+<td class="px-6 py-3">
+<div class="flex items-center justify-center gap-1.5 text-xs font-bold text-primary">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                        Healthy
+                                    </div>
+</td>
+<td class="px-6 py-3 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-3 font-semibold text-sm">Barley Silage</td>
+<td class="px-6 py-3 text-xs text-slate-500 dark:text-slate-400 font-mono">BS-042</td>
+<td class="px-6 py-3">
+<span class="text-xs px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 font-medium">Feed</span>
+</td>
+<td class="px-6 py-3 font-bold text-sm text-amber-500">120</td>
+<td class="px-6 py-3">
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Metric Ton</span>
+</td>
+<td class="px-6 py-3">
+<div class="flex items-center justify-center gap-1.5 text-xs font-bold text-amber-500 bg-amber-500/10 py-1 rounded-lg">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                        Low Stock
+                                    </div>
+</td>
+<td class="px-6 py-3 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-3 font-semibold text-sm">Organic Corn</td>
+<td class="px-6 py-3 text-xs text-slate-500 dark:text-slate-400 font-mono">OC-088</td>
+<td class="px-6 py-3">
+<span class="text-xs px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 font-medium">Grains</span>
+</td>
+<td class="px-6 py-3 font-bold text-sm">890</td>
+<td class="px-6 py-3">
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">KG</span>
+</td>
+<td class="px-6 py-3">
+<div class="flex items-center justify-center gap-1.5 text-xs font-bold text-primary">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                        Healthy
+                                    </div>
+</td>
+<td class="px-6 py-3 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-3 font-semibold text-sm">Soy Pellets</td>
+<td class="px-6 py-3 text-xs text-slate-500 dark:text-slate-400 font-mono">SP-015</td>
+<td class="px-6 py-3">
+<span class="text-xs px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 font-medium">Legumes</span>
+</td>
+<td class="px-6 py-3 font-bold text-sm text-red-500">12</td>
+<td class="px-6 py-3">
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Bulk Loader</span>
+</td>
+<td class="px-6 py-3">
+<div class="flex items-center justify-center gap-1.5 text-xs font-bold text-red-500 bg-red-500/10 py-1 rounded-lg">
+<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                                        Critical
+                                    </div>
+</td>
+<td class="px-6 py-3 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-3 font-semibold text-sm">Oat Husks</td>
+<td class="px-6 py-3 text-xs text-slate-500 dark:text-slate-400 font-mono">OH-022</td>
+<td class="px-6 py-3">
+<span class="text-xs px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 font-medium">Feed</span>
+</td>
+<td class="px-6 py-3 font-bold text-sm">600</td>
+<td class="px-6 py-3">
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">50kg Bag</span>
+</td>
+<td class="px-6 py-3">
+<div class="flex items-center justify-center gap-1.5 text-xs font-bold text-primary">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                        Healthy
+                                    </div>
+</td>
+<td class="px-6 py-3 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-3 font-semibold text-sm">Yellow Peas</td>
+<td class="px-6 py-3 text-xs text-slate-500 dark:text-slate-400 font-mono">YP-091</td>
+<td class="px-6 py-3">
+<span class="text-xs px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 font-medium">Legumes</span>
+</td>
+<td class="px-6 py-3 font-bold text-sm text-amber-500">45</td>
+<td class="px-6 py-3">
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">50kg Bag</span>
+</td>
+<td class="px-6 py-3">
+<div class="flex items-center justify-center gap-1.5 text-xs font-bold text-amber-500 bg-amber-500/10 py-1 rounded-lg">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                        Low Stock
+                                    </div>
+</td>
+<td class="px-6 py-3 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination -->
+<div class="px-6 py-4 bg-slate-50 dark:bg-primary/5 flex items-center justify-between border-t border-slate-200 dark:border-primary/10">
+<div class="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                            Showing 1 to 6 of 1,284 results
+                        </div>
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 dark:border-primary/20 text-slate-400 hover:border-primary hover:text-primary transition-all">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border-2 border-primary bg-primary text-background-dark text-xs font-bold">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 dark:border-primary/20 text-xs font-bold hover:border-primary hover:text-primary transition-all">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 dark:border-primary/20 text-xs font-bold hover:border-primary hover:text-primary transition-all">3</button>
+<span class="text-slate-500 text-xs px-1">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 dark:border-primary/20 text-xs font-bold hover:border-primary hover:text-primary transition-all">214</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 dark:border-primary/20 text-slate-400 hover:border-primary hover:text-primary transition-all">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
