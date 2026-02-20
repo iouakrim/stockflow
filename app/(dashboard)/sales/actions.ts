@@ -38,3 +38,36 @@ export async function processSaleCheckout(
 
     return { success: true, saleId }
 }
+
+export async function quickCreateCustomer(name: string, phone: string) {
+    const supabase = createClient()
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error("Unauthorized")
+
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("tenant_id")
+        .eq("id", user.id)
+        .single()
+
+    if (!profile?.tenant_id) throw new Error("Missing tenant profile")
+
+    const { data, error } = await supabase
+        .from("customers")
+        .insert({
+            tenant_id: profile.tenant_id,
+            name,
+            phone,
+            status: 'active'
+        })
+        .select("id")
+        .single()
+
+    if (error) {
+        console.error("Error creating customer:", error)
+        return { success: false, error: error.message }
+    }
+
+    return { success: true, id: data.id }
+}

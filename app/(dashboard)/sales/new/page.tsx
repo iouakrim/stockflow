@@ -27,7 +27,7 @@ export default async function NewSalePage() {
     const { data: customers } = await supabase.from("customers").select("id, name, phone").order("name", { ascending: true })
 
     return (
-        <div className="h-full flex flex-col p-4 md:p-6 lg:p-8">
+        <div className="h-[calc(100vh-4rem)] flex flex-col p-4 md:p-6 lg:p-8 overflow-hidden">
             <POSClient products={products || []} customers={customers || []} />
         </div>
     )

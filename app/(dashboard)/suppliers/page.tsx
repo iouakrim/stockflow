@@ -155,18 +155,18 @@ export default async function SuppliersPage() {
                                 suppliers.map((supplier: any) => (
                                     <TableRow key={supplier.id} className="border-b border-primary/5 hover:bg-primary/[0.02] transition-colors group">
                                         <TableCell className="py-6 px-8">
-                                            <div className="flex items-center gap-4">
+                                            <Link href={`/suppliers/${supplier.id}`} className="flex items-center gap-4 block w-full hover:opacity-80 transition-opacity">
                                                 <div className="size-11 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-background transition-all border border-primary/10 shadow-sm font-black text-sm uppercase">
                                                     {supplier.name[0]}
                                                 </div>
                                                 <div className="flex flex-col min-w-0">
-                                                    <span className="font-black text-sm tracking-tight truncate group-hover:text-primary transition-colors">{supplier.name}</span>
+                                                    <span className="font-black text-sm tracking-tight truncate group-hover:text-primary transition-colors underline-offset-4 group-hover:underline">{supplier.name}</span>
                                                     <div className="flex items-center gap-1.5 opacity-40 mt-0.5">
                                                         <MapPin className="h-3 w-3" />
                                                         <span className="text-[10px] font-medium truncate max-w-[150px]">{supplier.address || "Location unspecified"}</span>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </Link>
                                         </TableCell>
                                         <TableCell>
                                             <div className="flex flex-col">

@@ -72,19 +72,12 @@ export default async function SalesHistoryPage() {
             </div>
 
             {/* Filtering Intelligence */}
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-                <div className="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0 no-scrollbar w-full lg:w-auto">
-                    <Button variant="secondary" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black bg-primary text-background uppercase tracking-widest shadow-lg shadow-primary/20">All Transactions</Button>
-                    <Button variant="ghost" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black text-muted-foreground hover:text-primary uppercase tracking-widest transition-all">Cleared (Cash)</Button>
-                    <Button variant="ghost" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black text-muted-foreground hover:text-primary uppercase tracking-widest transition-all">Terminal (Card)</Button>
-                    <Button variant="ghost" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black text-muted-foreground hover:text-primary uppercase tracking-widest transition-all">Credit Lines</Button>
-                </div>
-
+            <div className="flex flex-col lg:flex-row items-center justify-start gap-6 border-b border-primary/5 pb-4">
                 <div className="flex items-center gap-3 w-full lg:w-auto">
-                    <div className="relative flex-1 lg:w-96 group">
+                    <div className="relative flex-1 lg:w-[400px] group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                         <input
-                            className="w-full bg-card/40 border-primary/10 rounded-2xl pl-11 pr-4 py-3 text-sm font-medium focus:ring-1 focus:ring-primary transition-all placeholder:text-muted-foreground/30 border shadow-sm"
+                            className="w-full bg-card/40 border-primary/10 rounded-2xl pl-11 pr-4 py-3 text-sm font-medium focus:ring-1 focus:ring-primary transition-all placeholder:text-muted-foreground/30 border shadow-sm uppercase"
                             placeholder="Find receipt, customer or ID..."
                         />
                     </div>
