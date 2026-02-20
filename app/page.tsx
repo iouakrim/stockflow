@@ -1,17 +1,13 @@
 import { Button } from "@/components/ui/button"
 import {
-  ChevronRight,
-  Zap,
-  ShieldCheck,
-  BarChart3,
-  Boxes,
-  Warehouse,
-  LayoutDashboard,
   ArrowUpRight,
+  Boxes,
+  ChevronRight,
+  LayoutDashboard,
   Play,
+  ShieldCheck,
   Terminal,
-  ShoppingCart,
-  Package
+  Zap
 } from "lucide-react"
 import Link from "next/link"
 

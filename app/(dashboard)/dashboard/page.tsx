@@ -16,7 +16,9 @@ import {
     ShoppingCart,
     Calendar,
     ChevronDown,
-    Users
+    Users,
+    Zap,
+    Shield
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -70,7 +72,7 @@ export default async function DashboardPage() {
         .limit(5)
 
     return (
-        <div className="flex-1 space-y-10 animate-in fade-in duration-700">
+        <div className="flex-1 space-y-10 animate-in fade-in duration-700 pb-12">
             {/* Page Header Section */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2">
                 <div>
@@ -98,7 +100,7 @@ export default async function DashboardPage() {
             {/* KPI Section with Enhanced Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Revenue Card */}
-                <Card className="glass-card overflow-hidden group hover:scale-[1.02] transition-all duration-300">
+                <Card className="glass-card overflow-hidden group hover:scale-[1.02] transition-all duration-300 shimmer">
                     <CardContent className="p-7">
                         <div className="flex items-center justify-between mb-6">
                             <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:shadow-[0_0_20px_rgba(17,212,115,0.2)] transition-all">
@@ -106,7 +108,7 @@ export default async function DashboardPage() {
                             </div>
                             <div className="flex flex-col items-end">
                                 <span className="text-[10px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-lg border border-primary/20 flex items-center gap-1">
-                                    <ArrowUpRight className="h-3 w-3" /> +12%
+                                    <ArrowUpRight className="h-3 w-3" /> +12.4%
                                 </span>
                             </div>
                         </div>
@@ -184,9 +186,9 @@ export default async function DashboardPage() {
             </div>
 
             {/* Visual Analytics Hub */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-10">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Revenue Visualization */}
-                <Card className="lg:col-span-2 glass-card overflow-hidden">
+                <Card className="lg:col-span-2 glass-card overflow-hidden border-none shadow-none bg-white/[0.02]">
                     <CardHeader className="flex flex-row items-center justify-between border-b border-primary/5 pb-6 p-7">
                         <div>
                             <CardTitle className="text-xl font-black flex items-center gap-2">
@@ -218,36 +220,19 @@ export default async function DashboardPage() {
                                         </feMerge>
                                     </filter>
                                 </defs>
-                                {/* Professional Grid */}
-                                {[0, 100, 200, 300].map(y => (
-                                    <line key={y} x1="0" y1={y} x2="1000" y2={y} stroke="currentColor" strokeOpacity="0.03" strokeWidth="1" />
-                                ))}
-
                                 <path
                                     d="M0,240 C100,230 150,260 250,220 C350,180 400,100 500,140 C600,180 700,60 850,90 C950,110 980,40 1000,30 L1000,300 L0,300 Z"
                                     fill="url(#premium-gradient)"
-                                    className="transition-all duration-1000 ease-in-out"
                                 />
-
                                 <path
                                     d="M0,240 C100,230 150,260 250,220 C350,180 400,100 500,140 C600,180 700,60 850,90 C950,110 980,40 1000,30"
                                     fill="none"
                                     stroke="hsl(var(--primary))"
                                     strokeWidth="5"
                                     strokeLinecap="round"
-                                    strokeLinejoin="round"
                                     filter="url(#glow)"
-                                    className="transition-all duration-1000 ease-in-out"
                                 />
-
-                                {/* Interactive Points */}
-                                {[
-                                    { x: 250, y: 220 }, { x: 500, y: 140 }, { x: 850, y: 90 }, { x: 1000, y: 30 }
-                                ].map((p, i) => (
-                                    <circle key={i} cx={p.x} cy={p.y} r="6" fill="hsl(var(--primary))" stroke="hsl(var(--background))" strokeWidth="3" className="hover:r-8 transition-all cursor-crosshair shadow-xl" />
-                                ))}
                             </svg>
-
                             <div className="flex justify-between mt-8 items-center border-t border-primary/5 pt-6">
                                 {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
                                     <span key={day} className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{day}</span>
@@ -258,7 +243,7 @@ export default async function DashboardPage() {
                 </Card>
 
                 {/* Pro Activity Center */}
-                <Card className="glass-card overflow-hidden border-t-4 border-t-primary/20 bg-gradient-to-b from-card/80 to-card/40">
+                <Card className="glass-card overflow-hidden border-t-4 border-t-primary/20">
                     <CardHeader className="border-b border-primary/5 pb-5 p-7">
                         <div className="flex items-center justify-between">
                             <CardTitle className="text-xl font-black tracking-tight flex items-center gap-3">
@@ -301,52 +286,66 @@ export default async function DashboardPage() {
                             )}
                         </div>
                     </CardContent>
-
-                    {/* Status Meter */}
-                    <div className="p-5 border-t border-primary/5 bg-primary/[0.02] flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <div className="size-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_#11d473]" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">System Synchronized</span>
-                        </div>
-                        <span className="text-[10px] font-bold text-muted-foreground/30">ID: SF-PRO-001</span>
-                    </div>
                 </Card>
             </div>
 
+            {/* Premium SaaS Upgrade CTA */}
+            <div className="relative group overflow-hidden rounded-[2.5rem] border border-primary/20 p-1">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-blue-500/10 to-primary/20 animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
+                <div className="relative bg-black/40 backdrop-blur-3xl rounded-[2.3rem] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div className="space-y-4 text-center md:text-left">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary border border-primary/30">
+                            <Zap className="size-3 fill-current" />
+                            <span className="text-[10px] font-black uppercase tracking-widest">Enterprise Access</span>
+                        </div>
+                        <h2 className="text-3xl md:text-4xl font-black tracking-tighter max-w-xl">Scale your logistics with <span className="text-primary italic">StockFlow AI Intelligence</span></h2>
+                        <p className="text-muted-foreground/60 font-medium max-w-md">Unlock predictive inventory routing, automated multi-currency global billing, and dedicated technical support.</p>
+                    </div>
+                    <div className="flex flex-col gap-3 w-full md:w-auto">
+                        <Button className="bg-primary hover:bg-primary/90 text-[#102219] font-black h-14 px-10 rounded-2xl shadow-xl shadow-primary/20 group">
+                            UPGRADE TO PRO <ArrowUpRight className="ml-2 size-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                        </Button>
+                        <p className="text-[10px] text-center text-muted-foreground/40 font-black uppercase tracking-widest flex items-center justify-center gap-2">
+                            <Shield className="size-3" /> SECURE DEPLOYMENT GUARANTEED
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             {/* Quick Management Section */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-primary/5 pb-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-primary/5">
                 <Link href="/products/new" className="group">
-                    <div className="glass-card hover:bg-primary/5 p-5 rounded-3xl flex items-center gap-5 transition-all cursor-pointer border-dashed">
-                        <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-background transition-all">
-                            <Plus className="h-6 w-6 stroke-[3px]" />
+                    <div className="glass-card hover:bg-primary/5 p-6 rounded-[2rem] flex items-center gap-5 transition-all cursor-pointer border-dashed">
+                        <div className="size-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-background transition-all">
+                            <Plus className="h-7 w-7 stroke-[3px]" />
                         </div>
                         <div>
-                            <h4 className="font-black text-sm tracking-tight group-hover:translate-x-1 transition-transform">Stock Intake</h4>
-                            <p className="text-[10px] text-muted-foreground font-medium">Add new agricultural inventory</p>
+                            <h4 className="font-black text-sm uppercase tracking-tight group-hover:translate-x-1 transition-transform">Stock Intake</h4>
+                            <p className="text-[11px] text-muted-foreground font-medium">Add new agricultural inventory</p>
                         </div>
                     </div>
                 </Link>
 
                 <div className="group hidden md:flex">
-                    <div className="glass-card hover:bg-blue-500/5 p-5 rounded-3xl flex items-center gap-5 transition-all w-full cursor-pointer border-dashed">
-                        <div className="size-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-background transition-all">
-                            <FileOutput className="h-6 w-6" />
+                    <div className="glass-card hover:bg-blue-500/5 p-6 rounded-[2rem] flex items-center gap-5 transition-all w-full cursor-pointer border-dashed">
+                        <div className="size-14 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-background transition-all">
+                            <FileOutput className="h-7 w-7" />
                         </div>
                         <div>
-                            <h4 className="font-black text-sm tracking-tight group-hover:translate-x-1 transition-transform">Market Reports</h4>
-                            <p className="text-[10px] text-muted-foreground font-medium">Export current pricing & analysis</p>
+                            <h4 className="font-black text-sm uppercase tracking-tight group-hover:translate-x-1 transition-transform">Market Reports</h4>
+                            <p className="text-[11px] text-muted-foreground font-medium">Export current pricing & analysis</p>
                         </div>
                     </div>
                 </div>
 
                 <div className="group hidden md:flex">
-                    <div className="glass-card hover:bg-amber-500/5 p-5 rounded-3xl flex items-center gap-5 transition-all w-full cursor-pointer border-dashed">
-                        <div className="size-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-background transition-all">
-                            <Users className="h-6 w-6" />
+                    <div className="glass-card hover:bg-amber-500/5 p-6 rounded-[2rem] flex items-center gap-5 transition-all w-full cursor-pointer border-dashed">
+                        <div className="size-14 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-background transition-all">
+                            <Users className="h-7 w-7" />
                         </div>
                         <div>
-                            <h4 className="font-black text-sm tracking-tight group-hover:translate-x-1 transition-transform">Client Hub</h4>
-                            <p className="text-[10px] text-muted-foreground font-medium">Manage farmers & distributors</p>
+                            <h4 className="font-black text-sm uppercase tracking-tight group-hover:translate-x-1 transition-transform">Client Hub</h4>
+                            <p className="text-[11px] text-muted-foreground font-medium">Manage farmers & distributors</p>
                         </div>
                     </div>
                 </div>
