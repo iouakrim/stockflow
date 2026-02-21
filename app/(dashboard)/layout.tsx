@@ -101,7 +101,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     return (
         <div className="flex h-screen bg-background dark:bg-[#102219] overflow-hidden selection:bg-primary/30 selection:text-primary transition-colors duration-500">
             {/* Desktop Sidebar */}
-            <aside className={`hidden md:flex flex-col border-r border-primary/10 bg-white dark:bg-[#0a140f] z-30 transition-all duration-300 ${isCollapsed ? 'w-24' : 'w-72'}`}>
+            <aside className={`hidden md:flex flex-col border-r border-primary/10 bg-white dark:bg-[#0a140f] z-30 transition-all duration-300 ${isCollapsed ? 'w-24' : 'w-64'}`}>
                 <div className={`p-8 flex items-center ${isCollapsed ? 'justify-center px-4' : 'gap-3'}`}>
                     <div className="size-11 shrink-0 rounded-xl bg-primary flex items-center justify-center text-[#102219] shadow-lg shadow-primary/20 animate-float">
                         <Leaf className="h-6 w-6 fill-current" />
@@ -132,16 +132,15 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 </nav>
 
                 <div className="p-6 border-t border-primary/5 bg-accent/5">
+                    <SignOutButton collapsed={isCollapsed} />
                     {!isCollapsed && (
-                        <div className="bg-primary/5 rounded-2xl p-4 border border-primary/10 mb-4 mx-2">
-                            <div className="flex items-center gap-2 mb-2">
-                                <Activity className="size-3 shrink-0 text-primary animate-pulse" />
-                                <span className="text-[9px] font-black uppercase tracking-widest text-primary truncate">System Node Active</span>
+                        <div className="mt-5 pt-4 border-t border-primary/5 flex justify-center items-center opacity-80 hover:opacity-100 transition-opacity">
+                            <div className="px-3 py-1 rounded-full bg-primary/5 border border-primary/10 flex items-center gap-2">
+                                <div className="size-1.5 rounded-full bg-primary/40 animate-pulse" />
+                                <span className="font-mono text-[9px] font-black tracking-[0.2em] text-primary/60">V1.0.0</span>
                             </div>
-                            <p className="text-[10px] text-muted-foreground/60 font-medium leading-tight">Last sync: 12s ago via Silo Matrix v4.2</p>
                         </div>
                     )}
-                    <SignOutButton collapsed={isCollapsed} />
                 </div>
             </aside>
 

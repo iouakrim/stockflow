@@ -40,17 +40,11 @@ export default async function SettingsPage() {
     ]
 
     return (
-        <div className="flex-1 space-y-10 animate-in fade-in duration-700 pb-20">
+        <div className="flex-1 space-y-6 animate-in fade-in duration-700 pb-20">
             {/* Page Header */}
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-4xl font-black tracking-tighter text-foreground leading-none">Control Center</h1>
-                    <div className="flex items-center gap-3 mt-3">
-                        <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest border border-primary/20">
-                            System Configuration & Access
-                        </span>
-                        <span className="text-muted-foreground/40 text-xs font-medium tracking-tight">Managing {personnelCount} verified personnel access nodes.</span>
-                    </div>
+                    <h1 className="text-3xl font-black tracking-tighter text-foreground leading-none">Control Center</h1>
                 </div>
 
                 <div className="flex items-center gap-3">
