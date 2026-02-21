@@ -214,7 +214,7 @@ export default async function SuppliersPage() {
                     </Table>
 
                     <div className="px-8 py-5 border-t border-primary/5 bg-primary/[0.02] flex items-center justify-between">
-                        <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-60">{t("supplyMatrix").replace('{count}', (suppliers?.length || 0).toString())}</p>
+                        <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-60">{t("supplyMatrix", { count: suppliers?.length || 0 })}</p>
                         <div className="flex items-center gap-2">
                             <Button variant="outline" size="sm" className="h-9 w-9 p-0 rounded-xl border-primary/10 bg-primary/10 text-primary font-black text-xs shadow-lg shadow-primary/10">1</Button>
                         </div>

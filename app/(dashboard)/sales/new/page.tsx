@@ -10,15 +10,40 @@ export default async function NewSalePage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) redirect("/login")
 
-    // Fetch tenant profile
+    // Fetch profile and access
     const { data: profile } = await supabase
         .from("profiles")
-        .select("tenant_id")
+        .select("tenant_id, role, warehouse_access")
         .eq("id", user.id)
         .single()
 
     if (!profile?.tenant_id) {
-        return <div className="p-4 text-destructive font-bold">Error: User missing tenant_id. Please configure profile.</div>
+        return <div className="p-4 text-destructive font-bold text-center mt-20">Error: Configuration profile missing.</div>
+    }
+
+    const cookieStore = cookies()
+    const activeWarehouseId = cookieStore.get('stockflow_active_warehouse')?.value
+
+    if (!activeWarehouseId) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
+                <p className="font-black text-xl text-muted-foreground uppercase tracking-widest italic opacity-50">Aucun Dépôt Actif</p>
+                <p className="text-xs font-medium text-muted-foreground/60 max-w-xs text-center">Veuillez sélectionner un dépôt dans le menu supérieur pour commencer une vente.</p>
+            </div>
+        )
+    }
+
+    // Server-side access verification
+    const isFullAccess = profile.role === 'admin' || profile.role === 'super-admin'
+    const hasAccess = isFullAccess || (profile.warehouse_access?.includes(activeWarehouseId))
+
+    if (!hasAccess) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
+                <p className="font-black text-xl text-red-500 uppercase tracking-widest italic opacity-80 underline underline-offset-8">Accès Refusé</p>
+                <p className="text-xs font-medium text-muted-foreground/60 max-w-xs text-center">Vous n'avez pas l'autorisation d'opérer sur ce dépôt.</p>
+            </div>
+        )
     }
 
     // Fetch products with supplier details
@@ -26,9 +51,6 @@ export default async function NewSalePage() {
         .from("products")
         .select(`*, suppliers(name)`)
         .order("name", { ascending: true })
-
-    const cookieStore = cookies()
-    const activeWarehouseId = cookieStore.get('stockflow_active_warehouse')?.value
 
     // Fetch local stock
     const { data: localStockParams } = await supabase

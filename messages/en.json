@@ -22,7 +22,8 @@
         "generalSettings": "General Settings",
         "security": "Security",
         "notifications": "Notifications",
-        "warehousesNetwork": "Warehouses Network"
+        "warehousesNetwork": "Warehouses",
+        "signOut": "Sign Out"
     },
     "Dashboard": {
         "title": "Global Overview",
@@ -402,7 +403,7 @@
         "newAccessNodeLogin": "New Access Node Login",
         "depotNetwork": "Depot Network",
         "geographicLogicalStorage": "Geographic & Logical Storage Units",
-        "addNewLocation": "Add New Location",
+        "addNewLocation": "Add a Depot",
         "newDepot": "New Depot",
         "initializeStorageLocation": "Initialize a new physical or virtual storage location.",
         "depotName": "Depot Name / Designation",
@@ -421,7 +422,22 @@
         "currentAddress": "Current Address",
         "decommissionDepot": "Decommission Depot",
         "saveChanges": "Save Changes",
-        "viewStock": "View Stock"
+        "viewStock": "View Stock",
+        "directoryMatrix": "Directory Matrix: {count} Personnel Nodes Identified",
+        "warehousesNetwork": "Warehouses Network",
+        "warehouses": "Depots",
+        "inviteUser": "Invite User",
+        "newUser": "New User",
+        "onboardNewTeamMember": "Onboard a new team member with specific permissions.",
+        "fullName": "Full Name",
+        "emailAddress": "Email Address",
+        "assignedRole": "Assigned Role",
+        "assignedDepot": "Assigned Depot",
+        "authorizedDepots": "Authorized Depots",
+        "emailNotification": "Email Notification",
+        "inviteInfo": "A secure invitation link will be sent by email for password initialization.",
+        "sendInvite": "Send Invite",
+        "resetPassword": "Reset Password"
     },
     "Receipt": {
         "pickupTicket": "Pickup Ticket",

@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useMemo } from "react"
 import { useTranslations } from "next-intl"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -115,16 +116,16 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <Link href="/receipt/daily" target="_blank">
-                        <Button variant="outline" className="border-emerald-500/20 bg-emerald-500/5 backdrop-blur rounded-2xl h-12 px-6 font-black tracking-widest text-xs gap-2 transition-all hover:bg-emerald-500/10 active:scale-95 text-emerald-600 shadow-sm uppercase">
+                    <Button asChild variant="outline" className="border-emerald-500/20 bg-emerald-500/5 backdrop-blur rounded-2xl h-12 px-6 font-black tracking-widest text-xs gap-2 transition-all hover:bg-emerald-500/10 active:scale-95 text-emerald-600 shadow-sm uppercase">
+                        <Link href="/sales/reports">
                             <FileText className="h-4 w-4" /> {t("dailyZReport")}
-                        </Button>
-                    </Link>
-                    <Link href="/sales/new">
-                        <Button className="bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-xl shadow-primary/20 rounded-2xl gap-2 h-12 px-8 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                        </Link>
+                    </Button>
+                    <Button asChild className="bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-xl shadow-primary/20 rounded-2xl gap-2 h-12 px-8 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                        <Link href="/sales/new">
                             <Plus className="h-5 w-5 stroke-[3px]" /> {t("newTransaction")}
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                 </div>
             </div>
 
@@ -217,8 +218,8 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                         </TableCell>
                                         <TableCell suppressHydrationWarning>
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-black tracking-tighter">{new Date(sale.created_at).toLocaleDateString('fr-FR', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                                                <span className="text-[10px] text-muted-foreground/40 font-black uppercase tracking-widest mt-0.5 whitespace-nowrap">
+                                                <span className="text-sm font-black tracking-tighter" suppressHydrationWarning>{new Date(sale.created_at).toLocaleDateString('fr-FR', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                                                <span className="text-[10px] text-muted-foreground/40 font-black uppercase tracking-widest mt-0.5 whitespace-nowrap" suppressHydrationWarning>
                                                     {new Date(sale.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                                                 </span>
                                             </div>
@@ -237,7 +238,7 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                         <TableCell className="text-right">
                                             <div className="flex flex-col items-end">
                                                 <span className="text-base font-black tracking-tighter text-emerald-500">
-                                                    ${Number(sale.total).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                                    $<span suppressHydrationWarning>{Number(sale.total).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                                                 </span>
                                                 {sale.discount && sale.discount > 0 ? (
                                                     <span className="text-[9px] text-red-500/80 font-black uppercase tracking-widest flex items-center gap-1">
@@ -413,7 +414,9 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="bg-primary/[0.03] border-primary/10 border p-4 rounded-3xl flex flex-col gap-1 items-center justify-center text-center">
                                         <span className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">{t("totalValue")}</span>
-                                        <span className="text-2xl font-black tracking-tighter text-emerald-500">${Number(previewDetailsSale.total).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                                        <span className="text-2xl font-black tracking-tighter text-emerald-500">
+                                            $<span suppressHydrationWarning>{Number(previewDetailsSale.total).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                                        </span>
                                     </div>
                                     <div className="bg-primary/[0.03] border-primary/10 border p-4 rounded-3xl flex flex-col gap-1 items-center justify-center text-center">
                                         <span className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">{t("status")}</span>
@@ -459,7 +462,7 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                         ) : null}
                                         <li className="flex justify-between items-center text-sm font-bold">
                                             <span className="text-muted-foreground uppercase text-[10px] tracking-widest">{t("dateProcessed")}</span>
-                                            <span>
+                                            <span suppressHydrationWarning>
                                                 {new Date(previewDetailsSale.created_at).toLocaleDateString('fr-FR', { month: 'short', day: 'numeric', year: 'numeric' })}
                                             </span>
                                         </li>
@@ -482,12 +485,12 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                                             <span className="font-black text-sm uppercase tracking-tight truncate">
                                                                 {productName || t("unknownProduct")}
                                                             </span>
-                                                            <span className="text-[10px] font-black text-muted-foreground tracking-widest uppercase">
+                                                            <span className="text-[10px] font-black text-muted-foreground tracking-widest uppercase" suppressHydrationWarning>
                                                                 {item.quantity} × ${Number(item.unit_price).toFixed(2)}
                                                             </span>
                                                         </div>
                                                         <div className="text-right shrink-0">
-                                                            <span className="font-black text-primary">${Number(item.total_price).toFixed(2)}</span>
+                                                            <span className="font-black text-primary" suppressHydrationWarning>${Number(item.total_price).toFixed(2)}</span>
                                                         </div>
                                                     </div>
                                                 )

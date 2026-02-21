@@ -24,6 +24,25 @@ export default async function ProductsPage() {
     const cookieStore = cookies()
     const activeWarehouseId = cookieStore.get('stockflow_active_warehouse')?.value
 
+    const { data: { user } } = await supabase.auth.getUser()
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("role, warehouse_access")
+        .eq("id", user?.id)
+        .single()
+
+    const isFullAccess = profile?.role === 'admin' || profile?.role === 'super-admin'
+    const hasAccess = isFullAccess || (profile?.warehouse_access?.includes(activeWarehouseId || ''))
+
+    if (activeWarehouseId && !hasAccess) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
+                <p className="font-black text-xl text-red-500 uppercase tracking-widest italic opacity-80 underline underline-offset-8">Accès Restreint</p>
+                <p className="text-xs font-medium text-muted-foreground/60 max-w-xs text-center">Vous n'avez pas l'autorisation d'accéder à l'inventaire de ce dépôt.</p>
+            </div>
+        )
+    }
+
     // Fetch warehouse info
     let warehouse = null;
     if (activeWarehouseId) {
@@ -75,11 +94,11 @@ export default async function ProductsPage() {
                     <Button variant="outline" className="border-primary/10 bg-card/40 backdrop-blur rounded-2xl h-12 px-6 font-bold text-xs gap-2 transition-all hover:bg-primary/5 active:scale-95">
                         <Download className="h-4 w-4 text-primary" /> {t("exportCsv")}
                     </Button>
-                    <Link href="/products/new">
-                        <Button className="bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-xl shadow-primary/20 rounded-2xl gap-2 h-12 px-8 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                    <Button asChild className="bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-xl shadow-primary/20 rounded-2xl gap-2 h-12 px-8 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                        <Link href="/products/new">
                             <Plus className="h-5 w-5 stroke-[3px]" /> {t("addSku")}
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                 </div>
             </div>
 
@@ -116,7 +135,10 @@ export default async function ProductsPage() {
                         </div>
                         <div>
                             <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">{t("inventoryValue")}</p>
-                            <p className="text-3xl font-black tracking-tighter">${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                            <div className="flex items-end gap-3">
+                                <h3 className="text-3xl font-black tracking-tighter" suppressHydrationWarning>${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+                                <span className="text-primary text-[9px] font-black uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded-full mb-1 border border-primary/20">{t("verified")}</span>
+                            </div>
                         </div>
                     </CardContent>
                 </Card>

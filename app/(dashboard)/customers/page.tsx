@@ -39,11 +39,11 @@ export default async function CustomersPage() {
                     <Button variant="outline" className="border-primary/10 bg-card/40 backdrop-blur rounded-2xl h-12 px-6 font-bold text-xs gap-2 transition-all hover:bg-primary/5 active:scale-95">
                         <Download className="h-4 w-4 text-primary" /> {t("exportList")}
                     </Button>
-                    <Link href="/customers/new">
-                        <Button className="bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-xl shadow-primary/20 rounded-2xl gap-2 h-12 px-8 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                    <Button asChild className="bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-xl shadow-primary/20 rounded-2xl gap-2 h-12 px-8 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                        <Link href="/customers/new">
                             <UserPlus className="h-5 w-5 stroke-[3px]" /> {t("newRecord")}
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                 </div>
             </div>
 
@@ -53,7 +53,7 @@ export default async function CustomersPage() {
                     <CardContent className="p-7">
                         <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">{t("totalOutstandingCredit")}</p>
                         <div className="flex items-end gap-3">
-                            <h3 className="text-3xl font-black tracking-tighter">${totalOutstanding.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+                            <h3 className="text-3xl font-black tracking-tighter" suppressHydrationWarning>${totalOutstanding.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
                             <span className="text-destructive text-[9px] font-black uppercase tracking-widest bg-destructive/10 px-2 py-0.5 rounded-full mb-1 border border-destructive/20">{t("liability")}</span>
                         </div>
                     </CardContent>
@@ -143,7 +143,7 @@ export default async function CustomersPage() {
                                     </TableCell>
                                     <TableCell className="text-right px-4">
                                         <div className="flex flex-col">
-                                            <span className={`text-base font-black tracking-tighter ${Number(customer.credit_balance) > 0 ? 'text-destructive' : 'text-primary'}`}>
+                                            <span className={`text-base font-black tracking-tighter ${Number(customer.credit_balance) > 0 ? 'text-destructive' : 'text-primary'}`} suppressHydrationWarning>
                                                 ${Number(customer.credit_balance).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                                             </span>
                                             <span className="text-[9px] text-muted-foreground/40 font-black uppercase tracking-widest mt-0.5">{t("capturedBalance")}</span>
@@ -157,11 +157,11 @@ export default async function CustomersPage() {
                                     </TableCell>
                                     <TableCell className="text-right px-8">
                                         <div className="flex items-center justify-end gap-3 translate-x-1 group-hover:translate-x-0 transition-transform">
-                                            <Link href={`/customers/${customer.id}`}>
-                                                <Button variant="ghost" size="sm" className="h-9 px-4 rounded-xl text-[9px] font-black uppercase tracking-widest bg-primary/5 text-primary opacity-0 group-hover:opacity-100 transition-all hover:bg-primary/20 border border-primary/10">
+                                            <Button asChild variant="ghost" size="sm" className="h-9 px-4 rounded-xl text-[9px] font-black uppercase tracking-widest bg-primary/5 text-primary opacity-0 group-hover:opacity-100 transition-all hover:bg-primary/20 border border-primary/10">
+                                                <Link href={`/customers/${customer.id}`}>
                                                     {t("ledger")} <ArrowRight className="ml-1 h-3 w-3" />
-                                                </Button>
-                                            </Link>
+                                                </Link>
+                                            </Button>
                                             <Button variant="ghost" size="icon" className="size-10 rounded-xl text-muted-foreground hover:bg-accent transition-all shrink-0">
                                                 <MoreVertical className="h-4 w-4" />
                                             </Button>
@@ -173,7 +173,7 @@ export default async function CustomersPage() {
                     </TableBody>
                 </Table>
                 <div className="px-8 py-5 border-t border-primary/5 bg-primary/[0.02] flex items-center justify-between">
-                    <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-60">{t("directoryMatrix").replace('{count}', (customers?.length || 0).toString())}</p>
+                    <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-60">{t("directoryMatrix", { count: customers?.length || 0 })}</p>
                     <div className="flex items-center gap-2">
                         <Button variant="outline" size="sm" className="h-9 w-9 p-0 rounded-xl border-primary/10 bg-primary/10 text-primary font-black text-xs shadow-lg shadow-primary/10">1</Button>
                     </div>

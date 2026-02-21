@@ -17,7 +17,13 @@
         "systemIdentity": "هوية النظام",
         "selectActiveDepot": "اختيار المستودع النشط",
         "configureNetwork": "إعداد الشبكة",
-        "levelSync": "مستوى المزامنة: {role}"
+        "levelSync": "مستوى المزامنة: {role}",
+        "usersAndRoles": "المستخدمين والأدوار",
+        "generalSettings": "الإعدادات العامة",
+        "security": "الأمان",
+        "notifications": "التنبيهات",
+        "warehousesNetwork": "المستودعات",
+        "signOut": "تسجيل الخروج"
     },
     "Dashboard": {
         "title": "نظرة عامة (الرئيسية)",
@@ -397,7 +403,7 @@
         "newAccessNodeLogin": "دخول عقدة وصول جديدة",
         "depotNetwork": "شبكة المستودعات",
         "geographicLogicalStorage": "وحدات التخزين الجغرافية والمنطقية",
-        "addNewLocation": "إضافة موقع جديد",
+        "addNewLocation": "إضافة مستودع",
         "newDepot": "مستودع جديد",
         "initializeStorageLocation": "بدء موقع تخزين مادي أو افتراضي جديد.",
         "depotName": "اسم المستودع / التعيين",
@@ -416,7 +422,22 @@
         "currentAddress": "العنوان الحالي",
         "decommissionDepot": "إيقاف تشغيل المستودع",
         "saveChanges": "حفظ التغييرات",
-        "viewStock": "عرض المخزون"
+        "viewStock": "عرض المخزون",
+        "directoryMatrix": "مصفوفة الدليل: تم تحديد {count} موظف",
+        "warehousesNetwork": "شبكة المستودعات",
+        "warehouses": "المستودعات",
+        "inviteUser": "دعوة مستخدم",
+        "newUser": "مستخدم جديد",
+        "onboardNewTeamMember": "إضافة عضو جديد للفريق بصلاحيات محددة.",
+        "fullName": "الاسم الكامل",
+        "emailAddress": "البريد الإلكتروني",
+        "assignedRole": "الدور المعين",
+        "assignedDepot": "المستودع المعين",
+        "authorizedDepots": "المستودعات المصرح بها",
+        "emailNotification": "إشعار بالبريد الإلكتروني",
+        "inviteInfo": "سيتم إرسال رابط دعوة آمن عبر البريد الإلكتروني لتعيين كلمة المرور.",
+        "sendInvite": "إرسال الدعوة",
+        "resetPassword": "إعادة تعيين كلمة المرور"
     },
     "Receipt": {
         "pickupTicket": "تذكرة الاستلام",

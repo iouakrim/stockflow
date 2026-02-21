@@ -37,6 +37,27 @@ import {
 
 export default async function DashboardPage({ searchParams }: { searchParams: { filter?: string } }) {
     const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    // Fetch profile and access
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("role, warehouse_access")
+        .eq("id", user?.id)
+        .single()
+
+    const cookieStore = cookies()
+    const activeWarehouseId = cookieStore.get('stockflow_active_warehouse')?.value
+
+    const isFullAccess = profile?.role === 'admin' || profile?.role === 'super-admin'
+
+    // Access validation
+    if (activeWarehouseId && !isFullAccess) {
+        if (!profile?.warehouse_access?.includes(activeWarehouseId)) {
+            // Redirect or error
+            return <div className="p-20 text-center font-black uppercase text-red-500 tracking-widest italic border-2 border-dashed border-red-500/20 rounded-3xl">Accès Depot Restreint</div>
+        }
+    }
 
     const filter = searchParams?.filter || 'today';
     let startDate = new Date();
@@ -56,57 +77,61 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
         filterLabel = t("allTime");
     }
 
-    // 1. Filtered Revenue
-    const { data: salesData } = await supabase
-        .from("sales")
-        .select("total")
-        .gte("created_at", startDate.toISOString())
+    // 1. Filtered Revenue - Localized by Warehouse
+    let revenueQuery = supabase.from("sales").select("total").gte("created_at", startDate.toISOString())
+    if (activeWarehouseId) {
+        revenueQuery = revenueQuery.eq("warehouse_id", activeWarehouseId)
+    }
+    const { data: salesData } = await revenueQuery
 
     const totalRevenue = salesData?.reduce((acc, sale) => acc + Number(sale.total), 0) || 0
 
-    // 2. Current Stock
-    const { count: productCount } = await supabase
-        .from("products")
-        .select("*", { count: "exact", head: true })
+    // 2. Current Stock - Filtered by Warehouse
+    let stockCountQuery = supabase.from("warehouse_stock").select("*", { count: "exact", head: true })
+    if (activeWarehouseId) {
+        stockCountQuery = stockCountQuery.eq("warehouse_id", activeWarehouseId)
+    }
+    const { count: productCount } = await stockCountQuery
 
-    // 3. Low Stock Alerts
-    const { data: lowStockItems } = await supabase
-        .from("products")
-        .select("id")
-        .lte("stock_quantity", 5)
+    // 3. Low Stock Alerts - Filtered by Warehouse
+    let lowStockQuery = supabase.from("warehouse_stock").select("id").lte("stock_quantity", 5)
+    if (activeWarehouseId) {
+        lowStockQuery = lowStockQuery.eq("warehouse_id", activeWarehouseId)
+    }
+    const { data: lowStockItems } = await lowStockQuery
 
     const lowStockCount = lowStockItems?.length || 0
 
-    // 4. Outstanding Credits
+    // 4. Outstanding Credits (Remains global/tenant-wide as customers are global)
     const { data: customers } = await supabase
         .from("customers")
         .select("credit_balance")
 
     const totalCredits = customers?.reduce((acc, c) => acc + Number(c.credit_balance), 0) || 0
 
-    // 5. Recent Activity
-    const { data: recentSales } = await supabase
-        .from("sales")
-        .select(`
+    // 5. Recent Activity - Filtered by Warehouse
+    let recentSalesQuery = supabase.from("sales").select(`
             id, 
             receipt_number, 
             total, 
             created_at,
             customers ( name )
         `)
-        .order("created_at", { ascending: false })
-        .limit(5)
+    if (activeWarehouseId) {
+        recentSalesQuery = recentSalesQuery.eq("warehouse_id", activeWarehouseId)
+    }
+    const { data: recentSales } = await recentSalesQuery.order("created_at", { ascending: false }).limit(5)
 
-    // 6. Last 7 Days Sales for Chart
+    // 6. Last 7 Days Sales for Chart - Filtered by Warehouse
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
     sevenDaysAgo.setHours(0, 0, 0, 0);
 
-    const { data: weekSales } = await supabase
-        .from("sales")
-        .select("total, created_at")
-        .gte("created_at", sevenDaysAgo.toISOString())
-        .order("created_at", { ascending: true });
+    let weekSalesQuery = supabase.from("sales").select("total, created_at").gte("created_at", sevenDaysAgo.toISOString())
+    if (activeWarehouseId) {
+        weekSalesQuery = weekSalesQuery.eq("warehouse_id", activeWarehouseId)
+    }
+    const { data: weekSales } = await weekSalesQuery.order("created_at", { ascending: true });
 
     const salesByDay: Record<string, number> = {};
     for (let i = 0; i < 7; i++) {
@@ -161,21 +186,21 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <Link href="/sales/new">
-                        <Button className="bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-xl shadow-primary/20 rounded-2xl gap-2 h-12 px-8 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                    <Button asChild className="bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-xl shadow-primary/20 rounded-2xl gap-2 h-12 px-8 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                        <Link href="/sales/new">
                             <Plus className="h-5 w-5 stroke-[3px]" /> {t("newTransaction")}
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                 </div>
             </div>
 
             {/* KPI Section with Enhanced Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Revenue Card */}
-                <Card className="glass-card overflow-hidden group hover:scale-[1.02] transition-all duration-300 shimmer">
+                <Card className="glass-card overflow-hidden group hover:scale-[1.02] transition-all duration-300">
                     <CardContent className="p-5">
                         <div className="flex items-center justify-between mb-4">
-                            <div className="size-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:shadow-[0_0_20px_rgba(17,212,115,0.2)] transition-all">
+                            <div className="size-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-background transition-all">
                                 <TrendingUp className="h-5 w-5" />
                             </div>
                             <div className="flex flex-col items-end">
@@ -186,12 +211,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
                         </div>
                         <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1.5">{t("revenue")}</p>
                         <div className="flex items-baseline gap-1">
-                            <h3 className="text-2xl font-black tracking-tighter">${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+                            <h3 className="text-2xl font-black tracking-tighter" suppressHydrationWarning>${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
                             <span className="text-xs font-bold text-primary/40 leading-none">USD</span>
                         </div>
                     </CardContent>
                     <div className="h-1 bg-primary/10 w-full overflow-hidden">
-                        <div className="h-full bg-primary w-1/3 rounded-full opacity-60 shadow-[0_0_10px_#11d473]" />
+                        <div className="h-full bg-primary w-1/3 rounded-full opacity-60" />
                     </div>
                 </Card>
 
@@ -247,7 +272,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
                         </div>
                         <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1.5">{t("outstandingDebt")}</p>
                         <div className="flex items-baseline gap-1">
-                            <h3 className="text-2xl font-black tracking-tighter">${totalCredits.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+                            <h3 className="text-2xl font-black tracking-tighter" suppressHydrationWarning>${totalCredits.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
                             <span className="text-xs font-bold text-amber-500/40 leading-none">USD</span>
                         </div>
                     </CardContent>
@@ -287,11 +312,11 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
                             <CardTitle className="text-xl font-black tracking-tight flex items-center gap-3">
                                 <Activity className="h-5 w-5 text-primary" /> {t("recentActivity")}
                             </CardTitle>
-                            <Link href="/sales">
-                                <Button variant="ghost" size="sm" className="h-8 rounded-lg text-[10px] font-black uppercase bg-primary/5 text-primary hover:bg-primary/20">
+                            <Button asChild variant="ghost" size="sm" className="h-8 rounded-lg text-[10px] font-black uppercase bg-primary/5 text-primary hover:bg-primary/20">
+                                <Link href="/sales">
                                     {t("viewAll")} <ArrowUpRight className="ml-1 h-3 w-3" />
-                                </Button>
-                            </Link>
+                                </Link>
+                            </Button>
                         </div>
                     </CardHeader>
                     <CardContent className="p-7 custom-scrollbar max-h-[460px] overflow-y-auto">
@@ -310,7 +335,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
                                         <div className="flex-1 min-w-0 pr-2">
                                             <div className="flex items-center justify-between gap-2">
                                                 <h4 className="text-sm font-black truncate tracking-tight group-hover:text-primary transition-colors">#{sale.receipt_number}</h4>
-                                                <span className="text-[10px] font-black text-primary">${Number(sale.total).toLocaleString()}</span>
+                                                <span className="text-[10px] font-black text-primary" suppressHydrationWarning>${Number(sale.total).toLocaleString()}</span>
                                             </div>
                                             <p className="text-xs text-muted-foreground font-medium mt-0.5 truncate opacity-70">
                                                 {(Array.isArray(sale.customers) ? sale.customers[0]?.name : sale.customers?.name) || t("standardClient")}
@@ -327,44 +352,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
                 </Card>
             </div>
 
-            {/* Quick Management Section */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-primary/5">
-                <Link href="/products/new" className="group">
-                    <div className="glass-card hover:bg-primary/5 p-6 rounded-[2rem] flex items-center gap-5 transition-all cursor-pointer border-dashed">
-                        <div className="size-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-background transition-all">
-                            <Plus className="h-7 w-7 stroke-[3px]" />
-                        </div>
-                        <div>
-                            <h4 className="font-black text-sm uppercase tracking-tight group-hover:translate-x-1 transition-transform">{t("stockIntake")}</h4>
-                            <p className="text-[11px] text-muted-foreground font-medium">{t("addAgriculturalInventory")}</p>
-                        </div>
-                    </div>
-                </Link>
-
-                <div className="group hidden md:flex">
-                    <div className="glass-card hover:bg-blue-500/5 p-6 rounded-[2rem] flex items-center gap-5 transition-all w-full cursor-pointer border-dashed">
-                        <div className="size-14 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-background transition-all">
-                            <FileOutput className="h-7 w-7" />
-                        </div>
-                        <div>
-                            <h4 className="font-black text-sm uppercase tracking-tight group-hover:translate-x-1 transition-transform">{t("marketReports")}</h4>
-                            <p className="text-[11px] text-muted-foreground font-medium">{t("exportPricingAnalysis")}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="group hidden md:flex">
-                    <div className="glass-card hover:bg-amber-500/5 p-6 rounded-[2rem] flex items-center gap-5 transition-all w-full cursor-pointer border-dashed">
-                        <div className="size-14 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-background transition-all">
-                            <Users className="h-7 w-7" />
-                        </div>
-                        <div>
-                            <h4 className="font-black text-sm uppercase tracking-tight group-hover:translate-x-1 transition-transform">{t("viewAll")}</h4>
-                            <p className="text-[11px] text-muted-foreground font-medium">{t("manageFarmersDistributors")}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     )
 }

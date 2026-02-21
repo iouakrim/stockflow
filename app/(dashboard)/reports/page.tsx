@@ -26,6 +26,19 @@ import { ReportsBarChart } from "./ReportsBarChart"
 
 export default async function ReportsPage({ searchParams }: { searchParams: { filter?: string } }) {
     const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) redirect("/login")
+
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+    const canViewReports = ['admin', 'super-admin', 'manager'].includes(profile?.role || '')
+    if (!canViewReports) {
+        redirect("/dashboard")
+    }
 
     const t = await getTranslations("Reports")
 

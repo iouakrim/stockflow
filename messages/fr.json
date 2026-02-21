@@ -17,7 +17,13 @@
         "systemIdentity": "Identité Système",
         "selectActiveDepot": "Sélectionner un Dépôt Actif",
         "configureNetwork": "Configurer le Réseau",
-        "levelSync": "Niveau de Sync: {role}"
+        "levelSync": "Niveau de Sync: {role}",
+        "usersAndRoles": "Utilisateurs & Rôles",
+        "generalSettings": "Paramètres Généraux",
+        "security": "Sécurité",
+        "notifications": "Notifications",
+        "warehousesNetwork": "Dépôts",
+        "signOut": "Déconnexion"
     },
     "Dashboard": {
         "title": "Aperçu Global",
@@ -397,7 +403,7 @@
         "newAccessNodeLogin": "Nouvelle Connexion de Nœud d'Accès",
         "depotNetwork": "Réseau de Dépôts",
         "geographicLogicalStorage": "Unités de Stockage Géographiques et Logiques",
-        "addNewLocation": "Ajouter un Emplacement",
+        "addNewLocation": "Ajouter un Dépôt",
         "newDepot": "Nouveau Dépôt",
         "initializeStorageLocation": "Initialiser un nouvel emplacement de stockage physique ou virtuel.",
         "depotName": "Nom / Désignation du Dépôt",
@@ -416,7 +422,22 @@
         "currentAddress": "Adresse Actuelle",
         "decommissionDepot": "Mettre hors service le dépôt",
         "saveChanges": "Enregistrer les Changements",
-        "viewStock": "Voir le Stock"
+        "viewStock": "Voir le Stock",
+        "directoryMatrix": "Matrice d'Annuaire : {count} Entités Identifiées",
+        "warehousesNetwork": "Réseau d'Entrepôts",
+        "warehouses": "Dépôts",
+        "inviteUser": "Inviter un Utilisateur",
+        "newUser": "Nouvel Utilisateur",
+        "onboardNewTeamMember": "Ajouter un membre à l'équipe avec des permissions spécifiques.",
+        "fullName": "Nom Complet",
+        "emailAddress": "Adresse Email",
+        "assignedRole": "Rôle Système",
+        "assignedDepot": "Dépôt de Référence",
+        "authorizedDepots": "Dépôts sous Gestion",
+        "emailNotification": "Notification Automatique",
+        "inviteInfo": "Une invitation sécurisée sera envoyée par email pour l'initialisation du mot de passe.",
+        "sendInvite": "Lancer l'Invitation",
+        "resetPassword": "Réinitialiser le mot de passe"
     },
     "Receipt": {
         "pickupTicket": "Ticket de Collecte",

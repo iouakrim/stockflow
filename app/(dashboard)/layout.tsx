@@ -77,7 +77,12 @@ function DashboardContent({ children }: { children: ReactNode }) {
         { label: t("inventory"), href: "/products", icon: Package },
         { label: t("customers"), href: "/customers", icon: Users },
         { label: t("suppliers"), href: "/suppliers", icon: Building2 },
-        { label: t("reports"), href: "/reports", icon: BarChart3 },
+        ...(['admin', 'super-admin', 'manager'].includes(userProfile?.role || '')
+            ? [{ label: t("reports"), href: "/reports", icon: BarChart3 }]
+            : []),
+        ...(['admin', 'super-admin'].includes(userProfile?.role || '')
+            ? [{ label: t("warehousesNetwork"), href: "/warehouses", icon: Warehouse }]
+            : []),
         { label: t("settings"), href: "/settings", icon: Settings },
     ];
 
@@ -131,13 +136,13 @@ function DashboardContent({ children }: { children: ReactNode }) {
                     ))}
                 </nav>
 
-                <div className="p-6 border-t border-primary/5 bg-accent/5">
+                <div className="p-4 border-t border-primary/5 bg-accent/5">
                     <SignOutButton collapsed={isCollapsed} />
                     {!isCollapsed && (
-                        <div className="mt-5 pt-4 border-t border-primary/5 flex justify-center items-center opacity-80 hover:opacity-100 transition-opacity">
+                        <div className="mt-2 pt-2 border-t border-primary/5 flex justify-center items-center opacity-80 hover:opacity-100 transition-opacity">
                             <div className="px-3 py-1 rounded-full bg-primary/5 border border-primary/10 flex items-center gap-2">
                                 <div className="size-1.5 rounded-full bg-primary/40 animate-pulse" />
-                                <span className="font-mono text-[9px] font-black tracking-[0.2em] text-primary/60">V1.0.0</span>
+                                <span className="font-mono text-[8px] font-black tracking-[0.2em] text-primary/60">V1.0.0</span>
                             </div>
                         </div>
                     )}

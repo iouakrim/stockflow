@@ -47,21 +47,43 @@ import {
 } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
+import { InviteUserSheet } from "./InviteUserSheet"
+import { UserActionsDropdown } from "./UserActionsDropdown"
+
 export default async function SettingsPage({ searchParams }: { searchParams: { q?: string, role?: string, tab?: string } }) {
     const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
 
-    // Fetch real profiles
-    const { data: profiles } = await supabase
-        .from("profiles")
-        .select("*")
-        .order("created_at", { ascending: false })
+    // Fetch requester profile
+    const { data: requesterProfile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user?.id)
+        .single()
 
-    // Fetch warehouses
+    const isAdmin = requesterProfile?.role === 'admin' || requesterProfile?.role === 'super-admin'
+
+    // Default tab logic based on role
+    let tab = searchParams?.tab || (isAdmin ? "Users & Roles" : "General Settings");
+    if (!isAdmin && tab === "Users & Roles") {
+        tab = "General Settings"
+    }
+
+    // Fetch warehouses for invitation form
     const { data: warehouses } = await supabase
         .from("warehouses")
         .select("*")
-        .order("created_at", { ascending: false })
+        .order("name", { ascending: true })
 
+    // Fetch real profiles - Only for Admins
+    let profiles: any[] = []
+    if (isAdmin) {
+        const { data: profilesData } = await supabase
+            .from("profiles")
+            .select("*")
+            .order("created_at", { ascending: false })
+        profiles = profilesData || []
+    }
 
     const q = searchParams?.q?.toLowerCase() || '';
     const roleFilter = searchParams?.role || 'all';
@@ -80,7 +102,6 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
     const personnelCount = filteredProfiles.length;
     const t = await getTranslations("Settings")
     const tSidebar = await getTranslations("Sidebar")
-    const tab = searchParams?.tab || "Users & Roles";
 
     const roles = [
         { title: "Admin", desc: "Unrestricted access to all warehouse zones, financial logs, and system configuration settings.", users: profiles?.filter(p => p.role === 'admin').length || 0, icon: ShieldCheck, color: "text-red-500", bg: "bg-red-500/10" },
@@ -97,7 +118,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                 </div>
             </div>
 
-            <SettingsTabs currentTab={tab} />
+            <SettingsTabs currentTab={tab} isAdmin={isAdmin} />
 
             {tab === "Users & Roles" && (
                 <div className="space-y-6 animate-in fade-in duration-500">
@@ -105,6 +126,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-6">
                         <SearchInput />
                         <div className="flex items-center gap-3">
+                            <InviteUserSheet warehouses={warehouses || []} />
                             <RoleFilter />
                         </div>
                     </div>
@@ -115,7 +137,8 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                             <TableHeader className="bg-primary/[0.03]">
                                 <TableRow className="border-b border-primary/5 hover:bg-transparent">
                                     <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5 px-8">{t("employeeEntity")}</TableHead>
-                                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">{t("assignedProtocol")}</TableHead>
+                                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">{t("assignedProtocol") || "Rôle"}</TableHead>
+                                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">{t("warehouses") || "Dépôts"}</TableHead>
                                     <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">{t("status")}</TableHead>
                                     <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">{t("lastTerminalSync")}</TableHead>
                                     <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5 text-right px-8">{t("actions")}</TableHead>
@@ -149,6 +172,22 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                                                 </span>
                                             </TableCell>
                                             <TableCell>
+                                                <div className="flex flex-wrap gap-1 max-w-[200px]">
+                                                    {p.warehouse_access && p.warehouse_access.length > 0 ? (
+                                                        p.warehouse_access.map((wId: string) => {
+                                                            const wName = warehouses?.find(w => w.id === wId)?.name || 'Unknown'
+                                                            return (
+                                                                <span key={wId} className="text-[8px] px-1.5 py-0.5 rounded bg-primary/5 text-primary border border-primary/10 font-black uppercase tracking-tighter">
+                                                                    {wName}
+                                                                </span>
+                                                            )
+                                                        })
+                                                    ) : (
+                                                        <span className="text-[8px] text-muted-foreground opacity-40 font-black uppercase tracking-widest italic">{p.role === 'admin' ? 'Accès Total' : 'Aucun Dépôt'}</span>
+                                                    )}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
                                                 <div className="flex items-center gap-2">
                                                     <span className={`size-1.5 rounded-full bg-primary animate-pulse`} />
                                                     <span className="text-xs font-bold tracking-tight text-muted-foreground">{t("active")}</span>
@@ -158,18 +197,11 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                                                 {new Date(p.created_at).toLocaleDateString()}
                                             </TableCell>
                                             <TableCell className="text-right px-8">
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" size="icon" className="size-10 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-all shrink-0">
-                                                            <MoreHorizontal className="h-4 w-4" />
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end" className="w-48 rounded-xl bg-[#0a140f] border-primary/10 shadow-xl shadow-black">
-                                                        <DropdownMenuItem className="text-xs font-bold py-2.5 cursor-pointer text-foreground focus:bg-primary/10 focus:text-primary">{t("configureAccess")}</DropdownMenuItem>
-                                                        <DropdownMenuItem className="text-xs font-bold py-2.5 cursor-pointer text-foreground focus:bg-primary/10">{t("resetOverrideCode")}</DropdownMenuItem>
-                                                        <DropdownMenuItem className="text-xs font-bold py-2.5 cursor-pointer text-red-500 focus:bg-red-500/10 focus:text-red-500">{t("terminateConnection")}</DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
+                                                <UserActionsDropdown
+                                                    user={p}
+                                                    warehouses={warehouses || []}
+                                                    currentUserId={user?.id}
+                                                />
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -178,7 +210,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                         </Table>
 
                         <div className="px-8 py-5 border-t border-primary/5 bg-primary/[0.02] flex items-center justify-between">
-                            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-60">{tSidebar("directoryMatrix", { count: personnelCount })}</p>
+                            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-60">{t("directoryMatrix", { count: personnelCount })}</p>
                             <div className="flex items-center gap-2">
                                 <Button variant="outline" size="sm" className="h-9 w-9 p-0 rounded-xl border-primary/10 bg-primary/10 text-primary font-black text-xs">1</Button>
                                 <Button variant="ghost" size="sm" className="h-9 w-9 p-0 rounded-xl text-muted-foreground font-black text-xs hover:bg-primary/5">2</Button>
@@ -311,139 +343,6 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                 </div>
             )}
 
-            {tab === "Warehouses Network" && (
-                <div className="space-y-6 mt-6 animate-in fade-in duration-500">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h3 className="text-xl font-black tracking-tight">{t("depotNetwork")}</h3>
-                            <p className="text-xs text-muted-foreground/60 font-medium mt-1 uppercase tracking-widest underline underline-offset-4 decoration-primary/30">{t("geographicLogicalStorage")}</p>
-                        </div>
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <Button className="bg-primary hover:bg-primary/90 text-[#102219] font-black rounded-2xl h-11 px-6 uppercase text-[10px] tracking-widest gap-2 shadow-xl shadow-primary/20 transition-all hover:scale-[1.02]">
-                                    <Plus className="h-4 w-4 stroke-[3px]" /> {t("addNewLocation")}
-                                </Button>
-                            </SheetTrigger>
-                            <SheetContent side="right" className="w-[400px] sm:w-[540px] border-primary/10 bg-background/80 backdrop-blur-xl p-0">
-                                <form className="h-full flex flex-col">
-                                    <div className="p-6 border-b border-primary/10">
-                                        <SheetHeader>
-                                            <div className="size-12 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mb-2">
-                                                <Building2 className="size-6" />
-                                            </div>
-                                            <SheetTitle className="text-2xl font-black tracking-tight">{t("newDepot")}</SheetTitle>
-                                            <SheetDescription className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-                                                {t("initializeStorageLocation")}
-                                            </SheetDescription>
-                                        </SheetHeader>
-                                    </div>
-                                    <div className="flex-1 p-6 space-y-6 overflow-y-auto">
-                                        <div className="space-y-3">
-                                            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t("depotName")}</Label>
-                                            <Input name="name" placeholder="e.g. Central Warehouse Paris" className="h-12 border-primary/20 rounded-xl bg-primary/5 font-bold focus-visible:ring-primary shadow-inner" required />
-                                        </div>
-                                        <div className="space-y-3">
-                                            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t("geographicCoordinates")}</Label>
-                                            <Input name="address" placeholder="e.g. 15 Rue de Rivoli, 75001 Paris" className="h-12 border-primary/20 rounded-xl bg-primary/5 font-medium focus-visible:ring-primary shadow-inner" required />
-                                        </div>
-                                        <div className="space-y-3 pt-4 border-t border-primary/10">
-                                            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2"><div className="size-2 rounded-full bg-primary animate-pulse" /> {t("advancedNetworkSettings")}</Label>
-                                            <div className="p-4 rounded-xl border border-primary/10 bg-accent/30 flex items-start gap-4">
-                                                <Switch id="online-sync" defaultChecked className="data-[state=checked]:bg-primary" />
-                                                <div className="space-y-1">
-                                                    <Label htmlFor="online-sync" className="font-bold text-sm tracking-tight">{t("enableLiveSync")}</Label>
-                                                    <p className="text-[10px] text-muted-foreground font-medium">{t("synchronizeStock")}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="p-6 border-t border-primary/10 bg-accent/10">
-                                        <SheetFooter className="flex w-full sm:justify-between gap-4">
-                                            <SheetClose asChild>
-                                                <Button type="button" variant="outline" className="h-12 rounded-xl flex-1 border-primary/20 font-bold hover:bg-primary/5">{t("abort")}</Button>
-                                            </SheetClose>
-                                            <Button type="submit" className="h-12 rounded-xl flex-1 bg-primary text-[#102219] font-black uppercase tracking-widest text-xs hover:bg-primary/90 shadow-xl shadow-primary/20">{t("initializeNode")}</Button>
-                                        </SheetFooter>
-                                    </div>
-                                </form>
-                            </SheetContent>
-                        </Sheet>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {(!warehouses || warehouses.length === 0) ? (
-                            <div className="col-span-full p-12 text-center rounded-3xl border border-dashed border-primary/20 bg-primary/5">
-                                <Building2 className="size-10 text-primary/40 mx-auto mb-4" />
-                                <h4 className="text-sm font-black tracking-tight mb-1">{t("noDepotsFound")}</h4>
-                                <p className="text-xs text-muted-foreground font-medium">{t("createFirstWarehouse")}</p>
-                            </div>
-                        ) : (
-                            warehouses.map((w: any) => (
-                                <Card key={w.id} className="glass-card group hover:scale-[1.02] transition-all duration-300 border-primary/10 overflow-hidden">
-                                    <div className="h-32 bg-primary/[0.03] w-full border-b border-primary/5 relative flex items-center justify-center overflow-hidden">
-                                        {/* Stylized map pattern background */}
-                                        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)', backgroundSize: '16px 16px' }} />
-                                        <div className="size-16 rounded-3xl bg-card border border-primary/10 flex items-center justify-center shadow-xl shadow-black/20 z-10 group-hover:scale-110 transition-transform">
-                                            <Building2 className="size-6 text-primary" />
-                                        </div>
-                                    </div>
-                                    <CardContent className="p-6 space-y-4 pt-5">
-                                        <div>
-                                            <h4 className="text-base font-black tracking-tight group-hover:text-primary transition-colors">{w.name}</h4>
-                                            <div className="flex items-center gap-1.5 mt-1 text-muted-foreground">
-                                                <MapPin className="size-3" />
-                                                <p className="text-[10px] font-medium truncate uppercase tracking-widest">{w.address || t("locationCoordinatesMissing")}</p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center gap-3 pt-4 border-t border-primary/5">
-                                            <div className="flex -space-x-2">
-                                                {[...Array(3)].map((_, i) => (
-                                                    <div key={i} className={`size-6 rounded-full border-2 border-background bg-accent flex items-center justify-center text-[8px] font-black`}>M</div>
-                                                ))}
-                                                <div className="size-6 rounded-full border-2 border-background bg-primary/10 text-primary flex items-center justify-center text-[8px] font-black">+2</div>
-                                            </div>
-                                            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">{t("assignedNodes")}</span>
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-2 pt-2">
-                                            <Sheet>
-                                                <SheetTrigger asChild>
-                                                    <Button variant="outline" className="h-9 rounded-xl border-primary/20 text-xs font-bold hover:bg-primary/10">{t("configure")}</Button>
-                                                </SheetTrigger>
-                                                <SheetContent className="w-[400px] sm:w-[540px] border-primary/10 bg-background/80 backdrop-blur-xl">
-                                                    <SheetHeader className="mb-6">
-                                                        <SheetTitle className="text-2xl font-black tracking-tight flex items-center gap-3">
-                                                            <div className="size-10 bg-primary/10 text-primary rounded-xl flex items-center justify-center"><Building2 className="size-5" /></div>
-                                                            {w.name}
-                                                        </SheetTitle>
-                                                        <SheetDescription className="text-xs font-medium uppercase tracking-widest text-muted-foreground">{t("warehousesNetwork")}</SheetDescription>
-                                                    </SheetHeader>
-                                                    <div className="space-y-6">
-                                                        <div className="space-y-2 pb-4 border-b border-primary/10">
-                                                            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t("uuidTracker")}</Label>
-                                                            <div className="p-3 rounded-lg bg-accent font-mono text-xs overflow-hidden text-ellipsis">{w.id}</div>
-                                                        </div>
-                                                        <div className="space-y-2 pb-4 border-b border-primary/10">
-                                                            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t("currentAddress")}</Label>
-                                                            <div className="p-3 rounded-lg border border-primary/10 bg-primary/5 text-sm font-medium">{w.address}</div>
-                                                        </div>
-                                                        <div className="pt-2 flex justify-between gap-4">
-                                                            <Button variant="destructive" className="flex-1 opacity-80 hover:opacity-100 font-bold rounded-xl h-11">{t("decommissionDepot")}</Button>
-                                                            <Button className="flex-1 bg-primary text-[#102219] font-bold rounded-xl h-11">{t("saveChanges")}</Button>
-                                                        </div>
-                                                    </div>
-                                                </SheetContent>
-                                            </Sheet>
-                                            <Button variant="outline" className="h-9 rounded-xl border-primary/20 text-xs font-bold text-primary hover:bg-primary/10"><ArrowUpRight className="size-3 mr-1" /> {t("viewStock")}</Button>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))
-                        )}
-                    </div>
-                </div>
-            )}
         </div>
     )
 }

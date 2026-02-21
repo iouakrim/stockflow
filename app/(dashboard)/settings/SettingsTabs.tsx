@@ -3,14 +3,13 @@
 import { Button } from "@/components/ui/button"
 import { useTranslations } from "next-intl"
 
-export function SettingsTabs({ currentTab }: { currentTab: string }) {
+export function SettingsTabs({ currentTab, isAdmin }: { currentTab: string, isAdmin: boolean }) {
     const t = useTranslations("Sidebar")
     const tabs = [
-        { key: "Users & Roles", label: t("usersAndRoles") },
+        ...(isAdmin ? [{ key: "Users & Roles", label: t("usersAndRoles") }] : []),
         { key: "General Settings", label: t("generalSettings") },
         { key: "Security", label: t("security") },
-        { key: "Notifications", label: t("notifications") },
-        { key: "Warehouses Network", label: t("warehousesNetwork") }
+        { key: "Notifications", label: t("notifications") }
     ]
 
     return (

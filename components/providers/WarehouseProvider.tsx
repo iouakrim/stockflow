@@ -32,23 +32,59 @@ export function WarehouseProvider({ children }: { children: ReactNode }) {
                 return
             }
 
-            const { data, error } = await supabase
-                .from('warehouses')
-                .select('*')
-                .order('name')
+            // 1. Fetch user profile for role and access list
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('role, warehouse_access')
+                .eq('id', user.id)
+                .single()
+
+            if (!profile) {
+                setIsLoading(false)
+                return
+            }
+
+            // 2. Query warehouses
+            let query = supabase.from('warehouses').select('*').order('name')
+
+            // 3. Filter by access list if not admin
+            const isFullAccess = profile.role === 'admin' || profile.role === 'super-admin'
+            if (!isFullAccess) {
+                if (!profile.warehouse_access || profile.warehouse_access.length === 0) {
+                    setWarehouses([])
+                    setIsLoading(false)
+                    return
+                }
+                query = query.in('id', profile.warehouse_access)
+            }
+
+            const { data, error } = await query
 
             if (data && data.length > 0) {
                 setWarehouses(data)
+
+                // 4. Try to restore saved active warehouse
                 const savedId = localStorage.getItem('stockflow_active_warehouse')
-                if (savedId) {
-                    const saved = data.find(w => w.id === savedId)
+                const activeIdFromCookie = document.cookie.match(/(?:^|;)\s*stockflow_active_warehouse=([^;]*)/)?.[1]
+                const targetId = savedId || activeIdFromCookie
+
+                if (targetId) {
+                    const saved = data.find(w => w.id === targetId)
                     if (saved) {
                         setActiveWarehouse(saved)
                         setIsLoading(false)
                         return
                     }
                 }
+
+                // 5. Default to first available
                 setActiveWarehouse(data[0])
+                // Update cookie/localstorage to stay in sync
+                document.cookie = `stockflow_active_warehouse=${data[0].id}; path=/; max-age=31536000; SameSite=Lax`;
+                localStorage.setItem('stockflow_active_warehouse', data[0].id)
+            } else {
+                setWarehouses([])
+                setActiveWarehouse(null)
             }
             setIsLoading(false)
         }
