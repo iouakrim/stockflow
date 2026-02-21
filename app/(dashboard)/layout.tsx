@@ -19,7 +19,8 @@ import {
     Activity,
     CreditCard,
     PanelLeftClose,
-    PanelLeftOpen
+    PanelLeftOpen,
+    ArrowUpRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SignOutButton } from "@/components/auth/SignOutButton"
@@ -32,8 +33,9 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { createClient } from "@/lib/supabase/client";
+import { WarehouseProvider, useWarehouse } from "@/components/providers/WarehouseProvider";
 
-export default function DashboardLayout({ children }: { children: ReactNode }) {
+function DashboardContent({ children }: { children: ReactNode }) {
     const pathname = usePathname();
     const [userProfile, setUserProfile] = useState<{ full_name: string; role: string } | null>(null);
     const [warehouseInfo, setWarehouseInfo] = useState<{ name: string; id: string } | null>(null);
@@ -53,23 +55,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
                 if (profile) {
                     setUserProfile(profile);
-
-                    // Fetch the first warehouse associated with the tenant
-                    const { data: warehouse } = await supabase
-                        .from('warehouses')
-                        .select('name, id')
-                        .eq('tenant_id', profile.tenant_id)
-                        .limit(1)
-                        .maybeSingle();
-
-                    if (warehouse) {
-                        setWarehouseInfo(warehouse);
-                    }
                 }
             }
         }
         getInitialData();
     }, [supabase]);
+
+    const { activeWarehouse, warehouses, setActiveWarehouse, isLoading } = useWarehouse()
 
     const navItems = [
         { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -95,8 +87,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     const displayRole = userProfile?.role || "Operator";
     const initials = userProfile?.full_name ? userProfile.full_name.split(' ').map(n => n[0]).join('') : "SF";
 
-    const displayWarehouse = warehouseInfo?.name || "System Base";
-    const displayWarehouseId = warehouseInfo?.id ? `#${warehouseInfo.id.slice(0, 5).toUpperCase()}` : "LIVE";
+    const displayWarehouse = activeWarehouse?.name || (isLoading ? "Syncing..." : "No Depot Found");
+    const displayWarehouseId = activeWarehouse?.id ? `#${activeWarehouse.id.slice(0, 5).toUpperCase()}` : "NULL";
 
     return (
         <div className="flex h-screen bg-background dark:bg-[#102219] overflow-hidden selection:bg-primary/30 selection:text-primary transition-colors duration-500">
@@ -166,10 +158,47 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                         </div>
 
                         <div className="hidden md:flex items-center gap-2.5 text-foreground">
-                            <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                                <Warehouse className="h-4 w-4" />
-                            </div>
-                            <h2 className="text-lg font-black tracking-tight">{displayWarehouse} <span className="text-[10px] font-medium text-muted-foreground ml-3 bg-accent/50 px-2 py-0.5 rounded-full opacity-60">ID: {displayWarehouseId}</span></h2>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <button className="flex items-center gap-3 p-1.5 pr-4 rounded-xl bg-card border border-primary/10 hover:border-primary/30 transition-all hover:bg-card/50 active:scale-95 group shadow-sm">
+                                        <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:scale-105 transition-transform overflow-hidden">
+                                            {isLoading ? <div className="size-3 border-2 border-primary border-t-transparent rounded-full animate-spin" /> : <Warehouse className="h-4 w-4" />}
+                                        </div>
+                                        <div className="flex flex-col text-left">
+                                            <div className="flex items-center gap-2">
+                                                <h2 className="text-sm font-black tracking-tight leading-none group-hover:text-primary transition-colors">{displayWarehouse}</h2>
+                                                <ChevronDown className="size-3 text-muted-foreground opacity-50 stroke-[3px]" />
+                                            </div>
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground mt-0.5">ID: {displayWarehouseId}</span>
+                                        </div>
+                                    </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start" className="w-64 rounded-2xl border-primary/10 shadow-xl overflow-hidden mt-1 p-2">
+                                    <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 px-3 py-2">Select Active Depot</DropdownMenuLabel>
+                                    <div className="space-y-1">
+                                        {warehouses.map(w => (
+                                            <DropdownMenuItem
+                                                key={w.id}
+                                                onClick={() => setActiveWarehouse(w)}
+                                                className={`rounded-xl px-3 py-2.5 cursor-pointer font-bold gap-3 ${activeWarehouse?.id === w.id ? 'bg-primary/10 text-primary' : 'hover:bg-accent focus:bg-accent'}`}
+                                            >
+                                                <Building2 className={`size-4 opacity-70 ${activeWarehouse?.id === w.id ? 'text-primary' : 'text-muted-foreground'}`} />
+                                                <div className="flex flex-col flex-1">
+                                                    <span className="text-xs truncate">{w.name}</span>
+                                                    {w.address && <span className="text-[9px] text-muted-foreground uppercase opacity-70 truncate max-w-[140px]">{w.address}</span>}
+                                                </div>
+                                                {activeWarehouse?.id === w.id && <div className="size-1.5 bg-primary rounded-full animate-pulse" />}
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </div>
+                                    {warehouses.length > 0 && <DropdownMenuSeparator className="my-2 opacity-50" />}
+                                    <DropdownMenuItem asChild>
+                                        <Link href="/settings?tab=Warehouses Network" className="rounded-xl px-3 py-2 cursor-pointer text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary focus:bg-transparent">
+                                            Configure Network <ArrowUpRight className="size-3 ml-auto opacity-50" />
+                                        </Link>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </div>
                     </div>
 
@@ -252,4 +281,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             </main>
         </div>
     );
+}
+
+export default function DashboardLayout({ children }: { children: ReactNode }) {
+    return (
+        <WarehouseProvider>
+            <DashboardContent>
+                {children}
+            </DashboardContent>
+        </WarehouseProvider>
+    )
 }

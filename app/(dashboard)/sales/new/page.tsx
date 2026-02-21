@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { POSClient } from "@/components/pos/POSClient"
 import { redirect } from "next/navigation"
+import { cookies } from "next/headers"
 
 export default async function NewSalePage() {
     const supabase = createClient()
@@ -21,10 +22,26 @@ export default async function NewSalePage() {
     }
 
     // Fetch products with supplier details
-    const { data: products } = await supabase
+    const { data: globalProducts } = await supabase
         .from("products")
         .select(`*, suppliers(name)`)
         .order("name", { ascending: true })
+
+    const cookieStore = cookies()
+    const activeWarehouseId = cookieStore.get('stockflow_active_warehouse')?.value
+
+    // Fetch local stock
+    const { data: localStockParams } = await supabase
+        .from("warehouse_stock")
+        .select("product_id, stock_quantity")
+        .eq("warehouse_id", activeWarehouseId || '')
+
+    const localStockMap = new Map((localStockParams || []).map(s => [s.product_id, s.stock_quantity]));
+
+    const products = globalProducts?.map(p => ({
+        ...p,
+        stock_quantity: localStockMap.get(p.id) || 0
+    })) || []
 
     // Fetch customers
     const { data: customers } = await supabase.from("customers").select("id, name, phone").order("name", { ascending: true })

@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
+import { cookies } from "next/headers"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -19,26 +20,45 @@ import { Product } from "@/types"
 
 export default async function ProductsPage() {
     const supabase = createClient()
+    const cookieStore = cookies()
+    const activeWarehouseId = cookieStore.get('stockflow_active_warehouse')?.value
 
-    // Fetch real products
-    const { data: products } = await supabase
+    // Fetch warehouse info
+    let warehouse = null;
+    if (activeWarehouseId) {
+        const { data } = await supabase.from('warehouses').select('name').eq('id', activeWarehouseId).single()
+        warehouse = data;
+    } else {
+        const { data } = await supabase.from('warehouses').select('name, id').limit(1).maybeSingle();
+        warehouse = data;
+    }
+
+    const warehouseName = warehouse?.name || "Global Network (Not local logic yet)";
+
+    // Fetch real products (Global Dictionary)
+    const { data: globalProducts } = await supabase
         .from("products")
         .select("*")
         .order("created_at", { ascending: false })
 
-    // Fetch warehouse info
-    const { data: warehouse } = await supabase
-        .from("warehouses")
-        .select("name")
-        .limit(1)
-        .maybeSingle();
+    // Fetch Local Stock for this specific Warehouse
+    const { data: localStockParams } = await supabase
+        .from("warehouse_stock")
+        .select("product_id, stock_quantity")
+        .eq("warehouse_id", activeWarehouseId || '')
 
-    const warehouseName = warehouse?.name || "Inventory Base";
+    const localStockMap = new Map((localStockParams || []).map(s => [s.product_id, s.stock_quantity]));
 
-    // Stats calculation
-    const totalSkus = products?.length || 0
-    const lowStockCount = products?.filter(p => p.stock_quantity <= p.low_stock_threshold).length || 0
-    const totalValue = products?.reduce((acc, p) => acc + (p.stock_quantity * p.cost_price), 0) || 0
+    // Merge global products with local stock
+    const products = globalProducts?.map(p => ({
+        ...p,
+        stock_quantity: localStockMap.get(p.id) || 0 // Local stock overrules global for this view!
+    })) || []
+
+    // Stats calculation based on LOCAL STOCK
+    const totalSkus = products.length || 0
+    const lowStockCount = products.filter(p => p.stock_quantity <= p.low_stock_threshold).length || 0
+    const totalValue = products.reduce((acc, p) => acc + (p.stock_quantity * p.cost_price), 0) || 0
 
     return (
         <div className="flex-1 space-y-6 animate-in fade-in duration-700">
@@ -46,6 +66,7 @@ export default async function ProductsPage() {
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-3xl font-black tracking-tighter text-foreground leading-none">Inventory Vault</h1>
+                    <p className="text-xs text-muted-foreground/60 font-medium mt-1 uppercase tracking-widest underline underline-offset-4 decoration-primary/30">Local View: {warehouseName}</p>
                 </div>
 
                 <div className="flex items-center gap-3">

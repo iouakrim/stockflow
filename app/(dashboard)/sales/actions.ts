@@ -1,6 +1,7 @@
 "use server"
 
 import { createClient } from "@/lib/supabase/server"
+import { cookies } from "next/headers"
 
 export async function processSaleCheckout(
     items: { product_id: string; quantity: number; unit_price: number; total_price: number }[],
@@ -21,12 +22,23 @@ export async function processSaleCheckout(
 
     if (!profile?.tenant_id) throw new Error("Missing tenant profile")
 
-    // The RPC `process_sale` was defined in the schema.sql:
-    // process_sale(p_tenant_id UUID, p_cashier_id UUID, p_customer_id UUID, p_payment_method text, p_items JSONB, p_discount DECIMAL)
+    const cookieStore = cookies()
+    let activeWarehouseId = cookieStore.get('stockflow_active_warehouse')?.value
+
+    if (!activeWarehouseId) {
+        // Fallback to first warehouse if cookie is missing
+        const { data: firstWarehouse } = await supabase.from('warehouses').select('id').limit(1).maybeSingle()
+        if (firstWarehouse) {
+            activeWarehouseId = firstWarehouse.id
+        } else {
+            throw new Error("No warehouse configured. Please set up a warehouse first.")
+        }
+    }
 
     const { data: saleId, error } = await supabase.rpc('process_sale', {
         p_tenant_id: profile.tenant_id,
         p_cashier_id: user.id,
+        p_warehouse_id: activeWarehouseId,
         p_customer_id: customerId || null,
         p_payment_method: paymentMethod,
         p_items: items,
