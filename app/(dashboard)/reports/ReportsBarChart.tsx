@@ -1,6 +1,7 @@
 "use client"
 
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, Cell } from "recharts"
+import { useTranslations } from "next-intl"
 
 interface ReportsBarChartProps {
     data: { name: string; value: number }[];
@@ -8,6 +9,7 @@ interface ReportsBarChartProps {
 }
 
 export function ReportsBarChart({ data, color = "#3b82f6" }: ReportsBarChartProps) {
+    const t = useTranslations("Reports")
     return (
         <div className="h-[300px] w-full mt-4">
             <ResponsiveContainer width="100%" height="100%">
@@ -41,7 +43,7 @@ export function ReportsBarChart({ data, color = "#3b82f6" }: ReportsBarChartProp
                         }}
                         cursor={{ fill: 'var(--primary)', opacity: 0.1 }}
                         itemStyle={{ fontWeight: 900, color: 'hsl(var(--foreground))' }}
-                        formatter={(value: number) => [`$${value.toLocaleString()}`, 'Value']}
+                        formatter={(value: number) => [`$${value.toLocaleString()}`, t("value")]}
                     />
                     <Bar dataKey="value" radius={[6, 6, 0, 0]}>
                         {data.map((entry, index) => (

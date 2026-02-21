@@ -16,7 +16,6 @@ import {
     Leaf,
     Building2,
     PlusCircle,
-    Activity,
     CreditCard,
     PanelLeftClose,
     PanelLeftOpen,
@@ -40,7 +39,6 @@ import { useTranslations } from "next-intl";
 function DashboardContent({ children }: { children: ReactNode }) {
     const pathname = usePathname();
     const [userProfile, setUserProfile] = useState<{ full_name: string; role: string } | null>(null);
-    const [warehouseInfo, setWarehouseInfo] = useState<{ name: string; id: string } | null>(null);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const supabase = createClient();
 
@@ -87,17 +85,17 @@ function DashboardContent({ children }: { children: ReactNode }) {
         { label: t("dashboard"), href: "/dashboard", icon: LayoutDashboard },
         { label: t("inventory"), href: "/products", icon: Package },
         { label: t("pos"), href: "/sales/new", icon: PlusCircle },
-        { label: "Ledger", href: "/sales", icon: CreditCard },
+        { label: t("ledger"), href: "/sales", icon: CreditCard },
         { label: t("settings"), href: "/settings", icon: Settings },
     ];
 
     const isActive = (path: string) => pathname === path;
 
-    const displayName = userProfile?.full_name || "Loading...";
-    const displayRole = userProfile?.role || "Operator";
+    const displayName = userProfile?.full_name || t("loading");
+    const displayRole = userProfile?.role || t("operator");
     const initials = userProfile?.full_name ? userProfile.full_name.split(' ').map(n => n[0]).join('') : "SF";
 
-    const displayWarehouse = activeWarehouse?.name || (isLoading ? "Syncing..." : "No Depot Found");
+    const displayWarehouse = activeWarehouse?.name || (isLoading ? t("syncing") : t("noDepotFound"));
     const displayWarehouseId = activeWarehouse?.id ? `#${activeWarehouse.id.slice(0, 5).toUpperCase()}` : "NULL";
 
     return (
@@ -184,7 +182,7 @@ function DashboardContent({ children }: { children: ReactNode }) {
                                     </button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="start" className="w-64 rounded-2xl border-primary/10 shadow-xl overflow-hidden mt-1 p-2">
-                                    <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 px-3 py-2">Select Active Depot</DropdownMenuLabel>
+                                    <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 px-3 py-2">{t("selectActiveDepot")}</DropdownMenuLabel>
                                     <div className="space-y-1">
                                         {warehouses.map(w => (
                                             <DropdownMenuItem
@@ -204,7 +202,7 @@ function DashboardContent({ children }: { children: ReactNode }) {
                                     {warehouses.length > 0 && <DropdownMenuSeparator className="my-2 opacity-50" />}
                                     <DropdownMenuItem asChild>
                                         <Link href="/settings?tab=Warehouses Network" className="rounded-xl px-3 py-2 cursor-pointer text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary focus:bg-transparent">
-                                            Configure Network <ArrowUpRight className="size-3 ml-auto opacity-50" />
+                                            {t("configureNetwork")} <ArrowUpRight className="size-3 ml-auto opacity-50" />
                                         </Link>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
@@ -238,19 +236,19 @@ function DashboardContent({ children }: { children: ReactNode }) {
                                 </button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-64 p-3 rounded-[1.5rem] border-primary/10 mt-3 shadow-2xl glass-card backdrop-blur-3xl" align="end">
-                                <DropdownMenuLabel className="font-black text-[10px] uppercase tracking-widest text-muted-foreground/60 mb-2 px-3">System Identity</DropdownMenuLabel>
+                                <DropdownMenuLabel className="font-black text-[10px] uppercase tracking-widest text-muted-foreground/60 mb-2 px-3">{t("systemIdentity")}</DropdownMenuLabel>
                                 <div className="flex items-center gap-3 px-3 py-4 bg-primary/5 rounded-2xl mb-2 border border-primary/10">
                                     <div className="size-10 rounded-xl bg-primary flex items-center justify-center font-black text-xs text-background">{initials}</div>
                                     <div className="flex flex-col">
                                         <span className="text-sm font-black tracking-tight">{displayName}</span>
-                                        <span className="text-[10px] text-muted-foreground font-bold italic uppercase tracking-tighter">{displayRole} Level Sync</span>
+                                        <span className="text-[10px] text-muted-foreground font-bold italic uppercase tracking-tighter">{t("levelSync", { role: displayRole })}</span>
                                     </div>
                                 </div>
                                 <DropdownMenuItem className="rounded-xl font-bold gap-3 focus:bg-primary/10 focus:text-primary cursor-pointer py-3 px-4">
-                                    <Users className="h-4 w-4" /> Profile Analytics
+                                    <Users className="h-4 w-4" /> {t("profileAnalytics")}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className="rounded-xl font-bold gap-3 focus:bg-primary/10 focus:text-primary cursor-pointer py-3 px-4">
-                                    <Settings className="h-4 w-4" /> Node Preferences
+                                    <Settings className="h-4 w-4" /> {t("nodePreferences")}
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator className="my-2 bg-primary/5" />
                                 <div className="p-1">

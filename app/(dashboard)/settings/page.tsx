@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
+import { getTranslations } from "next-intl/server"
 import {
     ShieldCheck,
     Plus,
@@ -77,7 +78,8 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
     }
 
     const personnelCount = filteredProfiles.length;
-
+    const t = await getTranslations("Settings")
+    const tSidebar = await getTranslations("Sidebar")
     const tab = searchParams?.tab || "Users & Roles";
 
     const roles = [
@@ -91,7 +93,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
             {/* Page Header */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tighter text-foreground leading-none">Control Center</h1>
+                    <h1 className="text-3xl font-black tracking-tighter text-foreground leading-none">{t("title")}</h1>
                 </div>
             </div>
 
@@ -112,11 +114,11 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                         <Table>
                             <TableHeader className="bg-primary/[0.03]">
                                 <TableRow className="border-b border-primary/5 hover:bg-transparent">
-                                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5 px-8">Employee Entity</TableHead>
-                                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">Assigned Protocol</TableHead>
-                                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">Status</TableHead>
-                                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">Last Terminal Sync</TableHead>
-                                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5 text-right px-8">Actions</TableHead>
+                                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5 px-8">{t("employeeEntity")}</TableHead>
+                                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">{t("assignedProtocol")}</TableHead>
+                                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">{t("status")}</TableHead>
+                                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">{t("lastTerminalSync")}</TableHead>
+                                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5 text-right px-8">{t("actions")}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -149,7 +151,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                                             <TableCell>
                                                 <div className="flex items-center gap-2">
                                                     <span className={`size-1.5 rounded-full bg-primary animate-pulse`} />
-                                                    <span className="text-xs font-bold tracking-tight text-muted-foreground">Active</span>
+                                                    <span className="text-xs font-bold tracking-tight text-muted-foreground">{t("active")}</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell className="text-xs font-medium text-muted-foreground opacity-60">
@@ -163,9 +165,9 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                                                         </Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end" className="w-48 rounded-xl bg-[#0a140f] border-primary/10 shadow-xl shadow-black">
-                                                        <DropdownMenuItem className="text-xs font-bold py-2.5 cursor-pointer text-foreground focus:bg-primary/10 focus:text-primary">Configure Access</DropdownMenuItem>
-                                                        <DropdownMenuItem className="text-xs font-bold py-2.5 cursor-pointer text-foreground focus:bg-primary/10">Reset Override Code</DropdownMenuItem>
-                                                        <DropdownMenuItem className="text-xs font-bold py-2.5 cursor-pointer text-red-500 focus:bg-red-500/10 focus:text-red-500">Terminate Connection</DropdownMenuItem>
+                                                        <DropdownMenuItem className="text-xs font-bold py-2.5 cursor-pointer text-foreground focus:bg-primary/10 focus:text-primary">{t("configureAccess")}</DropdownMenuItem>
+                                                        <DropdownMenuItem className="text-xs font-bold py-2.5 cursor-pointer text-foreground focus:bg-primary/10">{t("resetOverrideCode")}</DropdownMenuItem>
+                                                        <DropdownMenuItem className="text-xs font-bold py-2.5 cursor-pointer text-red-500 focus:bg-red-500/10 focus:text-red-500">{t("terminateConnection")}</DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
                                             </TableCell>
@@ -176,7 +178,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                         </Table>
 
                         <div className="px-8 py-5 border-t border-primary/5 bg-primary/[0.02] flex items-center justify-between">
-                            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-60">Displaying Protocol Matrix: {personnelCount} Access Nodes Found</p>
+                            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-60">{tSidebar("directoryMatrix", { count: personnelCount })}</p>
                             <div className="flex items-center gap-2">
                                 <Button variant="outline" size="sm" className="h-9 w-9 p-0 rounded-xl border-primary/10 bg-primary/10 text-primary font-black text-xs">1</Button>
                                 <Button variant="ghost" size="sm" className="h-9 w-9 p-0 rounded-xl text-muted-foreground font-black text-xs hover:bg-primary/5">2</Button>
@@ -192,42 +194,42 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6 animate-in fade-in duration-500">
                     <Card className="glass-card border-primary/10">
                         <CardHeader className="p-8 pb-4">
-                            <CardTitle className="text-xl font-black tracking-tight">Facility Identity</CardTitle>
-                            <CardDescription className="text-xs font-medium text-muted-foreground uppercase tracking-widest mt-1">Global System Nomenclature</CardDescription>
+                            <CardTitle className="text-xl font-black tracking-tight">{t("facilityIdentity")}</CardTitle>
+                            <CardDescription className="text-xs font-medium text-muted-foreground uppercase tracking-widest mt-1">{t("globalSystemNomenclature")}</CardDescription>
                         </CardHeader>
                         <CardContent className="p-8 pt-0 space-y-6">
                             <div className="space-y-3">
-                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Entity Designation</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">{t("entityDesignation")}</Label>
                                 <Input defaultValue="StockFlow Main Warehouse" className="h-12 rounded-2xl bg-card border-primary/10 focus-visible:ring-primary font-bold px-5" />
                             </div>
                             <div className="space-y-3">
-                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Primary Currency Base</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">{t("primaryCurrencyBase")}</Label>
                                 <Input defaultValue="USD ($)" className="h-12 rounded-2xl bg-card border-primary/10 focus-visible:ring-primary font-bold px-5" />
                             </div>
                             <div className="pt-4">
-                                <Button className="bg-primary text-[#102219] font-black rounded-2xl h-12 px-8 uppercase text-[10px] tracking-widest hover:scale-[1.02] shadow-xl shadow-primary/20">Commit Changes</Button>
+                                <Button className="bg-primary text-[#102219] font-black rounded-2xl h-12 px-8 uppercase text-[10px] tracking-widest hover:scale-[1.02] shadow-xl shadow-primary/20">{t("commitChanges")}</Button>
                             </div>
                         </CardContent>
                     </Card>
 
                     <Card className="glass-card border-primary/10">
                         <CardHeader className="p-8 pb-4">
-                            <CardTitle className="text-xl font-black tracking-tight">Time & Localization</CardTitle>
-                            <CardDescription className="text-xs font-medium text-muted-foreground uppercase tracking-widest mt-1">Temporal Alignment</CardDescription>
+                            <CardTitle className="text-xl font-black tracking-tight">{t("timeAndLocalization")}</CardTitle>
+                            <CardDescription className="text-xs font-medium text-muted-foreground uppercase tracking-widest mt-1">{t("temporalAlignment")}</CardDescription>
                         </CardHeader>
                         <CardContent className="p-8 pt-0 space-y-6">
                             <div className="space-y-3">
-                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Timezone Offset</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">{t("timezoneOffset")}</Label>
                                 <Input defaultValue="UTC ±00:00 Greenwich Mean Time" disabled className="h-12 rounded-2xl bg-primary/[0.02] border-primary/10 text-muted-foreground font-bold px-5 opacity-70" />
                             </div>
                             <div className="space-y-3">
-                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Date Format</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">{t("dateFormat")}</Label>
                                 <Input defaultValue="DD-MM-YYYY" className="h-12 rounded-2xl bg-card border-primary/10 focus-visible:ring-primary font-bold px-5" />
                             </div>
                             <div className="flex items-center justify-between pt-2">
                                 <div className="space-y-0.5">
-                                    <Label className="text-sm font-bold">24-Hour Clock Standard</Label>
-                                    <p className="text-[10px] font-medium text-muted-foreground">Force military time across all logs.</p>
+                                    <Label className="text-sm font-bold">{t("24HourClockStandard")}</Label>
+                                    <p className="text-[10px] font-medium text-muted-foreground">{t("forceMilitaryTime")}</p>
                                 </div>
                                 <Switch defaultChecked className="data-[state=checked]:bg-primary" />
                             </div>
@@ -240,14 +242,14 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                 <div className="space-y-6 mt-6 animate-in fade-in duration-500">
                     <Card className="glass-card border-primary/10">
                         <CardHeader className="p-8 pb-4">
-                            <CardTitle className="text-xl font-black tracking-tight">Security Enhancements</CardTitle>
-                            <CardDescription className="text-xs font-medium text-muted-foreground uppercase tracking-widest mt-1">Automated Defense Mechanisms</CardDescription>
+                            <CardTitle className="text-xl font-black tracking-tight">{t("securityEnhancements")}</CardTitle>
+                            <CardDescription className="text-xs font-medium text-muted-foreground uppercase tracking-widest mt-1">{t("automatedDefenseMechanisms")}</CardDescription>
                         </CardHeader>
                         <CardContent className="p-8 pt-0 space-y-8">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-b border-primary/10 pb-8">
                                 <div className="space-y-2">
-                                    <Label className="text-sm font-bold flex items-center gap-2">Two-Factor Authentication (2FA) <span className="text-[9px] px-2 py-0.5 rounded-md bg-primary/20 text-primary uppercase font-black tracking-widest">Recommended</span></Label>
-                                    <p className="text-xs text-muted-foreground font-medium max-w-sm">Require all Access Nodes to provide a cryptographic second factor before terminal insertion.</p>
+                                    <Label className="text-sm font-bold flex items-center gap-2">{t("twoFactorAuth")} <span className="text-[9px] px-2 py-0.5 rounded-md bg-primary/20 text-primary uppercase font-black tracking-widest">{t("recommended")}</span></Label>
+                                    <p className="text-xs text-muted-foreground font-medium max-w-sm">{t("requireCryptographicFactor")}</p>
                                 </div>
                                 <div className="flex items-center md:justify-end">
                                     <Switch className="data-[state=checked]:bg-primary" />
@@ -256,8 +258,8 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-b border-primary/10 pb-8">
                                 <div className="space-y-2">
-                                    <Label className="text-sm font-bold">Automatic Session Timeout</Label>
-                                    <p className="text-xs text-muted-foreground font-medium max-w-sm">Terminate idle connections after 15 minutes of inactivity to prevent unauthorized terminal access.</p>
+                                    <Label className="text-sm font-bold">{t("automaticSessionTimeout")}</Label>
+                                    <p className="text-xs text-muted-foreground font-medium max-w-sm">{t("terminateIdleConnections")}</p>
                                 </div>
                                 <div className="flex items-center md:justify-end gap-4">
                                     <span className="text-sm font-bold text-primary">15 Min</span>
@@ -267,11 +269,11 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-2">
-                                    <Label className="text-sm font-bold">IP Allowlist Restriction</Label>
-                                    <p className="text-xs text-muted-foreground font-medium max-w-sm">Block all access attempts originating outside the registered corporate network nodes.</p>
+                                    <Label className="text-sm font-bold">{t("ipAllowlistRestriction")}</Label>
+                                    <p className="text-xs text-muted-foreground font-medium max-w-sm">{t("blockOutsideAccess")}</p>
                                 </div>
                                 <div className="flex items-center md:justify-end">
-                                    <Button variant="outline" className="h-10 px-6 rounded-xl border-primary/20 text-primary hover:bg-primary/10 font-bold text-xs">Configure IP Routing</Button>
+                                    <Button variant="outline" className="h-10 px-6 rounded-xl border-primary/20 text-primary hover:bg-primary/10 font-bold text-xs">{t("configureIpRouting")}</Button>
                                 </div>
                             </div>
                         </CardContent>
@@ -286,15 +288,15 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                 <div className="mt-6 animate-in fade-in duration-500">
                     <Card className="glass-card border-primary/10 max-w-3xl">
                         <CardHeader className="p-8 pb-4">
-                            <CardTitle className="text-xl font-black tracking-tight">Alert Preferences</CardTitle>
-                            <CardDescription className="text-xs font-medium text-muted-foreground uppercase tracking-widest mt-1">System-wide transmission settings</CardDescription>
+                            <CardTitle className="text-xl font-black tracking-tight">{t("alertPreferences")}</CardTitle>
+                            <CardDescription className="text-xs font-medium text-muted-foreground uppercase tracking-widest mt-1">{t("systemWideTransmission")}</CardDescription>
                         </CardHeader>
                         <CardContent className="p-8 pt-0 space-y-6">
                             {[
-                                { title: "Low Stock Warnings", desc: "Instant push notifications when an item breaches minimum threshold.", checked: true },
-                                { title: "Large Transaction Alerts", desc: "Email notifications for any sale exceeding $5,000.", checked: true },
-                                { title: "Daily Audit Summary", desc: "End-of-day discrepancy report delivered at 23:59.", checked: false },
-                                { title: "New Access Node Login", desc: "Trigger alert upon detection of login from an unknown terminal.", checked: true },
+                                { title: t("lowStockWarnings"), desc: "Instant push notifications when an item breaches minimum threshold.", checked: true },
+                                { title: t("largeTransactionAlerts"), desc: "Email notifications for any sale exceeding $5,000.", checked: true },
+                                { title: t("dailyAuditSummary"), desc: "End-of-day discrepancy report delivered at 23:59.", checked: false },
+                                { title: t("newAccessNodeLogin"), desc: "Trigger alert upon detection of login from an unknown terminal.", checked: true },
                             ].map((item, i) => (
                                 <div key={i} className="flex items-start justify-between py-4 border-b border-primary/5 last:border-0 last:pb-0">
                                     <div className="space-y-1">
@@ -313,13 +315,13 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                 <div className="space-y-6 mt-6 animate-in fade-in duration-500">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h3 className="text-xl font-black tracking-tight">Depot Network</h3>
-                            <p className="text-xs text-muted-foreground/60 font-medium mt-1 uppercase tracking-widest underline underline-offset-4 decoration-primary/30">Geographic & Logical Storage Units</p>
+                            <h3 className="text-xl font-black tracking-tight">{t("depotNetwork")}</h3>
+                            <p className="text-xs text-muted-foreground/60 font-medium mt-1 uppercase tracking-widest underline underline-offset-4 decoration-primary/30">{t("geographicLogicalStorage")}</p>
                         </div>
                         <Sheet>
                             <SheetTrigger asChild>
                                 <Button className="bg-primary hover:bg-primary/90 text-[#102219] font-black rounded-2xl h-11 px-6 uppercase text-[10px] tracking-widest gap-2 shadow-xl shadow-primary/20 transition-all hover:scale-[1.02]">
-                                    <Plus className="h-4 w-4 stroke-[3px]" /> Add New Location
+                                    <Plus className="h-4 w-4 stroke-[3px]" /> {t("addNewLocation")}
                                 </Button>
                             </SheetTrigger>
                             <SheetContent side="right" className="w-[400px] sm:w-[540px] border-primary/10 bg-background/80 backdrop-blur-xl p-0">
@@ -329,28 +331,28 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                                             <div className="size-12 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mb-2">
                                                 <Building2 className="size-6" />
                                             </div>
-                                            <SheetTitle className="text-2xl font-black tracking-tight">New Depot</SheetTitle>
+                                            <SheetTitle className="text-2xl font-black tracking-tight">{t("newDepot")}</SheetTitle>
                                             <SheetDescription className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-                                                Initialize a new physical or virtual storage location.
+                                                {t("initializeStorageLocation")}
                                             </SheetDescription>
                                         </SheetHeader>
                                     </div>
                                     <div className="flex-1 p-6 space-y-6 overflow-y-auto">
                                         <div className="space-y-3">
-                                            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Depot Name / Designation</Label>
+                                            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t("depotName")}</Label>
                                             <Input name="name" placeholder="e.g. Central Warehouse Paris" className="h-12 border-primary/20 rounded-xl bg-primary/5 font-bold focus-visible:ring-primary shadow-inner" required />
                                         </div>
                                         <div className="space-y-3">
-                                            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Geographic Coordinates / Address</Label>
+                                            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t("geographicCoordinates")}</Label>
                                             <Input name="address" placeholder="e.g. 15 Rue de Rivoli, 75001 Paris" className="h-12 border-primary/20 rounded-xl bg-primary/5 font-medium focus-visible:ring-primary shadow-inner" required />
                                         </div>
                                         <div className="space-y-3 pt-4 border-t border-primary/10">
-                                            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2"><div className="size-2 rounded-full bg-primary animate-pulse" /> Advanced Network Settings</Label>
+                                            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2"><div className="size-2 rounded-full bg-primary animate-pulse" /> {t("advancedNetworkSettings")}</Label>
                                             <div className="p-4 rounded-xl border border-primary/10 bg-accent/30 flex items-start gap-4">
                                                 <Switch id="online-sync" defaultChecked className="data-[state=checked]:bg-primary" />
                                                 <div className="space-y-1">
-                                                    <Label htmlFor="online-sync" className="font-bold text-sm tracking-tight">Enable Live Sync</Label>
-                                                    <p className="text-[10px] text-muted-foreground font-medium">Instantly synchronize stock movements across the entire network.</p>
+                                                    <Label htmlFor="online-sync" className="font-bold text-sm tracking-tight">{t("enableLiveSync")}</Label>
+                                                    <p className="text-[10px] text-muted-foreground font-medium">{t("synchronizeStock")}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -358,9 +360,9 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                                     <div className="p-6 border-t border-primary/10 bg-accent/10">
                                         <SheetFooter className="flex w-full sm:justify-between gap-4">
                                             <SheetClose asChild>
-                                                <Button type="button" variant="outline" className="h-12 rounded-xl flex-1 border-primary/20 font-bold hover:bg-primary/5">Abort</Button>
+                                                <Button type="button" variant="outline" className="h-12 rounded-xl flex-1 border-primary/20 font-bold hover:bg-primary/5">{t("abort")}</Button>
                                             </SheetClose>
-                                            <Button type="submit" className="h-12 rounded-xl flex-1 bg-primary text-[#102219] font-black uppercase tracking-widest text-xs hover:bg-primary/90 shadow-xl shadow-primary/20">Initialize Node</Button>
+                                            <Button type="submit" className="h-12 rounded-xl flex-1 bg-primary text-[#102219] font-black uppercase tracking-widest text-xs hover:bg-primary/90 shadow-xl shadow-primary/20">{t("initializeNode")}</Button>
                                         </SheetFooter>
                                     </div>
                                 </form>
@@ -372,8 +374,8 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                         {(!warehouses || warehouses.length === 0) ? (
                             <div className="col-span-full p-12 text-center rounded-3xl border border-dashed border-primary/20 bg-primary/5">
                                 <Building2 className="size-10 text-primary/40 mx-auto mb-4" />
-                                <h4 className="text-sm font-black tracking-tight mb-1">No Depots Found</h4>
-                                <p className="text-xs text-muted-foreground font-medium">Create your first physical or virtual warehouse to begin.</p>
+                                <h4 className="text-sm font-black tracking-tight mb-1">{t("noDepotsFound")}</h4>
+                                <p className="text-xs text-muted-foreground font-medium">{t("createFirstWarehouse")}</p>
                             </div>
                         ) : (
                             warehouses.map((w: any) => (
@@ -390,7 +392,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                                             <h4 className="text-base font-black tracking-tight group-hover:text-primary transition-colors">{w.name}</h4>
                                             <div className="flex items-center gap-1.5 mt-1 text-muted-foreground">
                                                 <MapPin className="size-3" />
-                                                <p className="text-[10px] font-medium truncate uppercase tracking-widest">{w.address || 'Location Coordinates Missing'}</p>
+                                                <p className="text-[10px] font-medium truncate uppercase tracking-widest">{w.address || t("locationCoordinatesMissing")}</p>
                                             </div>
                                         </div>
 
@@ -401,13 +403,13 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                                                 ))}
                                                 <div className="size-6 rounded-full border-2 border-background bg-primary/10 text-primary flex items-center justify-center text-[8px] font-black">+2</div>
                                             </div>
-                                            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Assigned Nodes</span>
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">{t("assignedNodes")}</span>
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-2 pt-2">
                                             <Sheet>
                                                 <SheetTrigger asChild>
-                                                    <Button variant="outline" className="h-9 rounded-xl border-primary/20 text-xs font-bold hover:bg-primary/10">Configure</Button>
+                                                    <Button variant="outline" className="h-9 rounded-xl border-primary/20 text-xs font-bold hover:bg-primary/10">{t("configure")}</Button>
                                                 </SheetTrigger>
                                                 <SheetContent className="w-[400px] sm:w-[540px] border-primary/10 bg-background/80 backdrop-blur-xl">
                                                     <SheetHeader className="mb-6">
@@ -415,25 +417,25 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                                                             <div className="size-10 bg-primary/10 text-primary rounded-xl flex items-center justify-center"><Building2 className="size-5" /></div>
                                                             {w.name}
                                                         </SheetTitle>
-                                                        <SheetDescription className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Depot Network Settings</SheetDescription>
+                                                        <SheetDescription className="text-xs font-medium uppercase tracking-widest text-muted-foreground">{t("warehousesNetwork")}</SheetDescription>
                                                     </SheetHeader>
                                                     <div className="space-y-6">
                                                         <div className="space-y-2 pb-4 border-b border-primary/10">
-                                                            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">UUID Tracker</Label>
+                                                            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t("uuidTracker")}</Label>
                                                             <div className="p-3 rounded-lg bg-accent font-mono text-xs overflow-hidden text-ellipsis">{w.id}</div>
                                                         </div>
                                                         <div className="space-y-2 pb-4 border-b border-primary/10">
-                                                            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Current Address</Label>
+                                                            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t("currentAddress")}</Label>
                                                             <div className="p-3 rounded-lg border border-primary/10 bg-primary/5 text-sm font-medium">{w.address}</div>
                                                         </div>
                                                         <div className="pt-2 flex justify-between gap-4">
-                                                            <Button variant="destructive" className="flex-1 opacity-80 hover:opacity-100 font-bold rounded-xl h-11">Decommission Depot</Button>
-                                                            <Button className="flex-1 bg-primary text-[#102219] font-bold rounded-xl h-11">Save Changes</Button>
+                                                            <Button variant="destructive" className="flex-1 opacity-80 hover:opacity-100 font-bold rounded-xl h-11">{t("decommissionDepot")}</Button>
+                                                            <Button className="flex-1 bg-primary text-[#102219] font-bold rounded-xl h-11">{t("saveChanges")}</Button>
                                                         </div>
                                                     </div>
                                                 </SheetContent>
                                             </Sheet>
-                                            <Button variant="outline" className="h-9 rounded-xl border-primary/20 text-xs font-bold text-primary hover:bg-primary/10"><ArrowUpRight className="size-3 mr-1" /> View Stock</Button>
+                                            <Button variant="outline" className="h-9 rounded-xl border-primary/20 text-xs font-bold text-primary hover:bg-primary/10"><ArrowUpRight className="size-3 mr-1" /> {t("viewStock")}</Button>
                                         </div>
                                     </CardContent>
                                 </Card>

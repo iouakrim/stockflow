@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
+import { getTranslations } from "next-intl/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -65,6 +66,8 @@ export default async function NewSupplierPage() {
         redirect("/suppliers")
     }
 
+    const t = await getTranslations("Suppliers")
+
     return (
         <div className="flex-1 space-y-10 animate-in fade-in duration-700 pb-20 max-w-5xl mx-auto">
             {/* Page Header */}
@@ -76,21 +79,21 @@ export default async function NewSupplierPage() {
                                 <ArrowLeft className="h-4 w-4" />
                             </div>
                         </Link>
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary underline underline-offset-4 decoration-primary/30">Back to Matrix</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary underline underline-offset-4 decoration-primary/30">{t("backToMatrix")}</span>
                     </div>
-                    <h1 className="text-4xl font-black tracking-tighter text-foreground leading-none">Onboard Partner</h1>
+                    <h1 className="text-4xl font-black tracking-tighter text-foreground leading-none">{t("onboardPartner")}</h1>
                     <div className="flex items-center gap-3 mt-3">
                         <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest border border-primary/20">
-                            Logistics Integration
+                            {t("logisticsIntegration")}
                         </span>
-                        <span className="text-muted-foreground/40 text-xs font-medium tracking-tight">Registering a new supply chain entity.</span>
+                        <span className="text-muted-foreground/40 text-xs font-medium tracking-tight">{t("registeringNewEntity")}</span>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-3">
                     <Link href="/suppliers">
                         <Button variant="outline" className="border-primary/10 bg-card/40 backdrop-blur rounded-2xl h-12 px-6 font-bold text-xs gap-2 transition-all hover:bg-primary/5 active:scale-95">
-                            DISCARD ENTRY
+                            {t("discardEntry")}
                         </Button>
                     </Link>
                 </div>
@@ -108,36 +111,36 @@ export default async function NewSupplierPage() {
                             <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
                                 <Truck className="h-5 w-5" />
                             </div>
-                            <h3 className="text-xl font-black tracking-tight uppercase">Corporate Entity</h3>
+                            <h3 className="text-xl font-black tracking-tight uppercase">{t("corporateEntity")}</h3>
                         </div>
 
                         <div className="space-y-6 relative">
                             <div className="space-y-3">
-                                <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">Company Name / Organization *</Label>
+                                <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">{t("companyName")} *</Label>
                                 <Input
                                     id="name"
                                     name="name"
                                     required
                                     className="h-14 bg-card/40 border-primary/10 rounded-2xl px-6 text-base font-bold focus:ring-primary focus:border-primary/30 transition-all placeholder:font-medium"
-                                    placeholder="Enter verified supplier name..."
+                                    placeholder={t("companyNamePlaceholder")}
                                 />
                             </div>
 
                             <div className="space-y-3">
-                                <Label htmlFor="category" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">Primary Commodities Hub</Label>
+                                <Label htmlFor="category" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">{t("primaryCommoditiesHub")}</Label>
                                 <div className="relative group/input">
                                     <Layers className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within/input:text-primary transition-colors" />
                                     <Input
                                         id="category"
                                         name="category"
                                         className="h-14 bg-card/40 border-primary/10 rounded-2xl pl-14 pr-6 font-bold focus:ring-primary transition-all"
-                                        placeholder="e.g. Agricultural Grains, Machinery..."
+                                        placeholder={t("categoryPlaceholder")}
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-3">
-                                <Label htmlFor="address" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">Geographic Headquarters</Label>
+                                <Label htmlFor="address" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">{t("geographicHeadquarters")}</Label>
                                 <div className="relative group/input">
                                     <MapPin className="absolute left-5 top-6 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within/input:text-primary transition-colors" />
                                     <textarea
@@ -145,7 +148,7 @@ export default async function NewSupplierPage() {
                                         name="address"
                                         rows={3}
                                         className="w-full bg-card/40 border border-primary/10 rounded-2xl pl-14 pr-6 py-4 font-medium text-sm focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-muted-foreground/30 min-h-[100px]"
-                                        placeholder="Full dispatch layout and routing instructions..."
+                                        placeholder={t("addressPlaceholder")}
                                     />
                                 </div>
                             </div>
@@ -160,21 +163,21 @@ export default async function NewSupplierPage() {
                             <div className="size-9 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20">
                                 <User className="h-5 w-5" />
                             </div>
-                            <h3 className="text-lg font-black tracking-tight uppercase">Direct Contact</h3>
+                            <h3 className="text-lg font-black tracking-tight uppercase">{t("directContact")}</h3>
                         </div>
 
                         <div className="space-y-6">
                             <div className="space-y-3">
-                                <Label htmlFor="contact_name" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">Account Manager</Label>
+                                <Label htmlFor="contact_name" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">{t("accountManager")}</Label>
                                 <Input
                                     id="contact_name"
                                     name="contact_name"
                                     className="h-14 bg-card/40 border-blue-500/10 rounded-2xl px-6 font-bold focus:ring-blue-500 transition-all border"
-                                    placeholder="Representative Name"
+                                    placeholder={t("contactNamePlaceholder")}
                                 />
                             </div>
                             <div className="space-y-3">
-                                <Label htmlFor="phone" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">Voice Protocol</Label>
+                                <Label htmlFor="phone" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">{t("voiceProtocol")}</Label>
                                 <div className="relative group/input">
                                     <Phone className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within/input:text-blue-500 transition-colors" />
                                     <Input
@@ -182,12 +185,12 @@ export default async function NewSupplierPage() {
                                         name="phone"
                                         type="tel"
                                         className="h-14 bg-card/40 border-blue-500/10 rounded-2xl pl-12 pr-6 font-bold text-sm focus:ring-blue-500 transition-all border"
-                                        placeholder="+X XXX-XXX-XXXX"
+                                        placeholder={t("phonePlaceholder")}
                                     />
                                 </div>
                             </div>
                             <div className="space-y-3">
-                                <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">Digital Transmission</Label>
+                                <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">{t("digitalTransmission")}</Label>
                                 <div className="relative group/input">
                                     <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within/input:text-blue-500 transition-colors" />
                                     <Input
@@ -195,7 +198,7 @@ export default async function NewSupplierPage() {
                                         name="email"
                                         type="email"
                                         className="h-14 bg-card/40 border-blue-500/10 rounded-2xl pl-12 pr-6 font-bold text-sm focus:ring-blue-500 transition-all border"
-                                        placeholder="partner@domain.com"
+                                        placeholder={t("emailPlaceholder")}
                                     />
                                 </div>
                             </div>
@@ -208,8 +211,8 @@ export default async function NewSupplierPage() {
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                         <Save className="h-6 w-6 stroke-[3px] mb-1 group-hover:rotate-12 transition-transform" />
-                        <span className="text-sm uppercase tracking-[0.2em]">Validate Partner</span>
-                        <span className="text-[9px] opacity-40 uppercase tracking-widest font-black">Syncing to Logistics Matrix</span>
+                        <span className="text-sm uppercase tracking-[0.2em]">{t("validatePartner")}</span>
+                        <span className="text-[9px] opacity-40 uppercase tracking-widest font-black">{t("syncingToLogisticsMatrix")}</span>
                     </Button>
                 </div>
             </form>

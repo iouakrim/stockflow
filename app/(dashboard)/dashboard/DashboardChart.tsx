@@ -1,12 +1,14 @@
 "use client"
 
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from "recharts"
+import { useTranslations } from "next-intl"
 
 interface DashboardChartProps {
     data: { name: string; Revenue: number }[];
 }
 
 export function DashboardChart({ data }: DashboardChartProps) {
+    const t = useTranslations("Dashboard")
     return (
         <div className="h-[320px] w-full mt-4">
             <ResponsiveContainer width="100%" height="100%">
@@ -45,7 +47,7 @@ export function DashboardChart({ data }: DashboardChartProps) {
                             boxShadow: '0 4px 20px -5px rgba(0,0,0,0.1)'
                         }}
                         itemStyle={{ color: 'hsl(var(--primary))', fontWeight: 900 }}
-                        formatter={(value: number) => [`$${value.toLocaleString()}`, 'Revenue']}
+                        formatter={(value: number) => [`$${value.toLocaleString()}`, t("revenue")]}
                     />
                     <Line
                         type="monotone"

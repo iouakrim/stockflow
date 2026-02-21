@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
+import { getTranslations } from "next-intl/server"
 import { Customer } from "@/types"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -24,21 +25,23 @@ export default async function CustomersPage() {
     const activeCount = customers?.length || 0
     const overdueCount = customers?.filter(c => Number(c.credit_balance) > 0).length || 0
 
+    const t = await getTranslations("Customers")
+
     return (
         <div className="flex-1 space-y-6 animate-in fade-in duration-700 pb-20">
             {/* Page Header */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tighter text-foreground leading-none">Client Hub</h1>
+                    <h1 className="text-3xl font-black tracking-tighter text-foreground leading-none">{t("title")}</h1>
                 </div>
 
                 <div className="flex items-center gap-3">
                     <Button variant="outline" className="border-primary/10 bg-card/40 backdrop-blur rounded-2xl h-12 px-6 font-bold text-xs gap-2 transition-all hover:bg-primary/5 active:scale-95">
-                        <Download className="h-4 w-4 text-primary" /> EXPORT LIST
+                        <Download className="h-4 w-4 text-primary" /> {t("exportList")}
                     </Button>
                     <Link href="/customers/new">
                         <Button className="bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-xl shadow-primary/20 rounded-2xl gap-2 h-12 px-8 transition-all hover:scale-[1.02] active:scale-[0.98]">
-                            <UserPlus className="h-5 w-5 stroke-[3px]" /> NEW RECORD
+                            <UserPlus className="h-5 w-5 stroke-[3px]" /> {t("newRecord")}
                         </Button>
                     </Link>
                 </div>
@@ -48,30 +51,30 @@ export default async function CustomersPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card className="glass-card group hover:scale-[1.02] transition-all duration-300">
                     <CardContent className="p-7">
-                        <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">Total Outstanding Credit</p>
+                        <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">{t("totalOutstandingCredit")}</p>
                         <div className="flex items-end gap-3">
                             <h3 className="text-3xl font-black tracking-tighter">${totalOutstanding.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
-                            <span className="text-destructive text-[9px] font-black uppercase tracking-widest bg-destructive/10 px-2 py-0.5 rounded-full mb-1 border border-destructive/20">Liability</span>
+                            <span className="text-destructive text-[9px] font-black uppercase tracking-widest bg-destructive/10 px-2 py-0.5 rounded-full mb-1 border border-destructive/20">{t("liability")}</span>
                         </div>
                     </CardContent>
                 </Card>
 
                 <Card className="glass-card group hover:scale-[1.02] transition-all duration-300">
                     <CardContent className="p-7">
-                        <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">Active Customers</p>
+                        <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">{t("activeCustomers")}</p>
                         <div className="flex items-end gap-3">
                             <h3 className="text-3xl font-black tracking-tighter">{activeCount}</h3>
-                            <span className="text-primary text-[9px] font-black uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded-full mb-1 border border-primary/20">Verified</span>
+                            <span className="text-primary text-[9px] font-black uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded-full mb-1 border border-primary/20">{t("verified")}</span>
                         </div>
                     </CardContent>
                 </Card>
 
                 <Card className="glass-card group hover:scale-[1.02] transition-all duration-300">
                     <CardContent className="p-7">
-                        <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">Accounts with Debt</p>
+                        <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">{t("accountsWithDebt")}</p>
                         <div className="flex items-end gap-3">
                             <h3 className="text-3xl font-black tracking-tighter">{overdueCount}</h3>
-                            <span className="text-amber-500 text-[9px] font-black uppercase tracking-widest bg-amber-500/10 px-2 py-0.5 rounded-full mb-1 border border-amber-500/20">Monitoring</span>
+                            <span className="text-amber-500 text-[9px] font-black uppercase tracking-widest bg-amber-500/10 px-2 py-0.5 rounded-full mb-1 border border-amber-500/20">{t("monitoring")}</span>
                         </div>
                     </CardContent>
                 </Card>
@@ -80,9 +83,9 @@ export default async function CustomersPage() {
             {/* Search & Filters */}
             <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
                 <div className="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0 no-scrollbar w-full lg:w-auto">
-                    <Button variant="secondary" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black bg-primary text-background uppercase tracking-widest shadow-lg shadow-primary/20">All Directory</Button>
-                    <Button variant="ghost" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black text-muted-foreground hover:text-primary uppercase tracking-widest transition-all">Debtors Only</Button>
-                    <Button variant="ghost" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black text-muted-foreground hover:text-primary uppercase tracking-widest transition-all">VIP Accounts</Button>
+                    <Button variant="secondary" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black bg-primary text-background uppercase tracking-widest shadow-lg shadow-primary/20">{t("allDirectory")}</Button>
+                    <Button variant="ghost" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black text-muted-foreground hover:text-primary uppercase tracking-widest transition-all">{t("debtorsOnly")}</Button>
+                    <Button variant="ghost" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black text-muted-foreground hover:text-primary uppercase tracking-widest transition-all">{t("vipAccounts")}</Button>
                 </div>
 
                 <div className="flex items-center gap-3 w-full lg:w-auto">
@@ -90,7 +93,7 @@ export default async function CustomersPage() {
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                         <input
                             className="w-full bg-card/40 border-primary/10 rounded-2xl pl-11 pr-4 py-2.5 text-sm font-medium focus:ring-1 focus:ring-primary transition-all placeholder:text-muted-foreground/30 border"
-                            placeholder="Universal search by name, email or ID..."
+                            placeholder={t("search")}
                         />
                     </div>
                 </div>
@@ -101,18 +104,18 @@ export default async function CustomersPage() {
                 <Table>
                     <TableHeader className="bg-primary/[0.03]">
                         <TableRow className="border-b border-primary/5 hover:bg-transparent">
-                            <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5 px-8">Client Entity</TableHead>
-                            <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">Communication Nodes</TableHead>
-                            <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5 text-right">Settlement Index</TableHead>
-                            <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5 text-center">Protocol</TableHead>
-                            <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5 text-right px-8">Matrix</TableHead>
+                            <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5 px-8">{t("clientEntity")}</TableHead>
+                            <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">{t("communicationNodes")}</TableHead>
+                            <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5 text-right">{t("settlementIndex")}</TableHead>
+                            <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5 text-center">{t("protocol")}</TableHead>
+                            <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5 text-right px-8">{t("matrix")}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {(!customers || customers.length === 0) ? (
                             <TableRow>
                                 <TableCell colSpan={5} className="text-center py-12 text-muted-foreground italic">
-                                    No customers found.
+                                    {t("noCustomers")}
                                     {error && <span className="block text-destructive text-sm mt-2">{error.message}</span>}
                                 </TableCell>
                             </TableRow>
@@ -135,7 +138,7 @@ export default async function CustomersPage() {
                                     <TableCell>
                                         <div className="flex flex-col min-w-[200px]">
                                             <span className="text-sm font-black tracking-tighter">{customer.email || "---"}</span>
-                                            <span className="text-[10px] text-muted-foreground/40 font-black uppercase tracking-widest mt-0.5">{customer.phone || "NODE DISCONNECTED"}</span>
+                                            <span className="text-[10px] text-muted-foreground/40 font-black uppercase tracking-widest mt-0.5">{customer.phone || t("protocol")}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell className="text-right px-4">
@@ -143,20 +146,20 @@ export default async function CustomersPage() {
                                             <span className={`text-base font-black tracking-tighter ${Number(customer.credit_balance) > 0 ? 'text-destructive' : 'text-primary'}`}>
                                                 ${Number(customer.credit_balance).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                                             </span>
-                                            <span className="text-[9px] text-muted-foreground/40 font-black uppercase tracking-widest mt-0.5">Captured Balance</span>
+                                            <span className="text-[9px] text-muted-foreground/40 font-black uppercase tracking-widest mt-0.5">{t("capturedBalance")}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell>
                                         <div className={`flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.1em] ${Number(customer.credit_balance) > 0 ? 'text-destructive bg-destructive/10 border-destructive/20' : 'text-primary bg-primary/10 border-primary/20'} py-1.5 px-3 rounded-xl border`}>
                                             <div className={`size-1.5 rounded-full ${Number(customer.credit_balance) > 0 ? 'bg-destructive animate-pulse' : 'bg-primary'}`} />
-                                            {Number(customer.credit_balance) > 0 ? 'OUTSTANDING' : 'CLEARED'}
+                                            {Number(customer.credit_balance) > 0 ? t("outstanding") : t("cleared")}
                                         </div>
                                     </TableCell>
                                     <TableCell className="text-right px-8">
                                         <div className="flex items-center justify-end gap-3 translate-x-1 group-hover:translate-x-0 transition-transform">
                                             <Link href={`/customers/${customer.id}`}>
                                                 <Button variant="ghost" size="sm" className="h-9 px-4 rounded-xl text-[9px] font-black uppercase tracking-widest bg-primary/5 text-primary opacity-0 group-hover:opacity-100 transition-all hover:bg-primary/20 border border-primary/10">
-                                                    LEDGER <ArrowRight className="ml-1 h-3 w-3" />
+                                                    {t("ledger")} <ArrowRight className="ml-1 h-3 w-3" />
                                                 </Button>
                                             </Link>
                                             <Button variant="ghost" size="icon" className="size-10 rounded-xl text-muted-foreground hover:bg-accent transition-all shrink-0">
@@ -170,7 +173,7 @@ export default async function CustomersPage() {
                     </TableBody>
                 </Table>
                 <div className="px-8 py-5 border-t border-primary/5 bg-primary/[0.02] flex items-center justify-between">
-                    <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-60">Directory Matrix: {customers?.length || 0} Entities Identified</p>
+                    <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-60">{t("directoryMatrix").replace('{count}', (customers?.length || 0).toString())}</p>
                     <div className="flex items-center gap-2">
                         <Button variant="outline" size="sm" className="h-9 w-9 p-0 rounded-xl border-primary/10 bg-primary/10 text-primary font-black text-xs shadow-lg shadow-primary/10">1</Button>
                     </div>

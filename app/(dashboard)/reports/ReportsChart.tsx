@@ -1,12 +1,14 @@
 "use client"
 
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from "recharts"
+import { useTranslations } from "next-intl"
 
 interface ReportsChartProps {
     data: { name: string; revenue: number; profit: number }[];
 }
 
 export function ReportsChart({ data }: ReportsChartProps) {
+    const t = useTranslations("Reports")
     return (
         <div className="h-[350px] w-full mt-4">
             <ResponsiveContainer width="100%" height="100%">
@@ -49,7 +51,7 @@ export function ReportsChart({ data }: ReportsChartProps) {
                             boxShadow: '0 4px 20px -5px rgba(0,0,0,0.1)'
                         }}
                         itemStyle={{ fontWeight: 900 }}
-                        formatter={(value: number, name: string) => [`$${value.toLocaleString()}`, name.charAt(0).toUpperCase() + name.slice(1)]}
+                        formatter={(value: number, name: string) => [`$${value.toLocaleString()}`, t(name.toLowerCase())]}
                     />
                     <Area
                         type="monotone"

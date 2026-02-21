@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
+import { getTranslations } from "next-intl/server"
 import {
     TrendingUp,
     ArrowUpRight,
@@ -26,13 +27,15 @@ import { ReportsBarChart } from "./ReportsBarChart"
 export default async function ReportsPage({ searchParams }: { searchParams: { filter?: string } }) {
     const supabase = createClient()
 
+    const t = await getTranslations("Reports")
+
     const filter = searchParams?.filter || 'q1-2026';
-    let filterLabel = "Q1 2026";
+    let filterLabel = t("q1");
     // For demonstration, these filters change the label, 
     // but in a real scenario, they would affect data queries.
-    if (filter === 'this-month') filterLabel = "This Month";
-    else if (filter === 'last-year') filterLabel = "Fiscal 2025";
-    else if (filter === 'all-time') filterLabel = "All Time";
+    if (filter === 'this-month') filterLabel = t("thisMonth");
+    else if (filter === 'last-year') filterLabel = t("fiscal2025");
+    else if (filter === 'all-time') filterLabel = t("allTime");
 
     // Fetch real stats for reporting
     const { data: products } = await supabase.from("products").select("id, name, stock_quantity, low_stock_threshold, category, cost_price, selling_price, suppliers(name)")
@@ -45,21 +48,21 @@ export default async function ReportsPage({ searchParams }: { searchParams: { fi
     const customerCount = customers?.length || 0
 
     const performanceMetrics = [
-        { label: "Gross Revenue", value: `$${totalRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, trend: "+12.1%", positive: true },
-        { label: "Stock Health", value: `${totalProducts > 0 ? Math.round(((totalProducts - lowStock) / totalProducts) * 100) : 0}%`, trend: "-0.5%", positive: false },
-        { label: "Verified Clients", value: customerCount.toString(), trend: "+4.2%", positive: true },
-        { label: "SKU Velocity", value: totalProducts.toString(), trend: "+3.2%", positive: true },
+        { label: t("grossRevenue"), value: `$${totalRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, trend: "+12.1%", positive: true },
+        { label: t("stockHealth"), value: `${totalProducts > 0 ? Math.round(((totalProducts - lowStock) / totalProducts) * 100) : 0}%`, trend: "-0.5%", positive: false },
+        { label: t("verifiedClients"), value: customerCount.toString(), trend: "+4.2%", positive: true },
+        { label: t("skuVelocity"), value: totalProducts.toString(), trend: "+3.2%", positive: true },
     ]
 
     // Real Chart Data: Revenue Velocity (Last 6 Months)
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthKeys = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
     const monthlyDataMap: Record<string, { revenue: number; profit: number, sortKey: string, name: string }> = {};
 
     // Initialize last 6 months
     for (let i = 5; i >= 0; i--) {
         const d = new Date();
         d.setMonth(d.getMonth() - i);
-        const name = monthNames[d.getMonth()];
+        const name = t(`months.${monthKeys[d.getMonth()]}`);
         const sortKey = `${d.getFullYear()}-${String(d.getMonth()).padStart(2, '0')}`;
         monthlyDataMap[sortKey] = { revenue: 0, profit: 0, sortKey, name };
     }
@@ -89,7 +92,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: { fi
 
     if (products) {
         products.forEach(p => {
-            const cat = p.category || 'Uncategorized';
+            const cat = p.category || t("uncategorized");
             const val = (p.stock_quantity || 0) * (p.cost_price || 0);
             if (!categoryMap[cat]) categoryMap[cat] = 0;
             categoryMap[cat] += val;
@@ -109,7 +112,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: { fi
         }));
 
     if (pieData.length === 0) {
-        pieData = [{ name: "No Stock", value: 100, color: "#cbd5e1" }];
+        pieData = [{ name: t("noStock"), value: 100, color: "#cbd5e1" }];
     }
 
     // Real Data: Supplier Exposure
@@ -118,7 +121,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: { fi
         products.forEach(p => {
             // Supabase returns related objects or arrays, depending on the schema
             const supplierObj = p.suppliers as any;
-            const supplierName = supplierObj?.name || 'Unknown Supplier';
+            const supplierName = supplierObj?.name || t("unknownSupplier");
             const val = (p.stock_quantity || 0) * (p.cost_price || 0);
             if (!supplierMap[supplierName]) supplierMap[supplierName] = 0;
             supplierMap[supplierName] += val;
@@ -133,7 +136,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: { fi
     // Real Data: Top Products by Profit Potential
     const productProfitData = (products || [])
         .map(p => ({
-            name: p.name?.length > 12 ? p.name.substring(0, 12) + '...' : p.name || 'Unknown',
+            name: p.name?.length > 12 ? p.name.substring(0, 12) + '...' : p.name || t("unknown"),
             value: Math.round(((p.selling_price || 0) - (p.cost_price || 0)) * (p.stock_quantity || 0)) || 0
         }))
         .filter(p => p.value > 0)
@@ -145,7 +148,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: { fi
             {/* Page Header */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tighter text-foreground leading-none">Intelligence Hub</h1>
+                    <h1 className="text-3xl font-black tracking-tighter text-foreground leading-none">{t("title")}</h1>
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -157,21 +160,21 @@ export default async function ReportsPage({ searchParams }: { searchParams: { fi
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48 rounded-xl">
                             <DropdownMenuItem asChild className="text-xs font-bold py-2.5 cursor-pointer">
-                                <Link href="/reports?filter=this-month">This Month</Link>
+                                <Link href="/reports?filter=this-month">{t("thisMonth")}</Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild className="text-xs font-bold py-2.5 cursor-pointer">
-                                <Link href="/reports?filter=q1-2026">Q1 2026</Link>
+                                <Link href="/reports?filter=q1-2026">{t("q1")}</Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild className="text-xs font-bold py-2.5 cursor-pointer">
-                                <Link href="/reports?filter=last-year">Fiscal 2025</Link>
+                                <Link href="/reports?filter=last-year">{t("fiscal2025")}</Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild className="text-xs font-bold py-2.5 cursor-pointer">
-                                <Link href="/reports?filter=all-time">All Time</Link>
+                                <Link href="/reports?filter=all-time">{t("allTime")}</Link>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                     <Button className="bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-xl shadow-primary/20 rounded-2xl gap-2 h-12 px-8 transition-all hover:scale-[1.02] active:scale-[0.98]">
-                        <Download className="h-5 w-5 stroke-[3px]" /> GENERATE PDF
+                        <Download className="h-5 w-5 stroke-[3px]" /> {t("generatePdf")}
                     </Button>
                 </div>
             </div>
@@ -207,13 +210,13 @@ export default async function ReportsPage({ searchParams }: { searchParams: { fi
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl font-black flex items-center gap-3">
-                                    <TrendingUp className="h-5 w-5 text-primary" /> Revenue Velocity
+                                    <TrendingUp className="h-5 w-5 text-primary" /> {t("revenueVelocity")}
                                 </CardTitle>
-                                <p className="text-xs text-muted-foreground mt-1 font-bold uppercase tracking-wider opacity-60">Comparative financial growth • Monthly interval</p>
+                                <p className="text-xs text-muted-foreground mt-1 font-bold uppercase tracking-wider opacity-60">{t("revenueVelocitySubtitle")}</p>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Button variant="ghost" size="sm" className="h-8 rounded-lg text-[9px] font-black uppercase text-muted-foreground hover:bg-primary/10">Linear</Button>
-                                <Button variant="ghost" size="sm" className="h-8 rounded-lg text-[9px] font-black uppercase bg-primary/10 text-primary border border-primary/20">Exponential</Button>
+                                <Button variant="ghost" size="sm" className="h-8 rounded-lg text-[9px] font-black uppercase text-muted-foreground hover:bg-primary/10">{t("linear")}</Button>
+                                <Button variant="ghost" size="sm" className="h-8 rounded-lg text-[9px] font-black uppercase bg-primary/10 text-primary border border-primary/20">{t("exponential")}</Button>
                             </div>
                         </div>
                     </CardHeader>
@@ -226,9 +229,9 @@ export default async function ReportsPage({ searchParams }: { searchParams: { fi
                 <Card className="glass-card overflow-hidden">
                     <CardHeader className="border-b border-primary/5 p-7">
                         <CardTitle className="text-xl font-black flex items-center gap-3">
-                            <Layers className="h-5 w-5 text-primary" /> Stock Weighted
+                            <Layers className="h-5 w-5 text-primary" /> {t("stockWeighted")}
                         </CardTitle>
-                        <p className="text-xs text-muted-foreground mt-1 font-bold uppercase tracking-wider opacity-60">Resource allocation strategy</p>
+                        <p className="text-xs text-muted-foreground mt-1 font-bold uppercase tracking-wider opacity-60">{t("resourceAllocation")}</p>
                     </CardHeader>
                     <CardContent className="p-7 space-y-6">
                         <ReportsPieChart data={pieData} />
@@ -258,9 +261,9 @@ export default async function ReportsPage({ searchParams }: { searchParams: { fi
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl font-black flex items-center gap-3">
-                                    <Building2 className="h-5 w-5 text-primary" /> Supplier Exposure
+                                    <Building2 className="h-5 w-5 text-primary" /> {t("supplierExposure")}
                                 </CardTitle>
-                                <p className="text-xs text-muted-foreground mt-1 font-bold uppercase tracking-wider opacity-60">Stock valuation per vendor</p>
+                                <p className="text-xs text-muted-foreground mt-1 font-bold uppercase tracking-wider opacity-60">{t("stockValuationPerVendor")}</p>
                             </div>
                         </div>
                     </CardHeader>
@@ -275,9 +278,9 @@ export default async function ReportsPage({ searchParams }: { searchParams: { fi
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl font-black flex items-center gap-3">
-                                    <PackageCheck className="h-5 w-5 text-blue-500" /> Margin Leaders
+                                    <PackageCheck className="h-5 w-5 text-blue-500" /> {t("marginLeaders")}
                                 </CardTitle>
-                                <p className="text-xs text-muted-foreground mt-1 font-bold uppercase tracking-wider opacity-60">Top products by total profit potential</p>
+                                <p className="text-xs text-muted-foreground mt-1 font-bold uppercase tracking-wider opacity-60">{t("topProductsMargin")}</p>
                             </div>
                         </div>
                     </CardHeader>

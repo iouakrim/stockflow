@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
+import { getTranslations } from "next-intl/server"
 import { Supplier } from "@/types"
 import {
     Plus,
@@ -32,21 +33,23 @@ export default async function SuppliersPage() {
     // Calculations for header stats
     const totalSuppliers = suppliers?.length || 0
 
+    const t = await getTranslations("Suppliers")
+
     return (
         <div className="flex-1 space-y-6 animate-in fade-in duration-700 pb-20">
             {/* Page Header */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tighter text-foreground leading-none">Supply Chain Matrix</h1>
+                    <h1 className="text-3xl font-black tracking-tighter text-foreground leading-none">{t("title")}</h1>
                 </div>
 
                 <div className="flex items-center gap-3">
                     <Button variant="outline" className="border-primary/10 bg-card/40 backdrop-blur rounded-2xl h-12 px-6 font-bold text-xs gap-2 transition-all hover:bg-primary/5 active:scale-95">
-                        <Download className="h-4 w-4 text-primary" /> EXPORT REPORTS
+                        <Download className="h-4 w-4 text-primary" /> {t("exportReports")}
                     </Button>
                     <Link href="/suppliers/new">
                         <Button className="bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-xl shadow-primary/20 rounded-2xl gap-2 h-12 px-8 transition-all hover:scale-[1.02] active:scale-[0.98]">
-                            <Plus className="h-5 w-5 stroke-[3px]" /> ONBOARD PARTNER
+                            <Plus className="h-5 w-5 stroke-[3px]" /> {t("onboardPartner")}
                         </Button>
                     </Link>
                 </div>
@@ -60,7 +63,7 @@ export default async function SuppliersPage() {
                             <Building2 className="h-7 w-7" />
                         </div>
                         <div>
-                            <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">Total Partners</p>
+                            <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">{t("totalPartners")}</p>
                             <p className="text-3xl font-black tracking-tighter">{totalSuppliers}</p>
                         </div>
                     </CardContent>
@@ -72,7 +75,7 @@ export default async function SuppliersPage() {
                             <Truck className="h-7 w-7" />
                         </div>
                         <div>
-                            <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">Active Deliveries</p>
+                            <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">{t("activeDeliveries")}</p>
                             <p className="text-3xl font-black tracking-tighter">04</p>
                         </div>
                     </CardContent>
@@ -84,7 +87,7 @@ export default async function SuppliersPage() {
                             <ShieldCheck className="h-7 w-7" />
                         </div>
                         <div>
-                            <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">Quality Certified</p>
+                            <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">{t("qualityCertified")}</p>
                             <p className="text-3xl font-black tracking-tighter">{Math.floor(totalSuppliers * 0.8)}</p>
                         </div>
                     </CardContent>
@@ -95,9 +98,9 @@ export default async function SuppliersPage() {
             <div className="space-y-6 pb-20">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                     <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar w-full md:w-auto">
-                        <Button variant="secondary" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black bg-primary text-background uppercase tracking-widest shadow-lg shadow-primary/20">All Partners</Button>
-                        <Button variant="ghost" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black text-muted-foreground hover:text-primary uppercase tracking-widest transition-all">Wholesalers</Button>
-                        <Button variant="ghost" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black text-muted-foreground hover:text-primary uppercase tracking-widest transition-all">Farmers</Button>
+                        <Button variant="secondary" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black bg-primary text-background uppercase tracking-widest shadow-lg shadow-primary/20">{t("allPartners")}</Button>
+                        <Button variant="ghost" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black text-muted-foreground hover:text-primary uppercase tracking-widest transition-all">{t("wholesalers")}</Button>
+                        <Button variant="ghost" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black text-muted-foreground hover:text-primary uppercase tracking-widest transition-all">{t("farmers")}</Button>
                     </div>
 
                     <div className="flex items-center gap-3 w-full md:w-auto">
@@ -105,7 +108,7 @@ export default async function SuppliersPage() {
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                             <input
                                 className="w-full bg-card/40 border-primary/10 rounded-2xl pl-11 pr-4 py-2.5 text-sm font-medium focus:ring-1 focus:ring-primary transition-all placeholder:text-muted-foreground/30 border"
-                                placeholder="Search by name, contact or category..."
+                                placeholder={t("search")}
                             />
                         </div>
                         <Button variant="outline" size="icon" className="size-11 rounded-2xl border-primary/10 bg-card/40 transition-all hover:bg-primary/10 hover:text-primary active:scale-95">
@@ -118,12 +121,12 @@ export default async function SuppliersPage() {
                     <Table>
                         <TableHeader className="bg-primary/[0.03]">
                             <TableRow className="border-b border-primary/5 hover:bg-transparent">
-                                <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5 px-8">Company Entity</TableHead>
-                                <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">Main Contact</TableHead>
-                                <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">Communications</TableHead>
-                                <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">Classification</TableHead>
-                                <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">Reliability</TableHead>
-                                <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5 text-right px-8">Actions</TableHead>
+                                <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5 px-8">{t("companyEntity")}</TableHead>
+                                <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">{t("mainContact")}</TableHead>
+                                <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">{t("communications")}</TableHead>
+                                <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">{t("classification")}</TableHead>
+                                <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">{t("reliability")}</TableHead>
+                                <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5 text-right px-8">{t("actions")}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -133,12 +136,12 @@ export default async function SuppliersPage() {
                                         <div className="flex flex-col items-center gap-4">
                                             <Building2 className="h-10 w-10 opacity-20" />
                                             <div className="space-y-1">
-                                                <p className="text-xs font-black uppercase tracking-[0.2em]">Supplier Directory Empty</p>
-                                                <p className="text-[10px] font-medium tracking-tight">Onboard your first supplier to begin supply chain monitoring.</p>
+                                                <p className="text-xs font-black uppercase tracking-[0.2em]">{t("directoryEmpty")}</p>
+                                                <p className="text-[10px] font-medium tracking-tight">{t("onboardFirst")}</p>
                                             </div>
                                             <Link href="/suppliers/new" className="mt-4">
                                                 <Button className="h-10 px-6 rounded-xl bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 font-black text-[10px] tracking-widest uppercase">
-                                                    Initialize First Onboarding
+                                                    {t("initializeFirstOnboarding")}
                                                 </Button>
                                             </Link>
                                         </div>
@@ -156,7 +159,7 @@ export default async function SuppliersPage() {
                                                     <span className="font-black text-sm tracking-tight truncate group-hover:text-primary transition-colors underline-offset-4 group-hover:underline">{supplier.name}</span>
                                                     <div className="flex items-center gap-1.5 opacity-40 mt-0.5">
                                                         <MapPin className="h-3 w-3" />
-                                                        <span className="text-[10px] font-medium truncate max-w-[150px]">{supplier.address || "Location unspecified"}</span>
+                                                        <span className="text-[10px] font-medium truncate max-w-[150px]">{supplier.address || t("unspecifiedLocation")}</span>
                                                     </div>
                                                 </div>
                                             </Link>
@@ -164,7 +167,7 @@ export default async function SuppliersPage() {
                                         <TableCell>
                                             <div className="flex flex-col">
                                                 <span className="text-sm font-black tracking-tighter">{supplier.contact_name || "N/A"}</span>
-                                                <span className="text-[9px] text-muted-foreground/40 font-black uppercase tracking-widest mt-0.5">Direct Representative</span>
+                                                <span className="text-[9px] text-muted-foreground/40 font-black uppercase tracking-widest mt-0.5">{t("directRepresentative")}</span>
                                             </div>
                                         </TableCell>
                                         <TableCell>
@@ -181,7 +184,7 @@ export default async function SuppliersPage() {
                                         </TableCell>
                                         <TableCell>
                                             <span className="text-[9px] px-3 py-1.5 rounded-full bg-accent/50 text-muted-foreground border border-primary/5 font-black uppercase tracking-widest group-hover:border-primary/20 transition-all">
-                                                {supplier.category || "General Supply"}
+                                                {supplier.category || t("generalSupply")}
                                             </span>
                                         </TableCell>
                                         <TableCell>
@@ -196,7 +199,7 @@ export default async function SuppliersPage() {
                                             <div className="flex items-center justify-end gap-3">
                                                 <Link href={`/suppliers/${supplier.id}`}>
                                                     <Button variant="ghost" size="sm" className="h-9 px-4 rounded-xl text-[9px] font-black uppercase tracking-widest bg-primary/5 text-primary opacity-0 group-hover:opacity-100 transition-all hover:bg-primary/20 border border-primary/10">
-                                                        Logistics <ArrowUpRight className="ml-1 h-3 w-3" />
+                                                        {t("logistics")} <ArrowUpRight className="ml-1 h-3 w-3" />
                                                     </Button>
                                                 </Link>
                                                 <Button variant="ghost" size="icon" className="size-10 rounded-xl text-muted-foreground hover:bg-accent transition-all shrink-0">
@@ -211,7 +214,7 @@ export default async function SuppliersPage() {
                     </Table>
 
                     <div className="px-8 py-5 border-t border-primary/5 bg-primary/[0.02] flex items-center justify-between">
-                        <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-60">Supply Matrix: {suppliers?.length || 0} Entities Registered</p>
+                        <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-60">{t("supplyMatrix").replace('{count}', (suppliers?.length || 0).toString())}</p>
                         <div className="flex items-center gap-2">
                             <Button variant="outline" size="sm" className="h-9 w-9 p-0 rounded-xl border-primary/10 bg-primary/10 text-primary font-black text-xs shadow-lg shadow-primary/10">1</Button>
                         </div>

@@ -63,7 +63,7 @@ export function POSClient({ products, customers }: POSClientProps) {
     const [selectedCustomerId, setSelectedCustomerId] = useState<string>("walk-in")
     const [isCustomerOpen, setIsCustomerOpen] = useState(false)
     const [isProcessing, setIsProcessing] = useState(false)
-    const [activeSupplier, setActiveSupplier] = useState("All")
+    const [activeSupplier, setActiveSupplier] = useState(t("all"))
     const [isSupplierOpen, setIsSupplierOpen] = useState(false)
     const [showSuccess, setShowSuccess] = useState(false)
     const [completedSaleId, setCompletedSaleId] = useState<string | null>(null)
@@ -122,7 +122,7 @@ export function POSClient({ products, customers }: POSClientProps) {
         const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             p.barcode?.includes(searchTerm) ||
             p.sku?.toLowerCase().includes(searchTerm.toLowerCase())
-        const matchesSupplier = activeSupplier === "All" || (p.suppliers as any)?.name === activeSupplier
+        const matchesSupplier = activeSupplier === t("all") || (p.suppliers as any)?.name === activeSupplier
         return matchesSearch && matchesSupplier
     })
 
@@ -202,7 +202,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                 {items.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 px-6 border-2 border-dashed border-primary/5 rounded-3xl bg-accent/5">
                         <ShoppingCart className="h-8 w-8 text-muted-foreground/20 mb-3" />
-                        <p className="text-[9px] font-black uppercase text-muted-foreground/40 tracking-widest text-center">Awaiting Protocol Input...</p>
+                        <p className="text-[9px] font-black uppercase text-muted-foreground/40 tracking-widest text-center">{t("awaitingInput")}</p>
                     </div>
                 ) : (
                     items.map(item => (
@@ -215,7 +215,7 @@ export function POSClient({ products, customers }: POSClientProps) {
 
                             <div className="flex-1 min-w-0 relative z-10">
                                 <p className="font-bold text-xs truncate tracking-tight uppercase group-hover:text-primary transition-colors">{item.name}</p>
-                                <p className="text-[9px] text-muted-foreground/60 font-black uppercase tracking-widest mt-0.5">${item.selling_price.toFixed(2)} / {item.unit || 'UN'}</p>
+                                <p className="text-[9px] text-muted-foreground/60 font-black uppercase tracking-widest mt-0.5">${item.selling_price.toFixed(2)} / {item.unit ? t(item.unit.toLowerCase()) : t("un")}</p>
                             </div>
 
                             <div className="flex flex-col items-end gap-1.5 shrink-0 relative z-10">
@@ -261,7 +261,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                             <button
                                 onClick={() => removeItem(item.id)}
                                 className="size-8 rounded-xl shrink-0 flex items-center justify-center text-muted-foreground/30 hover:bg-destructive/10 hover:text-destructive transition-colors relative z-10 ml-0.5"
-                                title="Remove Item"
+                                title={t("removeItem")}
                             >
                                 <Trash2 className="h-4 w-4" />
                             </button>
@@ -277,13 +277,13 @@ export function POSClient({ products, customers }: POSClientProps) {
             {/* Smart Discount Toggle */}
             <div className="bg-primary/[0.02] p-4 rounded-3xl border border-primary/5 space-y-3">
                 <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Apply Discount</span>
+                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t("applyDiscount")}</span>
                     {discount > 0 && (
                         <button
                             onClick={() => setDiscount(0, 'percentage')}
                             className="text-[9px] font-bold text-destructive hover:underline uppercase tracking-widest"
                         >
-                            Clear
+                            {t("clear")}
                         </button>
                     )}
                 </div>
@@ -347,11 +347,11 @@ export function POSClient({ products, customers }: POSClientProps) {
             >
                 {showSuccess ? (
                     <div className="flex items-center gap-3">
-                        <CheckCircle2 className="h-5 w-5" /> COMPLETED
+                        <CheckCircle2 className="h-5 w-5" /> {t("completed")}
                     </div>
                 ) : isProcessing ? (
                     <div className="flex items-center gap-3">
-                        <span className="size-4 border-2 border-background/20 border-t-background rounded-full animate-spin" /> PROCESSING
+                        <span className="size-4 border-2 border-background/20 border-t-background rounded-full animate-spin" /> {t("processing")}
                     </div>
                 ) : (
                     <div className="flex items-center gap-3">
@@ -395,9 +395,9 @@ export function POSClient({ products, customers }: POSClientProps) {
                                     </PopoverTrigger>
                                     <PopoverContent className="w-[300px] p-0 rounded-2xl border-primary/10 shadow-2xl">
                                         <Command>
-                                            <CommandInput placeholder="Search clients..." className="h-12 font-bold" />
+                                            <CommandInput placeholder={t("searchClients")} className="h-12 font-bold" />
                                             <CommandList className="max-h-[300px] custom-scrollbar">
-                                                <CommandEmpty className="py-6 text-center text-sm font-medium">No client found.</CommandEmpty>
+                                                <CommandEmpty className="py-6 text-center text-sm font-medium">{t("noClientFound")}</CommandEmpty>
                                                 <CommandGroup>
                                                     <CommandItem
                                                         value="walk-in"
@@ -455,7 +455,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                                 <div className="relative flex-1">
                                     <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground opacity-50" />
                                     <Input
-                                        placeholder="CLIENT NAME *"
+                                        placeholder={t("clientName")}
                                         className="pl-9 h-11 border-primary/5 focus-visible:ring-primary/20 bg-background/80 uppercase font-bold text-sm"
                                         value={newCustomerName}
                                         onChange={(e) => setNewCustomerName(e.target.value)}
@@ -465,7 +465,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                                 <div className="relative flex-1">
                                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground opacity-50" />
                                     <Input
-                                        placeholder="PHONE NUMBER"
+                                        placeholder={t("phoneNumber")}
                                         className="pl-9 h-11 border-primary/5 focus-visible:ring-primary/20 bg-background/80 font-bold text-sm"
                                         value={newCustomerPhone}
                                         onChange={(e) => setNewCustomerPhone(e.target.value)}
@@ -496,7 +496,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                                         setIsCreatingCustomer(false)
                                     }}
                                 >
-                                    {isCreatingCustomer ? <Loader2 className="h-4 w-4 animate-spin" /> : "SAVE"}
+                                    {isCreatingCustomer ? <Loader2 className="h-4 w-4 animate-spin" /> : t("save")}
                                 </Button>
                             </div>
                         )}
@@ -529,15 +529,15 @@ export function POSClient({ products, customers }: POSClientProps) {
                     {/* Supplier Smart Filters */}
                     {suppliers.length > 0 && (
                         <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar mask-fade-right select-none">
-                            <span className="text-[9px] font-black uppercase text-muted-foreground/40 tracking-widest mr-2 shrink-0">Suppliers:</span>
+                            <span className="text-[9px] font-black uppercase text-muted-foreground/40 tracking-widest mr-2 shrink-0">{t("suppliers")}</span>
                             <button
-                                onClick={() => setActiveSupplier("All")}
-                                className={`h-8 px-4 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap active:scale-95 border ${activeSupplier === "All"
+                                onClick={() => setActiveSupplier(t("all"))}
+                                className={`h-8 px-4 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap active:scale-95 border ${activeSupplier === t("all")
                                     ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'
                                     : 'bg-card/40 text-muted-foreground border-primary/5 hover:border-primary/20 hover:text-primary'
                                     }`}
                             >
-                                All
+                                {t("all")}
                             </button>
                             {/* Top 3 Suppliers */}
                             {suppliers.slice(0, 3).map(s => (
@@ -567,17 +567,17 @@ export function POSClient({ products, customers }: POSClientProps) {
                                                     : 'bg-card/40 text-muted-foreground border-primary/5 hover:border-primary/20 hover:text-primary'
                                                     }`}
                                             >
-                                                {activeSupplier !== "All" && !suppliers.slice(0, 3).find(s => s.name === activeSupplier)
+                                                {activeSupplier !== t("all") && !suppliers.slice(0, 3).find(s => s.name === activeSupplier)
                                                     ? activeSupplier
-                                                    : "More Suppliers..."}
+                                                    : t("moreSuppliers")}
                                                 <ChevronDown className="h-3 w-3 opacity-50" />
                                             </Button>
                                         </PopoverTrigger>
                                         <PopoverContent className="w-[280px] p-0 rounded-2xl border-primary/10 shadow-xl bg-card/95 backdrop-blur-xl" align="start">
                                             <Command className="bg-transparent">
-                                                <CommandInput placeholder="Search supplier..." className="h-12 border-none focus:ring-0 uppercase text-xs font-bold font-sans" />
+                                                <CommandInput placeholder={t("searchSupplier")} className="h-12 border-none focus:ring-0 uppercase text-xs font-bold font-sans" />
                                                 <CommandList className="max-h-[300px] custom-scrollbar p-2">
-                                                    <CommandEmpty className="py-6 text-center text-xs font-bold text-muted-foreground uppercase">No supplier found.</CommandEmpty>
+                                                    <CommandEmpty className="py-6 text-center text-xs font-bold text-muted-foreground uppercase">{t("noSupplierFound")}</CommandEmpty>
                                                     <CommandGroup>
                                                         {suppliers.map((s) => (
                                                             <CommandItem
@@ -590,7 +590,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                                                                 }}
                                                             >
                                                                 <span className="uppercase text-xs">{s.name}</span>
-                                                                <span className="text-[10px] opacity-40">{s.count} items</span>
+                                                                <span className="text-[10px] opacity-40">{s.count} {t("items")}</span>
                                                             </CommandItem>
                                                         ))}
                                                     </CommandGroup>
@@ -632,7 +632,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                                         <div className="flex items-start justify-between gap-4 w-full">
                                             {/* Left: Product Details */}
                                             <div className="flex-1 min-w-0">
-                                                <p className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-1">{product.category || 'General'}</p>
+                                                <p className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-1">{product.category || t("general")}</p>
                                                 <h3 className="font-black text-base uppercase tracking-tight truncate group-hover:text-primary transition-colors">
                                                     {product.name}
                                                 </h3>
@@ -647,7 +647,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                                             {/* Right: Stock & Price Info */}
                                             <div className="flex flex-col items-end shrink-0 gap-3">
                                                 <Badge className={`text-[10px] px-2.5 py-1.5 border-none rounded-xl font-black uppercase tracking-widest shadow-sm transition-colors ${quantity > 0 ? 'bg-primary text-primary-foreground' : isLow ? 'bg-destructive text-destructive-foreground animate-pulse shadow-destructive/20' : 'bg-accent text-muted-foreground'}`}>
-                                                    {product.stock_quantity} <span className="opacity-50 ml-1">{product.unit || 'UN'}</span>
+                                                    {product.stock_quantity} <span className="opacity-50 ml-1">{product.unit ? t(product.unit.toLowerCase()) : t("un")}</span>
                                                 </Badge>
 
                                                 {/* Price Moved to Right */}
@@ -655,7 +655,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                                                     <span className="font-black text-xl tracking-tighter text-emerald-500/90 group-hover:text-emerald-500 transition-colors leading-none">
                                                         ${product.selling_price.toFixed(2)}
                                                     </span>
-                                                    <span className="text-[9px] uppercase font-black text-muted-foreground/50 mt-1">/ {product.unit || 'UN'}</span>
+                                                    <span className="text-[9px] uppercase font-black text-muted-foreground/50 mt-1">/ {product.unit ? t(product.unit.toLowerCase()) : t("un")}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -667,10 +667,10 @@ export function POSClient({ products, customers }: POSClientProps) {
                                             <div className="flex items-center gap-2">
                                                 {isWeightBased ? (
                                                     <>
-                                                        <button onClick={(e) => handleQuickAdd(e, 40)} className="flex-1 h-9 rounded-xl bg-accent/40 hover:bg-primary/10 hover:text-primary text-xs font-black transition-all border border-primary/5 border-b-[3px] active:border-b active:translate-y-px">+40<span className="text-[9px] font-bold opacity-50 ml-0.5">KG</span></button>
-                                                        <button onClick={(e) => handleQuickAdd(e, 100)} className="flex-1 h-9 rounded-xl bg-accent/40 hover:bg-primary/10 hover:text-primary text-xs font-black transition-all border border-primary/5 border-b-[3px] active:border-b active:translate-y-px">+100<span className="text-[9px] font-bold opacity-50 ml-0.5">KG</span></button>
+                                                        <button onClick={(e) => handleQuickAdd(e, 40)} className="flex-1 h-9 rounded-xl bg-accent/40 hover:bg-primary/10 hover:text-primary text-xs font-black transition-all border border-primary/5 border-b-[3px] active:border-b active:translate-y-px">+40<span className="text-[9px] font-bold opacity-50 ml-0.5">{t("kg")}</span></button>
+                                                        <button onClick={(e) => handleQuickAdd(e, 100)} className="flex-1 h-9 rounded-xl bg-accent/40 hover:bg-primary/10 hover:text-primary text-xs font-black transition-all border border-primary/5 border-b-[3px] active:border-b active:translate-y-px">+100<span className="text-[9px] font-bold opacity-50 ml-0.5">{t("kg")}</span></button>
                                                         <button onClick={(e) => handleQuickAdd(e, 1000)} className="flex-1 h-9 rounded-xl bg-accent/40 hover:bg-primary/10 hover:text-primary text-xs font-black transition-all border border-primary/5 border-b-[3px] active:border-b active:translate-y-px">
-                                                            +1K<span className="text-[9px] font-bold opacity-50 ml-0.5">KG</span>
+                                                            +1K<span className="text-[9px] font-bold opacity-50 ml-0.5">{t("kg")}</span>
                                                         </button>
                                                     </>
                                                 ) : (
@@ -715,7 +715,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                                                             className="w-16 h-7 text-xl bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-md p-0 text-primary text-center font-black leading-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                                             onClick={(e) => e.stopPropagation()}
                                                         />
-                                                        <span className="text-[8px] font-black tracking-widest text-muted-foreground/60 uppercase mt-0.5">{product.unit || 'UN'}</span>
+                                                        <span className="text-[8px] font-black tracking-widest text-muted-foreground/60 uppercase mt-0.5">{product.unit ? t(product.unit.toLowerCase()) : t("un")}</span>
                                                     </div>
                                                     <button
                                                         onClick={() => updateQuantity(product.id, quantity + 1)}
@@ -740,19 +740,19 @@ export function POSClient({ products, customers }: POSClientProps) {
                             <div className="p-5 border-b border-primary/10 flex justify-between items-center bg-card">
                                 <h2 className="font-black text-sm flex items-center gap-2">
                                     <CheckCircle2 className="h-5 w-5 text-primary" />
-                                    Transaction Complete
+                                    {t("transactionComplete")}
                                 </h2>
                             </div>
                             <iframe src={`/receipt/${completedSaleId}`} className="flex-1 w-full bg-white relative z-0" />
                             <div className="p-4 bg-card border-t border-primary/10 flex flex-col gap-3">
                                 <Button onClick={() => window.open(`/receipt/${completedSaleId}?print=true`, '_blank')} className="w-full h-12 rounded-xl bg-black hover:bg-black/90 text-white font-black tracking-widest uppercase shadow-xl shadow-black/10 text-xs gap-2">
-                                    <Printer className="w-4 h-4" /> Print Receipt
+                                    <Printer className="w-4 h-4" /> {t("printReceipt")}
                                 </Button>
                                 <Button onClick={() => window.open(`/receipt/${completedSaleId}?print=true&type=pickup`, '_blank')} className="w-full h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-black tracking-widest uppercase shadow-xl shadow-emerald-500/20 text-xs gap-2">
-                                    <Truck className="w-4 h-4" /> Print Pickup Ticket
+                                    <Truck className="w-4 h-4" /> {t("printPickup")}
                                 </Button>
                                 <Button onClick={handleNewSale} variant="outline" className="w-full h-12 rounded-xl border-2 border-primary/20 hover:bg-primary/5 text-primary font-black tracking-widest uppercase text-xs">
-                                    Next Customer (New Sale)
+                                    {t("nextCustomer")}
                                 </Button>
                             </div>
                         </div>
@@ -775,7 +775,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                                 <div className="size-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
                                     <ShoppingCart className="h-4 w-4" />
                                 </div>
-                                <span>{items.length} ITMS</span>
+                                <span>{items.length} {t("itms")}</span>
                             </div>
                             <div className="flex items-center gap-4">
                                 <span className="text-lg tracking-tighter">${grandTotal.toFixed(2)}</span>
@@ -790,19 +790,19 @@ export function POSClient({ products, customers }: POSClientProps) {
                                 <div className="p-5 border-b border-primary/10 flex justify-between items-center bg-card">
                                     <h2 className="font-black text-sm flex items-center gap-2">
                                         <CheckCircle2 className="h-5 w-5 text-primary" />
-                                        Transaction Complete
+                                        {t("transactionComplete")}
                                     </h2>
                                 </div>
                                 <iframe src={`/receipt/${completedSaleId}`} className="flex-1 w-full bg-white relative z-0" />
                                 <div className="p-4 bg-card border-t border-primary/10 flex flex-col gap-3">
                                     <Button onClick={() => window.open(`/receipt/${completedSaleId}?print=true`, '_blank')} className="w-full h-12 rounded-xl bg-black hover:bg-black/90 text-white font-black tracking-widest uppercase shadow-xl shadow-black/10 text-xs gap-2">
-                                        <Printer className="w-4 h-4" /> Print Receipt
+                                        <Printer className="w-4 h-4" /> {t("printReceipt")}
                                     </Button>
                                     <Button onClick={() => window.open(`/receipt/${completedSaleId}?print=true&type=pickup`, '_blank')} className="w-full h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-black tracking-widest uppercase shadow-xl shadow-emerald-500/20 text-xs gap-2">
-                                        <Truck className="w-4 h-4" /> Print Pickup Ticket
+                                        <Truck className="w-4 h-4" /> {t("printPickup")}
                                     </Button>
                                     <Button onClick={handleNewSale} variant="outline" className="w-full h-12 rounded-xl border-2 border-primary/20 hover:bg-primary/5 text-primary font-black tracking-widest uppercase text-xs">
-                                        Next Customer (New Sale)
+                                        {t("nextCustomer")}
                                     </Button>
                                 </div>
                             </div>
