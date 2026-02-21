@@ -6,20 +6,37 @@ import {
     Calendar,
     ChevronDown,
     Download,
-    FileText,
-    Calculator,
-    Zap,
-    Layers
+    Layers,
+    Building2,
+    PackageCheck
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import Link from "next/link"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { ReportsChart } from "./ReportsChart"
+import { ReportsPieChart } from "./ReportsPieChart"
+import { ReportsBarChart } from "./ReportsBarChart"
 
-export default async function ReportsPage() {
+export default async function ReportsPage({ searchParams }: { searchParams: { filter?: string } }) {
     const supabase = createClient()
 
+    const filter = searchParams?.filter || 'q1-2026';
+    let filterLabel = "Q1 2026";
+    // For demonstration, these filters change the label, 
+    // but in a real scenario, they would affect data queries.
+    if (filter === 'this-month') filterLabel = "This Month";
+    else if (filter === 'last-year') filterLabel = "Fiscal 2025";
+    else if (filter === 'all-time') filterLabel = "All Time";
+
     // Fetch real stats for reporting
-    const { data: products } = await supabase.from("products").select("id, stock_quantity, low_stock_threshold")
-    const { data: sales } = await supabase.from("sales").select("id, total")
+    const { data: products } = await supabase.from("products").select("id, name, stock_quantity, low_stock_threshold, category, cost_price, selling_price, suppliers(name)")
+    const { data: sales } = await supabase.from("sales").select("id, total, created_at")
     const { data: customers } = await supabase.from("customers").select("id")
 
     const totalProducts = products?.length || 0
@@ -34,6 +51,95 @@ export default async function ReportsPage() {
         { label: "SKU Velocity", value: totalProducts.toString(), trend: "+3.2%", positive: true },
     ]
 
+    // Real Chart Data: Revenue Velocity (Last 6 Months)
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthlyDataMap: Record<string, { revenue: number; profit: number, sortKey: string, name: string }> = {};
+
+    // Initialize last 6 months
+    for (let i = 5; i >= 0; i--) {
+        const d = new Date();
+        d.setMonth(d.getMonth() - i);
+        const name = monthNames[d.getMonth()];
+        const sortKey = `${d.getFullYear()}-${String(d.getMonth()).padStart(2, '0')}`;
+        monthlyDataMap[sortKey] = { revenue: 0, profit: 0, sortKey, name };
+    }
+
+    if (sales) {
+        sales.forEach(s => {
+            const d = new Date(s.created_at);
+            const sortKey = `${d.getFullYear()}-${String(d.getMonth()).padStart(2, '0')}`;
+            if (monthlyDataMap[sortKey]) {
+                monthlyDataMap[sortKey].revenue += Number(s.total);
+                monthlyDataMap[sortKey].profit += Number(s.total) * 0.35; // Estimated 35% Margin for MVP
+            }
+        });
+    }
+
+    const chartData = Object.values(monthlyDataMap)
+        .sort((a, b) => a.sortKey.localeCompare(b.sortKey))
+        .map(item => ({
+            name: item.name,
+            revenue: Math.round(item.revenue),
+            profit: Math.round(item.profit)
+        }));
+
+    // Real Chart Data: Stock Weighted
+    const categoryMap: Record<string, number> = {};
+    let totalStockValue = 0;
+
+    if (products) {
+        products.forEach(p => {
+            const cat = p.category || 'Uncategorized';
+            const val = (p.stock_quantity || 0) * (p.cost_price || 0);
+            if (!categoryMap[cat]) categoryMap[cat] = 0;
+            categoryMap[cat] += val;
+            totalStockValue += val;
+        });
+    }
+
+    const colors = ["#11d473", "#3b82f6", "#f59e0b", "#a855f7", "#ec4899", "#06b6d4"];
+    let pieData = Object.keys(categoryMap)
+        .filter(k => categoryMap[k] > 0)
+        .sort((a, b) => categoryMap[b] - categoryMap[a])
+        .slice(0, 4) // Top 4 categories
+        .map((k, idx) => ({
+            name: k,
+            value: Number(((categoryMap[k] / totalStockValue) * 100).toFixed(1)),
+            color: colors[idx % colors.length]
+        }));
+
+    if (pieData.length === 0) {
+        pieData = [{ name: "No Stock", value: 100, color: "#cbd5e1" }];
+    }
+
+    // Real Data: Supplier Exposure
+    const supplierMap: Record<string, number> = {};
+    if (products) {
+        products.forEach(p => {
+            // Supabase returns related objects or arrays, depending on the schema
+            const supplierObj = p.suppliers as any;
+            const supplierName = supplierObj?.name || 'Unknown Supplier';
+            const val = (p.stock_quantity || 0) * (p.cost_price || 0);
+            if (!supplierMap[supplierName]) supplierMap[supplierName] = 0;
+            supplierMap[supplierName] += val;
+        });
+    }
+
+    const supplierData = Object.keys(supplierMap)
+        .map(name => ({ name: name.length > 12 ? name.substring(0, 12) + '...' : name, value: Math.round(supplierMap[name]) }))
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 5); // top 5 suppliers
+
+    // Real Data: Top Products by Profit Potential
+    const productProfitData = (products || [])
+        .map(p => ({
+            name: p.name?.length > 12 ? p.name.substring(0, 12) + '...' : p.name || 'Unknown',
+            value: Math.round(((p.selling_price || 0) - (p.cost_price || 0)) * (p.stock_quantity || 0)) || 0
+        }))
+        .filter(p => p.value > 0)
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 5); // top 5 products by potential profit in stock
+
     return (
         <div className="flex-1 space-y-6 animate-in fade-in duration-700 pb-20">
             {/* Page Header */}
@@ -43,9 +149,27 @@ export default async function ReportsPage() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" className="border-primary/10 bg-card/40 backdrop-blur rounded-2xl h-12 px-6 font-bold text-xs gap-2 transition-all hover:bg-primary/5 active:scale-95">
-                        <Calendar className="h-4 w-4 text-primary" /> Q1 2026 <ChevronDown className="h-3.5 w-3.5 opacity-40 ml-1" />
-                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" className="border-primary/10 bg-card/40 backdrop-blur rounded-2xl h-12 px-6 font-bold text-xs gap-2 transition-all hover:bg-primary/5 active:scale-95 group">
+                                <Calendar className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" /> {filterLabel} <ChevronDown className="h-3.5 w-3.5 opacity-40 ml-1" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48 rounded-xl">
+                            <DropdownMenuItem asChild className="text-xs font-bold py-2.5 cursor-pointer">
+                                <Link href="/reports?filter=this-month">This Month</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild className="text-xs font-bold py-2.5 cursor-pointer">
+                                <Link href="/reports?filter=q1-2026">Q1 2026</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild className="text-xs font-bold py-2.5 cursor-pointer">
+                                <Link href="/reports?filter=last-year">Fiscal 2025</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild className="text-xs font-bold py-2.5 cursor-pointer">
+                                <Link href="/reports?filter=all-time">All Time</Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                     <Button className="bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-xl shadow-primary/20 rounded-2xl gap-2 h-12 px-8 transition-all hover:scale-[1.02] active:scale-[0.98]">
                         <Download className="h-5 w-5 stroke-[3px]" /> GENERATE PDF
                     </Button>
@@ -56,7 +180,7 @@ export default async function ReportsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {performanceMetrics.map((metric, i) => (
                     <Card key={i} className="glass-card group hover:scale-[1.02] transition-all duration-300">
-                        <CardContent className="p-7">
+                        <CardContent className="p-5">
                             <div className="flex items-center justify-between mb-2">
                                 <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em]">{metric.label}</p>
                                 <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg border flex items-center gap-1 ${metric.positive ? 'bg-primary/10 text-primary border-primary/20' : 'bg-destructive/10 text-destructive border-destructive/20'}`}>
@@ -64,8 +188,8 @@ export default async function ReportsPage() {
                                     {metric.trend}
                                 </span>
                             </div>
-                            <h3 className="text-3xl font-black tracking-tighter">{metric.value}</h3>
-                            <div className="mt-4 w-full h-1 bg-accent rounded-full overflow-hidden">
+                            <h3 className="text-2xl font-black tracking-tighter">{metric.value}</h3>
+                            <div className="mt-3 w-full h-1 bg-accent rounded-full overflow-hidden">
                                 <div
                                     className={`h-full rounded-full ${metric.positive ? 'bg-primary' : 'bg-destructive'} opacity-40`}
                                     style={{ width: `${60 + (i * 10)}%` }}
@@ -93,64 +217,8 @@ export default async function ReportsPage() {
                             </div>
                         </div>
                     </CardHeader>
-                    <CardContent className="p-8 pt-12">
-                        <div className="h-[350px] w-full relative group">
-                            <svg className="w-full h-full overflow-visible" viewBox="0 0 1000 300" preserveAspectRatio="none">
-                                <defs>
-                                    <linearGradient id="blue-gradient" x1="0%" x2="0%" y1="0%" y2="100%">
-                                        <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.2" />
-                                        <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
-                                    </linearGradient>
-                                    <linearGradient id="green-gradient" x1="0%" x2="0%" y1="0%" y2="100%">
-                                        <stop offset="0%" stopColor="#11d473" stopOpacity="0.2" />
-                                        <stop offset="100%" stopColor="#11d473" stopOpacity="0" />
-                                    </linearGradient>
-                                </defs>
-
-                                {/* Professional Vertical Grids */}
-                                {[0, 250, 500, 750, 1000].map(x => (
-                                    <line key={x} x1={x} y1="0" x2={x} y2="300" stroke="currentColor" strokeOpacity="0.03" strokeDasharray="4 4" />
-                                ))}
-
-                                {/* Horizontal Reference Lines */}
-                                {[0, 75, 150, 225, 300].map(y => (
-                                    <line key={y} x1="0" y1={y} x2="1000" y2={y} stroke="currentColor" strokeOpacity="0.05" />
-                                ))}
-
-                                {/* Baseline Series (Prior Year) */}
-                                <path
-                                    d="M0,280 C100,260 200,270 300,240 C400,210 500,230 600,180 C700,200 800,140 900,160 C950,170 1000,120 1000,120 L1000,300 L0,300 Z"
-                                    fill="url(#blue-gradient)"
-                                />
-                                <path
-                                    d="M0,280 C100,260 200,270 300,240 C400,210 500,230 600,180 C700,200 800,140 900,160 C950,170 1000,120 1000,120"
-                                    fill="none"
-                                    stroke="#3b82f6"
-                                    strokeWidth="3"
-                                    strokeDasharray="5 5"
-                                    opacity="0.4"
-                                />
-
-                                {/* Growth Series (Current) */}
-                                <path
-                                    d="M0,240 C100,220 200,210 300,160 C400,110 500,140 600,80 C700,100 800,40 900,60 C950,70 1000,20 1000,20 L1000,300 L0,300 Z"
-                                    fill="url(#green-gradient)"
-                                />
-                                <path
-                                    d="M0,240 C100,220 200,210 300,160 C400,110 500,140 600,80 C700,100 800,40 900,60 C950,70 1000,20 1000,20"
-                                    fill="none"
-                                    stroke="#11d473"
-                                    strokeWidth="4"
-                                    strokeLinecap="round"
-                                />
-                            </svg>
-
-                            <div className="flex justify-between mt-8 pr-2">
-                                {['OCT', 'NOV', 'DEC', 'JAN', 'FEB', 'MAR'].map(m => (
-                                    <span key={m} className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">{m}</span>
-                                ))}
-                            </div>
-                        </div>
+                    <CardContent className="p-8 pt-6">
+                        <ReportsChart data={chartData} />
                     </CardContent>
                 </Card>
 
@@ -162,32 +230,18 @@ export default async function ReportsPage() {
                         </CardTitle>
                         <p className="text-xs text-muted-foreground mt-1 font-bold uppercase tracking-wider opacity-60">Resource allocation strategy</p>
                     </CardHeader>
-                    <CardContent className="p-7 space-y-8">
-                        {/* Circular Visualization Concept */}
-                        <div className="flex justify-center py-6">
-                            <div className="size-48 rounded-full border-[1.5rem] border-primary/10 relative flex items-center justify-center">
-                                <div className="absolute inset-0 rounded-full border-[1.5rem] border-primary border-t-transparent border-r-transparent transform rotate-45" />
-                                <div className="text-center group">
-                                    <span className="text-3xl font-black tracking-tighter group-hover:scale-110 transition-transform block">72%</span>
-                                    <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-60">Utilization</span>
-                                </div>
-                            </div>
-                        </div>
+                    <CardContent className="p-7 space-y-6">
+                        <ReportsPieChart data={pieData} />
 
                         <div className="space-y-5">
-                            {[
-                                { label: "Grain Silos", percent: 45, color: "bg-primary" },
-                                { label: "Cold Storage", percent: 28, color: "bg-blue-500" },
-                                { label: "Logistics Fleet", percent: 12, color: "bg-amber-500" },
-                                { label: "Chemical Vaults", percent: 15, color: "bg-purple-500" },
-                            ].map((item, i) => (
+                            {pieData.map((item, i) => (
                                 <div key={i} className="space-y-2">
                                     <div className="flex justify-between text-[11px] font-black uppercase tracking-tight">
-                                        <span className="text-muted-foreground/80">{item.label}</span>
-                                        <span>{item.percent}%</span>
+                                        <span className="text-muted-foreground/80">{item.name}</span>
+                                        <span>{item.value}%</span>
                                     </div>
                                     <div className="w-full h-1.5 bg-accent/50 rounded-full overflow-hidden">
-                                        <div className={`h-full ${item.color} rounded-full opacity-80`} style={{ width: `${item.percent}%` }} />
+                                        <div className="h-full rounded-full opacity-80" style={{ width: `${item.value}%`, backgroundColor: item.color }} />
                                     </div>
                                 </div>
                             ))}
@@ -196,26 +250,41 @@ export default async function ReportsPage() {
                 </Card>
             </div>
 
-            {/* Tactical Reports List */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-primary/5">
-                {[
-                    { title: "Profitability Manifest", icon: Calculator, desc: "Detailed breakdown of margins per category." },
-                    { title: "Deficit Alerts", icon: Zap, desc: "Predictive analysis of potential stock ruptures." },
-                    { title: "Compliance Audit", icon: FileText, desc: "Verified records for regulatory bodies." },
-                ].map((report, i) => (
-                    <Card key={i} className="glass-card hover:bg-primary/5 transition-all cursor-pointer group border-dashed">
-                        <CardContent className="p-7 flex items-start gap-5">
-                            <div className="size-12 rounded-2xl bg-accent flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-background transition-all">
-                                <report.icon className="h-6 w-6" />
+            {/* Advanced Analytics Grids */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                {/* Supplier Exposure Chart */}
+                <Card className="glass-card overflow-hidden">
+                    <CardHeader className="border-b border-primary/5 p-7">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <CardTitle className="text-xl font-black flex items-center gap-3">
+                                    <Building2 className="h-5 w-5 text-primary" /> Supplier Exposure
+                                </CardTitle>
+                                <p className="text-xs text-muted-foreground mt-1 font-bold uppercase tracking-wider opacity-60">Stock valuation per vendor</p>
                             </div>
-                            <div className="flex-1 min-w-0">
-                                <h4 className="font-black text-sm tracking-tight group-hover:translate-x-1 transition-transform">{report.title}</h4>
-                                <p className="text-[10px] text-muted-foreground font-medium mt-1 leading-relaxed">{report.desc}</p>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="p-8 pt-2">
+                        <ReportsBarChart data={supplierData} color="hsl(var(--primary))" />
+                    </CardContent>
+                </Card>
+
+                {/* Profit Potential Chart */}
+                <Card className="glass-card overflow-hidden">
+                    <CardHeader className="border-b border-primary/5 p-7">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <CardTitle className="text-xl font-black flex items-center gap-3">
+                                    <PackageCheck className="h-5 w-5 text-blue-500" /> Margin Leaders
+                                </CardTitle>
+                                <p className="text-xs text-muted-foreground mt-1 font-bold uppercase tracking-wider opacity-60">Top products by total profit potential</p>
                             </div>
-                            <ArrowUpRight className="h-4 w-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </CardContent>
-                    </Card>
-                ))}
+                        </div>
+                    </CardHeader>
+                    <CardContent className="p-8 pt-2">
+                        <ReportsBarChart data={productProfitData} color="#3b82f6" />
+                    </CardContent>
+                </Card>
             </div>
         </div>
     )
