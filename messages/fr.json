@@ -273,8 +273,20 @@
         "commitProtocol": "Protocole d'Engagement",
         "syncingToGlobalMatrix": "Synchronisation vers la Matrice Globale",
         "recorded": "Enregistré le",
-        "globalNetwork": "Réseau Global",
-        "unit": "unité"
+        "unit": "unité",
+        "movementsHistory": "Historique des Mouvements",
+        "auditTrail": "Audit d'inventaire",
+        "restrictedAccess": "Accès Dépôt Restreint",
+        "searchMovements": "Recherche Produit ou Note...",
+        "auditId": "Audit ID",
+        "productSku": "Produit / SKU",
+        "type": "Type",
+        "quantity": "Quantité",
+        "details": "Détails",
+        "deletedProduct": "Produit Supprimé",
+        "noNote": "Aucune note",
+        "system": "Système",
+        "noMovementsFound": "Aucun mouvement trouvé"
     },
     "Ledger": {
         "transactionalLedger": "Registre des Ventes",

@@ -19,7 +19,9 @@ import {
     CreditCard,
     PanelLeftClose,
     PanelLeftOpen,
-    ArrowUpRight
+    ArrowUpRight,
+    Truck,
+    Activity
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SignOutButton } from "@/components/auth/SignOutButton"
@@ -74,11 +76,15 @@ function DashboardContent({ children }: { children: ReactNode }) {
     const navItems = [
         { label: t("dashboard"), href: "/dashboard", icon: LayoutDashboard },
         { label: t("pos"), href: "/sales/new", icon: ShoppingCart },
+        { label: "Arrivages", href: "/purchases", icon: Truck },
         { label: t("inventory"), href: "/products", icon: Package },
         { label: t("customers"), href: "/customers", icon: Users },
         { label: t("suppliers"), href: "/suppliers", icon: Building2 },
         ...(['admin', 'super-admin', 'manager'].includes(userProfile?.role || '')
             ? [{ label: t("reports"), href: "/reports", icon: BarChart3 }]
+            : []),
+        ...(['admin', 'super-admin', 'manager'].includes(userProfile?.role || '')
+            ? [{ label: "Audit / Mouvements", href: "/movements", icon: Activity }]
             : []),
         ...(['admin', 'super-admin'].includes(userProfile?.role || '')
             ? [{ label: t("warehousesNetwork"), href: "/warehouses", icon: Warehouse }]

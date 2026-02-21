@@ -10,6 +10,8 @@ const manrope = Manrope({
   weight: ["300", "400", "500", "600", "700", "800"],
 });
 
+import { Toaster } from "sonner";
+
 export const metadata: Metadata = {
   title: "StockFlow Pro",
   description: "Premium SaaS Inventory & POS Management",
@@ -30,6 +32,7 @@ export default async function RootLayout({
       >
         <NextIntlClientProvider messages={messages}>
           {children}
+          <Toaster position="bottom-right" richColors theme="dark" />
         </NextIntlClientProvider>
       </body>
     </html>

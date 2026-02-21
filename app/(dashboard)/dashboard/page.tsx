@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { getTranslations } from "next-intl/server"
+import { cookies } from "next/headers"
 
 interface RecentSale {
     id: string;

@@ -273,8 +273,20 @@
         "commitProtocol": "Commit Protocol",
         "syncingToGlobalMatrix": "Syncing to Global Matrix",
         "recorded": "Recorded",
-        "globalNetwork": "Global Network",
-        "unit": "unit"
+        "unit": "unit",
+        "movementsHistory": "Movements History",
+        "auditTrail": "Inventory Audit",
+        "restrictedAccess": "Restricted Warehouse Access",
+        "searchMovements": "Search Product or Note...",
+        "auditId": "Audit ID",
+        "productSku": "Product / SKU",
+        "type": "Type",
+        "quantity": "Quantity",
+        "details": "Details",
+        "deletedProduct": "Deleted Product",
+        "noNote": "No note",
+        "system": "System",
+        "noMovementsFound": "No movements found"
     },
     "Ledger": {
         "transactionalLedger": "Transactional Ledger",

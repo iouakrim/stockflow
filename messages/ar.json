@@ -273,8 +273,20 @@
         "commitProtocol": "بروتوكول التأكيد",
         "syncingToGlobalMatrix": "جاري المزامنة مع المصفوفة العالمية",
         "recorded": "تم التسجيل في",
-        "globalNetwork": "الشبكة العالمية",
-        "unit": "وحدة"
+        "unit": "وحدة",
+        "movementsHistory": "سجل الحركات",
+        "auditTrail": "تدقيق المخزون",
+        "restrictedAccess": "دخول مقيد للمستودع",
+        "searchMovements": "ابحث عن منتج أو ملاحظة...",
+        "auditId": "رقم التدقيق",
+        "productSku": "المنتج / الرمز",
+        "type": "النوع",
+        "quantity": "الكمية",
+        "details": "التفاصيل",
+        "deletedProduct": "منتج محذوف",
+        "noNote": "بدون ملاحظة",
+        "system": "النظام",
+        "noMovementsFound": "لا توجد حركات"
     },
     "Ledger": {
         "transactionalLedger": "لائحة المبيعات",

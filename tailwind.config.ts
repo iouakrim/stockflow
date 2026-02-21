@@ -65,3 +65,4 @@ const config: Config = {
 	plugins: [tailwindAnimate],
 };
 export default config;
+
