@@ -22,7 +22,8 @@ import {
     X,
     Loader2,
     Phone,
-    Printer
+    Printer,
+    Truck
 } from "lucide-react"
 
 import {
@@ -32,10 +33,7 @@ import {
     SheetClose
 } from "@/components/ui/sheet"
 
-import {
-    Dialog,
-    DialogContent
-} from "@/components/ui/dialog"
+
 
 import {
     Popover,
@@ -59,12 +57,13 @@ interface POSClientProps {
 }
 
 export function POSClient({ products, customers }: POSClientProps) {
-    const { items, addItem, removeItem, updateQuantity, total, clearCart } = useCartStore()
+    const { items, addItem, removeItem, updateQuantity, total, clearCart, discount, discountType, setDiscount } = useCartStore()
     const [searchTerm, setSearchTerm] = useState("")
     const [selectedCustomerId, setSelectedCustomerId] = useState<string>("walk-in")
     const [isCustomerOpen, setIsCustomerOpen] = useState(false)
     const [isProcessing, setIsProcessing] = useState(false)
-    const [activeCategory, setActiveCategory] = useState("All")
+    const [activeSupplier, setActiveSupplier] = useState("All")
+    const [isSupplierOpen, setIsSupplierOpen] = useState(false)
     const [showSuccess, setShowSuccess] = useState(false)
     const [completedSaleId, setCompletedSaleId] = useState<string | null>(null)
 
@@ -102,23 +101,39 @@ export function POSClient({ products, customers }: POSClientProps) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [items])
 
-    const categories = useMemo(() => {
-        const cats = Array.from(new Set(products.map(p => p.category || "General")))
-        return ["All", ...cats]
+    const suppliers = useMemo(() => {
+        const supps: { id: string; name: string; count: number }[] = []
+        products.forEach(p => {
+            if (p.suppliers) {
+                const s = p.suppliers as any
+                const existing = supps.find(x => x.name === s.name)
+                if (existing) {
+                    existing.count++
+                } else {
+                    supps.push({ id: p.supplier_id || s.name, name: s.name, count: 1 })
+                }
+            }
+        })
+        return supps.sort((a, b) => b.count - a.count)
     }, [products])
 
     const filteredProducts = products.filter(p => {
         const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             p.barcode?.includes(searchTerm) ||
             p.sku?.toLowerCase().includes(searchTerm.toLowerCase())
-        const matchesCategory = activeCategory === "All" || (p.category || "General") === activeCategory
-        return matchesSearch && matchesCategory
+        const matchesSupplier = activeSupplier === "All" || (p.suppliers as any)?.name === activeSupplier
+        return matchesSearch && matchesSupplier
     })
 
-    const taxRate = 0.02
     const subtotal = total
-    const tax = total * taxRate
-    const grandTotal = subtotal + tax
+
+    // Calculate Discount Amount
+    const discountAmount = discountType === 'percentage'
+        ? subtotal * (discount / 100)
+        : discount
+
+    let grandTotal = subtotal - discountAmount
+    if (grandTotal < 0) grandTotal = 0
 
     const handleCheckout = async () => {
         if (items.length === 0 || isProcessing) return
@@ -137,7 +152,8 @@ export function POSClient({ products, customers }: POSClientProps) {
             const res = await processSaleCheckout(
                 saleItems,
                 customerId,
-                'cash' // Defaulting to cash for MVP
+                'cash', // Defaulting to cash for MVP
+                discountAmount // Pass numeric discount amount
             )
 
             if (res.success) {
@@ -163,29 +179,21 @@ export function POSClient({ products, customers }: POSClientProps) {
         router.refresh()
     }
 
-    const CartHeader = () => (
-        <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-                <div className="size-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                    <Terminal className="h-4 w-4" />
-                </div>
-                <div>
-                    <h3 className="text-sm font-black tracking-tight uppercase">Terminal Order</h3>
-                    <p className="text-[9px] text-muted-foreground font-black tracking-widest opacity-60 leading-none mt-0.5">SESSION ACTIVE</p>
-                </div>
-            </div>
-            {items.length > 0 && (
+    const CartHeader = () => {
+        if (items.length === 0) return null;
+        return (
+            <div className="flex justify-end mb-2 -mt-2">
                 <Button
                     variant="ghost"
-                    size="icon"
+                    size="sm"
                     onClick={clearCart}
-                    className="size-8 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                    className="h-8 rounded-lg text-xs font-bold text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-1.5 px-3"
                 >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-3 w-3" /> CLEAR CART
                 </Button>
-            )}
-        </div>
-    )
+            </div>
+        )
+    }
 
     const CartItemsList = () => (
         <ScrollArea className="flex-1 -mr-2 pr-4 custom-scrollbar">
@@ -265,17 +273,67 @@ export function POSClient({ products, customers }: POSClientProps) {
 
     const CheckoutPanel = () => (
         <div className="pt-4 border-t border-primary/10 space-y-4">
+            {/* Smart Discount Toggle */}
+            <div className="bg-primary/[0.02] p-4 rounded-3xl border border-primary/5 space-y-3">
+                <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Apply Discount</span>
+                    {discount > 0 && (
+                        <button
+                            onClick={() => setDiscount(0, 'percentage')}
+                            className="text-[9px] font-bold text-destructive hover:underline uppercase tracking-widest"
+                        >
+                            Clear
+                        </button>
+                    )}
+                </div>
+
+                <div className="flex gap-2">
+                    {[5, 10, 15].map((pct) => (
+                        <button
+                            key={pct}
+                            onClick={() => setDiscount(pct, 'percentage')}
+                            className={`flex-1 h-9 rounded-xl text-xs font-black transition-all border ${discount === pct && discountType === 'percentage'
+                                ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20'
+                                : 'bg-background text-muted-foreground border-primary/10 hover:border-primary/30 hover:bg-primary/5'
+                                }`}
+                        >
+                            -{pct}%
+                        </button>
+                    ))}
+                    <div className="relative flex-1">
+                        <Input
+                            type="number"
+                            placeholder="$$"
+                            className={`h-9 rounded-xl text-xs font-black px-2 pr-6 text-right transition-all border ${discount > 0 && discountType === 'fixed'
+                                ? 'border-primary ring-1 ring-primary/20 bg-primary/5'
+                                : 'border-primary/10 hover:border-primary/30'
+                                }`}
+                            value={discountType === 'fixed' && discount > 0 ? discount : ''}
+                            onChange={(e) => {
+                                const val = parseFloat(e.target.value) || 0
+                                setDiscount(val, 'fixed')
+                            }}
+                        />
+                        <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground pointer-events-none">$</span>
+                    </div>
+                </div>
+            </div>
+
             <div className="bg-primary/[0.03] p-4 rounded-3xl border border-primary/10 space-y-2 shadow-inner">
-                <div className="flex justify-between text-[11px] font-black text-muted-foreground uppercase tracking-widest">
-                    <span>Subtotal</span>
-                    <span>${subtotal.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-[11px] font-black text-muted-foreground uppercase tracking-widest">
-                    <span>Tax (2%)</span>
-                    <span>${tax.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between items-end pt-3 border-t border-primary/10">
-                    <span className="text-xs font-black uppercase text-primary tracking-[0.2em] mb-1">Grand Total</span>
+                {discountAmount > 0 && (
+                    <div className="flex justify-between items-center text-xs font-bold text-muted-foreground mb-2 pb-2 border-b border-primary/5">
+                        <span className="uppercase tracking-widest">Subtotal</span>
+                        <span className="line-through opacity-50">${subtotal.toFixed(2)}</span>
+                    </div>
+                )}
+                {discountAmount > 0 && (
+                    <div className="flex justify-between items-center text-xs font-bold text-emerald-500 mb-2 pb-2 border-b border-primary/5">
+                        <span className="uppercase tracking-widest">Discount applied</span>
+                        <span>-${discountAmount.toFixed(2)}</span>
+                    </div>
+                )}
+                <div className="flex justify-between items-end">
+                    <span className="text-xs font-black uppercase text-primary tracking-[0.2em] mb-1">Total</span>
                     <span className="text-3xl font-black tracking-tighter text-foreground leading-none">${grandTotal.toFixed(2)}</span>
                 </div>
             </div>
@@ -304,11 +362,11 @@ export function POSClient({ products, customers }: POSClientProps) {
     )
 
     return (
-        <div className="flex-1 flex flex-col h-full bg-background selection:bg-primary/30 selection:text-primary pt-2">
+        <div className="flex-1 flex flex-col h-full bg-background selection:bg-primary/30 selection:text-primary">
 
-            <div className="flex-1 flex flex-col md:flex-row gap-8 overflow-hidden min-h-0">
+            <div className="flex-1 flex flex-col md:flex-row gap-4 overflow-hidden min-h-0">
                 {/* Left Side: Controls & Product Catalog */}
-                <div className="flex-1 flex flex-col min-w-0 gap-6">
+                <div className="flex-1 flex flex-col min-w-0 gap-4">
 
                     {/* Stacked Controls: Customer & Search */}
                     <div className="flex flex-col gap-3">
@@ -465,22 +523,86 @@ export function POSClient({ products, customers }: POSClientProps) {
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-4 overflow-x-auto pb-2 no-scrollbar mask-fade-right select-none">
-                        {categories.map(cat => (
+
+
+                    {/* Supplier Smart Filters */}
+                    {suppliers.length > 0 && (
+                        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar mask-fade-right select-none">
+                            <span className="text-[9px] font-black uppercase text-muted-foreground/40 tracking-widest mr-2 shrink-0">Suppliers:</span>
                             <button
-                                key={cat}
-                                onClick={() => setActiveCategory(cat)}
-                                className={`h-11 px-6 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all whitespace-nowrap active:scale-95 border ${activeCategory === cat
-                                    ? 'bg-primary text-background border-primary shadow-lg shadow-primary/20 scale-105'
-                                    : 'bg-card/40 text-muted-foreground border-primary/10 hover:border-primary/40 hover:text-primary'
+                                onClick={() => setActiveSupplier("All")}
+                                className={`h-8 px-4 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap active:scale-95 border ${activeSupplier === "All"
+                                    ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'
+                                    : 'bg-card/40 text-muted-foreground border-primary/5 hover:border-primary/20 hover:text-primary'
                                     }`}
                             >
-                                {cat}
+                                All
                             </button>
-                        ))}
-                    </div>
+                            {/* Top 3 Suppliers */}
+                            {suppliers.slice(0, 3).map(s => (
+                                <button
+                                    key={s.name}
+                                    onClick={() => setActiveSupplier(s.name)}
+                                    className={`h-8 px-4 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap active:scale-95 border flex items-center gap-1.5 ${activeSupplier === s.name
+                                        ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'
+                                        : 'bg-card/40 text-muted-foreground border-primary/5 hover:border-primary/20 hover:text-primary'
+                                        }`}
+                                >
+                                    {s.name} <span className="opacity-50 font-normal">({s.count})</span>
+                                </button>
+                            ))}
 
-                    <ScrollArea className="flex-1 h-full w-full pr-4 pb-20 custom-scrollbar">
+                            {/* All Suppliers Dropdown */}
+                            {suppliers.length > 3 && (
+                                <div className="relative group shrink-0">
+                                    <Popover open={isSupplierOpen} onOpenChange={setIsSupplierOpen}>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant="outline"
+                                                role="combobox"
+                                                aria-expanded={isSupplierOpen}
+                                                className={`h-8 px-3 ml-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap active:scale-95 border flex items-center gap-1.5 ${activeSupplier !== "All" && !suppliers.slice(0, 3).find(s => s.name === activeSupplier)
+                                                    ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'
+                                                    : 'bg-card/40 text-muted-foreground border-primary/5 hover:border-primary/20 hover:text-primary'
+                                                    }`}
+                                            >
+                                                {activeSupplier !== "All" && !suppliers.slice(0, 3).find(s => s.name === activeSupplier)
+                                                    ? activeSupplier
+                                                    : "More Suppliers..."}
+                                                <ChevronDown className="h-3 w-3 opacity-50" />
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-[280px] p-0 rounded-2xl border-primary/10 shadow-xl bg-card/95 backdrop-blur-xl" align="start">
+                                            <Command className="bg-transparent">
+                                                <CommandInput placeholder="Search supplier..." className="h-12 border-none focus:ring-0 uppercase text-xs font-bold font-sans" />
+                                                <CommandList className="max-h-[300px] custom-scrollbar p-2">
+                                                    <CommandEmpty className="py-6 text-center text-xs font-bold text-muted-foreground uppercase">No supplier found.</CommandEmpty>
+                                                    <CommandGroup>
+                                                        {suppliers.map((s) => (
+                                                            <CommandItem
+                                                                key={s.name}
+                                                                value={s.name}
+                                                                className="font-bold py-3 pl-3 data-[selected=true]:bg-primary/5 data-[selected=true]:text-primary cursor-pointer rounded-xl flex justify-between"
+                                                                onSelect={() => {
+                                                                    setActiveSupplier(s.name)
+                                                                    setIsSupplierOpen(false)
+                                                                }}
+                                                            >
+                                                                <span className="uppercase text-xs">{s.name}</span>
+                                                                <span className="text-[10px] opacity-40">{s.count} items</span>
+                                                            </CommandItem>
+                                                        ))}
+                                                    </CommandGroup>
+                                                </CommandList>
+                                            </Command>
+                                        </PopoverContent>
+                                    </Popover>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    <ScrollArea className="flex-1 h-full w-full pr-4 pb-[100px] lg:pb-4 custom-scrollbar">
                         <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4">
                             {filteredProducts.map(product => {
                                 const cartItem = items.find(i => i.id === product.id)
@@ -513,22 +635,27 @@ export function POSClient({ products, customers }: POSClientProps) {
                                                 <h3 className="font-black text-base uppercase tracking-tight truncate group-hover:text-primary transition-colors">
                                                     {product.name}
                                                 </h3>
-                                                <div className="mt-1 flex items-center gap-2">
-                                                    <p className="font-black text-xl tracking-tighter text-emerald-500/90 group-hover:text-emerald-500 transition-colors">
-                                                        ${product.selling_price.toFixed(2)}
-                                                    </p>
-                                                    <span className="text-[10px] uppercase font-black text-muted-foreground/50">/ {product.unit || 'UN'}</span>
-                                                </div>
+                                                {product.suppliers && (
+                                                    <p className="text-[10px] font-bold text-primary/70 uppercase tracking-widest mt-0.5 truncate" title={(product.suppliers as any).name}>{(product.suppliers as any).name}</p>
+                                                )}
                                                 {product.sku && (
                                                     <span className="text-[9px] font-mono font-bold text-muted-foreground/40 bg-accent/80 px-2 py-1 rounded-md mt-2 inline-block border border-primary/5">{product.sku}</span>
                                                 )}
                                             </div>
 
-                                            {/* Right: Stock Info */}
-                                            <div className="flex flex-col items-end gap-2 shrink-0">
+                                            {/* Right: Stock & Price Info */}
+                                            <div className="flex flex-col items-end shrink-0 gap-3">
                                                 <Badge className={`text-[10px] px-2.5 py-1.5 border-none rounded-xl font-black uppercase tracking-widest shadow-sm transition-colors ${quantity > 0 ? 'bg-primary text-primary-foreground' : isLow ? 'bg-destructive text-destructive-foreground animate-pulse shadow-destructive/20' : 'bg-accent text-muted-foreground'}`}>
                                                     {product.stock_quantity} <span className="opacity-50 ml-1">{product.unit || 'UN'}</span>
                                                 </Badge>
+
+                                                {/* Price Moved to Right */}
+                                                <div className="flex flex-col items-end">
+                                                    <span className="font-black text-xl tracking-tighter text-emerald-500/90 group-hover:text-emerald-500 transition-colors leading-none">
+                                                        ${product.selling_price.toFixed(2)}
+                                                    </span>
+                                                    <span className="text-[9px] uppercase font-black text-muted-foreground/50 mt-1">/ {product.unit || 'UN'}</span>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -607,9 +734,34 @@ export function POSClient({ products, customers }: POSClientProps) {
 
                 {/* Desktop Cart Controller */}
                 <div className="hidden lg:flex w-[380px] flex-col glass-card rounded-[2rem] p-5 shadow-2xl overflow-hidden h-full">
-                    <CartHeader />
-                    <CartItemsList />
-                    <CheckoutPanel />
+                    {completedSaleId ? (
+                        <div className="flex flex-col h-full bg-background rounded-3xl overflow-hidden border border-primary/10 shadow-sm mt-2 mb-2">
+                            <div className="p-5 border-b border-primary/10 flex justify-between items-center bg-card">
+                                <h2 className="font-black text-sm flex items-center gap-2">
+                                    <CheckCircle2 className="h-5 w-5 text-primary" />
+                                    Transaction Complete
+                                </h2>
+                            </div>
+                            <iframe src={`/receipt/${completedSaleId}`} className="flex-1 w-full bg-white relative z-0" />
+                            <div className="p-4 bg-card border-t border-primary/10 flex flex-col gap-3">
+                                <Button onClick={() => window.open(`/receipt/${completedSaleId}?print=true`, '_blank')} className="w-full h-12 rounded-xl bg-black hover:bg-black/90 text-white font-black tracking-widest uppercase shadow-xl shadow-black/10 text-xs gap-2">
+                                    <Printer className="w-4 h-4" /> Print Receipt
+                                </Button>
+                                <Button onClick={() => window.open(`/receipt/${completedSaleId}?print=true&type=pickup`, '_blank')} className="w-full h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-black tracking-widest uppercase shadow-xl shadow-emerald-500/20 text-xs gap-2">
+                                    <Truck className="w-4 h-4" /> Print Pickup Ticket
+                                </Button>
+                                <Button onClick={handleNewSale} variant="outline" className="w-full h-12 rounded-xl border-2 border-primary/20 hover:bg-primary/5 text-primary font-black tracking-widest uppercase text-xs">
+                                    Next Customer (New Sale)
+                                </Button>
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            <CartHeader />
+                            <CartItemsList />
+                            <CheckoutPanel />
+                        </>
+                    )}
                 </div>
             </div>
 
@@ -632,11 +784,36 @@ export function POSClient({ products, customers }: POSClientProps) {
                     </SheetTrigger>
                     <SheetContent side="bottom" className="h-[95vh] rounded-t-[3rem] border-primary/20 bg-card/95 backdrop-blur-3xl flex flex-col p-8">
                         <div className="w-12 h-1 bg-primary/20 rounded-full mx-auto mb-8" />
-                        <CartHeader />
-                        <CartItemsList />
-                        <div className="pt-6">
-                            <CheckoutPanel />
-                        </div>
+                        {completedSaleId ? (
+                            <div className="flex flex-col flex-1 bg-background rounded-3xl overflow-hidden border border-primary/10 shadow-sm">
+                                <div className="p-5 border-b border-primary/10 flex justify-between items-center bg-card">
+                                    <h2 className="font-black text-sm flex items-center gap-2">
+                                        <CheckCircle2 className="h-5 w-5 text-primary" />
+                                        Transaction Complete
+                                    </h2>
+                                </div>
+                                <iframe src={`/receipt/${completedSaleId}`} className="flex-1 w-full bg-white relative z-0" />
+                                <div className="p-4 bg-card border-t border-primary/10 flex flex-col gap-3">
+                                    <Button onClick={() => window.open(`/receipt/${completedSaleId}?print=true`, '_blank')} className="w-full h-12 rounded-xl bg-black hover:bg-black/90 text-white font-black tracking-widest uppercase shadow-xl shadow-black/10 text-xs gap-2">
+                                        <Printer className="w-4 h-4" /> Print Receipt
+                                    </Button>
+                                    <Button onClick={() => window.open(`/receipt/${completedSaleId}?print=true&type=pickup`, '_blank')} className="w-full h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-black tracking-widest uppercase shadow-xl shadow-emerald-500/20 text-xs gap-2">
+                                        <Truck className="w-4 h-4" /> Print Pickup Ticket
+                                    </Button>
+                                    <Button onClick={handleNewSale} variant="outline" className="w-full h-12 rounded-xl border-2 border-primary/20 hover:bg-primary/5 text-primary font-black tracking-widest uppercase text-xs">
+                                        Next Customer (New Sale)
+                                    </Button>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <CartHeader />
+                                <CartItemsList />
+                                <div className="pt-6">
+                                    <CheckoutPanel />
+                                </div>
+                            </>
+                        )}
                         <SheetClose className="absolute right-8 top-8 opacity-40 hover:opacity-100 transition-opacity">
                             <X className="h-6 w-6" />
                         </SheetClose>
@@ -644,30 +821,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                 </Sheet>
             </div>
 
-            {/* Receipt Modal */}
-            <Dialog open={!!completedSaleId} onOpenChange={(open) => { if (!open) handleNewSale() }}>
-                <DialogContent className="max-w-md p-0 overflow-hidden bg-background border-primary/20 rounded-[2.5rem]">
-                    {completedSaleId && (
-                        <div className="flex flex-col h-[85vh] max-h-[800px]">
-                            <div className="p-5 border-b border-primary/10 flex justify-between items-center bg-card">
-                                <h2 className="font-black text-lg flex items-center gap-2">
-                                    <CheckCircle2 className="h-5 w-5 text-primary" />
-                                    Transaction Complete
-                                </h2>
-                                <Button onClick={() => window.open(`/receipt/${completedSaleId}`, '_blank')} variant="outline" size="sm" className="gap-2 rounded-xl text-primary border-primary/20 hover:bg-primary/10 font-black text-[10px] uppercase tracking-widest bg-primary/5">
-                                    <Printer className="w-4 h-4" /> Print
-                                </Button>
-                            </div>
-                            <iframe src={`/receipt/${completedSaleId}`} className="flex-1 w-full bg-white relative z-0" />
-                            <div className="p-5 bg-card border-t border-primary/10 flex flex-col items-center">
-                                <Button onClick={handleNewSale} className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-[#102219] font-black tracking-widest uppercase shadow-xl shadow-primary/20 text-xs">
-                                    Next Customer (New Sale)
-                                </Button>
-                            </div>
-                        </div>
-                    )}
-                </DialogContent>
-            </Dialog>
+
         </div>
     )
 }

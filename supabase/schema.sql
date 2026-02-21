@@ -224,10 +224,12 @@ CREATE OR REPLACE FUNCTION process_sale(
   p_cashier_id UUID,
   p_customer_id UUID,
   p_payment_method payment_method,
-  p_items JSONB -- Array of {product_id, quantity, unit_price, total_price}
+  p_items JSONB, -- Array of {product_id, quantity, unit_price, total_price}
+  p_discount DECIMAL(12, 2) DEFAULT 0.0
 ) RETURNS UUID AS $$
 DECLARE
   v_sale_id UUID;
+  v_subtotal DECIMAL(12, 2) := 0;
   v_total DECIMAL(12, 2) := 0;
   v_item JSONB;
   v_receipt_number TEXT;
@@ -236,15 +238,21 @@ BEGIN
   -- Generate receipt number
   v_receipt_number := 'RCP-' || to_char(NOW(), 'YYYYMMDDHH24MISS');
 
-  -- Calculate total
+  -- Calculate subtotal
   FOR v_item IN SELECT * FROM jsonb_array_elements(p_items)
   LOOP
-    v_total := v_total + (v_item->>'total_price')::DECIMAL;
+    v_subtotal := v_subtotal + (v_item->>'total_price')::DECIMAL;
   END LOOP;
 
+  -- Calculate grand total (subtotal minus discount)
+  v_total := v_subtotal - p_discount;
+  IF v_total < 0 THEN
+      v_total := 0;
+  END IF;
+
   -- Create sale
-  INSERT INTO sales (tenant_id, receipt_number, customer_id, cashier_id, subtotal, total, amount_paid, payment_method)
-  VALUES (p_tenant_id, v_receipt_number, p_customer_id, p_cashier_id, v_total, v_total, v_total, p_payment_method)
+  INSERT INTO sales (tenant_id, receipt_number, customer_id, cashier_id, subtotal, discount, total, amount_paid, payment_method)
+  VALUES (p_tenant_id, v_receipt_number, p_customer_id, p_cashier_id, v_subtotal, p_discount, v_total, v_total, p_payment_method)
   RETURNING id INTO v_sale_id;
 
   -- Process items and update stock

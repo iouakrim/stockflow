@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 
-<html class="dark" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Create New Sale - StockFlow Pro</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Create New Sale - StockFlow Pro</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
@@ -21,342 +28,446 @@
                     fontFamily: {
                         "display": ["Manrope", "sans-serif"]
                     },
-                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
                 },
             },
         }
     </script>
-<style>
+    <style>
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
+
         body {
             font-family: 'Manrope', sans-serif;
         }
+
         /* Custom scrollbar for a cleaner dark look */
         ::-webkit-scrollbar {
             width: 6px;
         }
+
         ::-webkit-scrollbar-track {
             background: #102219;
         }
+
         ::-webkit-scrollbar-thumb {
             background: #283930;
             border-radius: 10px;
         }
+
         ::-webkit-scrollbar-thumb:hover {
             background: #11d473;
         }
     </style>
 </head>
+
 <body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
-<!-- Top Navigation Bar -->
-<header class="border-b border-primary/10 bg-background-light dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
-<div class="max-w-[1600px] mx-auto px-6 h-16 flex items-center justify-between">
-<div class="flex items-center gap-8">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-background-dark">
-<span class="material-symbols-outlined font-bold">inventory_2</span>
-</div>
-<h1 class="text-xl font-bold tracking-tight">StockFlow <span class="text-primary">Pro</span></h1>
-</div>
-<nav class="hidden md:flex items-center gap-6">
-<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
-<a class="text-sm font-medium text-primary border-b-2 border-primary py-5" href="#">Sales</a>
-<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Inventory</a>
-<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Reports</a>
-</nav>
-</div>
-<div class="flex items-center gap-4">
-<div class="hidden lg:flex flex-col items-end mr-4">
-<span class="text-xs text-slate-500 dark:text-slate-400">Warehouse Terminal</span>
-<span class="text-sm font-semibold">Central Grain Silo A</span>
-</div>
-<button class="p-2 rounded-lg bg-slate-200 dark:bg-primary/10 text-slate-700 dark:text-primary hover:bg-primary/20 transition-all">
-<span class="material-symbols-outlined">notifications</span>
-</button>
-<div class="h-8 w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden">
-<img alt="User Profile" class="w-full h-full object-cover" data-alt="User avatar illustration" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0i0j_hUZSKuZ2cpSndtkkBiilkDHtwAZFvDGpTaU6oOTfsqnzjGD6HafBsiE-P6jhREJiruKXnebORqFqU-OvH5VaU_RAsPU1b5ldKgCuJm2KEFsBEBN_lXq31_QCl_pZUB70UHZpwbgKgVd-gkVTj3N0HdpjIdnmNF4ACxHH9beA2ElGj0mmfjxWeT6Tx0NP7lv9Pl5tS2uxXQk1cN7ARpxvkcbXwg3he7ZXT9mluoQ1Td32FWgB0P05KGyhBd9HGS-07SYzcic"/>
-</div>
-</div>
-</div>
-</header>
-<main class="flex-1 max-w-[1600px] mx-auto w-full flex flex-col lg:flex-row gap-6 p-6">
-<!-- Left Side: Product Selection & Search -->
-<div class="flex-1 flex flex-col gap-6 overflow-hidden">
-<!-- Breadcrumbs & Title -->
-<div class="flex flex-col gap-1">
-<div class="flex items-center gap-2 text-xs text-slate-500 uppercase tracking-wider font-semibold">
-<span>Sales</span>
-<span class="material-symbols-outlined text-[14px]">chevron_right</span>
-<span class="text-primary">New Sale POS</span>
-</div>
-<h2 class="text-2xl font-extrabold">Create New Sale</h2>
-</div>
-<!-- Selection Controls -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-<!-- Customer Selection -->
-<div class="relative">
-<label class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block uppercase tracking-tight">Select Customer</label>
-<div class="relative group">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary">person_search</span>
-<select class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none appearance-none transition-all">
-<option>Walk-in Customer</option>
-<option>Green Valley Farms Ltd.</option>
-<option>Northern Poultry Cooperative</option>
-<option>Sunrise Livestock Supplies</option>
-</select>
-<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
-</div>
-</div>
-<!-- Product Search -->
-<div>
-<label class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block uppercase tracking-tight">Search Catalog</label>
-<div class="relative group">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary">search</span>
-<input class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none transition-all" placeholder="Search by name, SKU or barcode..." type="text"/>
-</div>
-</div>
-</div>
-<!-- Category Filter Tabs -->
-<div class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
-<button class="px-5 py-2 rounded-full bg-primary text-background-dark text-sm font-bold whitespace-nowrap">All Items</button>
-<button class="px-5 py-2 rounded-full bg-slate-200 dark:bg-primary/10 text-slate-700 dark:text-slate-300 text-sm font-semibold hover:bg-primary/20 transition-all whitespace-nowrap">Grains &amp; Seeds</button>
-<button class="px-5 py-2 rounded-full bg-slate-200 dark:bg-primary/10 text-slate-700 dark:text-slate-300 text-sm font-semibold hover:bg-primary/20 transition-all whitespace-nowrap">Animal Feed</button>
-<button class="px-5 py-2 rounded-full bg-slate-200 dark:bg-primary/10 text-slate-700 dark:text-slate-300 text-sm font-semibold hover:bg-primary/20 transition-all whitespace-nowrap">Fertilizers</button>
-<button class="px-5 py-2 rounded-full bg-slate-200 dark:bg-primary/10 text-slate-700 dark:text-slate-300 text-sm font-semibold hover:bg-primary/20 transition-all whitespace-nowrap">Bulk Supplies</button>
-</div>
-<!-- Product Grid -->
-<div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto pr-2 pb-8">
-<!-- Product Card 1 -->
-<div class="bg-white dark:bg-background-dark/40 border border-slate-200 dark:border-primary/10 rounded-xl p-4 flex flex-col gap-3 hover:border-primary/40 hover:shadow-lg transition-all cursor-pointer group">
-<div class="h-32 w-full bg-slate-100 dark:bg-primary/5 rounded-lg flex items-center justify-center overflow-hidden">
-<img alt="Yellow Corn" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Close up of yellow corn kernels" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcUYGfmwYspyIv4CfHI9NUyGl7yQKNHxjY3nokg_tDzYMSrmxq0a3r2sxQAK9OI0q_fTPCo1nrQkEsBDW2mfWK0zZAVRrdUsnUl5rrrPK29e38bBz2IWLAjr_ZCADoZDaZHH9q7So6QhA89JnD--e6F6uv897fqv0wP4G0jWd3ha4X2RPVEAx6ea--yLiHEZJDKEchxEDEPtHwlrWxyod1pAg7T8IMuqMjXretONpoHKxlFMAs5Cq8SE5xLlfRD3jRgq4pYJipsH0"/>
-</div>
-<div>
-<span class="text-[10px] font-bold text-primary uppercase bg-primary/10 px-2 py-0.5 rounded">Grains</span>
-<h3 class="font-bold text-sm mt-1">Bulk Yellow Corn (MT)</h3>
-<p class="text-xs text-slate-500 dark:text-slate-400">Stock: 45.2 Metric Tons</p>
-</div>
-<div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-100 dark:border-primary/5">
-<span class="font-extrabold text-primary">$240.00</span>
-<button class="w-8 h-8 rounded-lg bg-primary text-background-dark flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform">
-<span class="material-symbols-outlined">add</span>
-</button>
-</div>
-</div>
-<!-- Product Card 2 -->
-<div class="bg-white dark:bg-background-dark/40 border border-slate-200 dark:border-primary/10 rounded-xl p-4 flex flex-col gap-3 hover:border-primary/40 hover:shadow-lg transition-all cursor-pointer group">
-<div class="h-32 w-full bg-slate-100 dark:bg-primary/5 rounded-lg flex items-center justify-center overflow-hidden">
-<img alt="Soybean Meal" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="High quality soybean meal in sacks" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWUcWk9vlfiYy5sKJ7kDhq6UrfA0e5gBRqxi2BOJaUvxrMxQpodxq1-X0vbc-LYAwrWVpux3cryWaJ-4iSFg5w3qlFsvWbJzfaQGSryx32XnU6bBKyWRsbpaDaSdsP6S9f63cPrsAEsGWj6uMVJd7l4ztR9Mnc9jYfBV5FkRer2moU6cH-C53y7WK3qCAZjYk5YkvGH8O6j9ylQPSoRJDERPuBB3BXo-tOvenbn_vB2n9a3TJ3m7XbaRXOmSTjq5eG_JIVbjn1tPg"/>
-</div>
-<div>
-<span class="text-[10px] font-bold text-primary uppercase bg-primary/10 px-2 py-0.5 rounded">Animal Feed</span>
-<h3 class="font-bold text-sm mt-1">High-Protein Soy Meal</h3>
-<p class="text-xs text-slate-500 dark:text-slate-400">Stock: 120 Sacks</p>
-</div>
-<div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-100 dark:border-primary/5">
-<span class="font-extrabold text-primary">$18.50</span>
-<button class="w-8 h-8 rounded-lg bg-primary text-background-dark flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform">
-<span class="material-symbols-outlined">add</span>
-</button>
-</div>
-</div>
-<!-- Product Card 3 -->
-<div class="bg-white dark:bg-background-dark/40 border border-slate-200 dark:border-primary/10 rounded-xl p-4 flex flex-col gap-3 hover:border-primary/40 hover:shadow-lg transition-all cursor-pointer group">
-<div class="h-32 w-full bg-slate-100 dark:bg-primary/5 rounded-lg flex items-center justify-center overflow-hidden">
-<img alt="Wheat Grain" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Golden wheat seeds macro shot" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVZlQz-ab-H31liTtUSnuUEial4Tl5wULW9GakV3V301O8HIftKnC2er32_BokNsknMdc1TK7rv8Wkxa_A_EOjcFjAG5THpA6p6bejG5-3tJFbJD5zL_9Rz5KLZM4pvvYSRp40-rF_1-kiOOgmZbTRZIuj9tGoBVEBJn1wSi3gV5rXQv_2rTV7ICdTh8IeyHTTLK-EDHsnXoGkg4ehJOzQQrHwpnlek-k3yIiprQGTYzcryA8xaFJKhW4qZkuNRIOTltGOx3D32Fk"/>
-</div>
-<div>
-<span class="text-[10px] font-bold text-primary uppercase bg-primary/10 px-2 py-0.5 rounded">Grains</span>
-<h3 class="font-bold text-sm mt-1">Hard Red Winter Wheat</h3>
-<p class="text-xs text-slate-500 dark:text-slate-400">Stock: 8.4 Metric Tons</p>
-</div>
-<div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-100 dark:border-primary/5">
-<span class="font-extrabold text-primary">$315.00</span>
-<button class="w-8 h-8 rounded-lg bg-primary text-background-dark flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform">
-<span class="material-symbols-outlined">add</span>
-</button>
-</div>
-</div>
-<!-- Product Card 4 -->
-<div class="bg-white dark:bg-background-dark/40 border border-slate-200 dark:border-primary/10 rounded-xl p-4 flex flex-col gap-3 hover:border-primary/40 hover:shadow-lg transition-all cursor-pointer group">
-<div class="h-32 w-full bg-slate-100 dark:bg-primary/5 rounded-lg flex items-center justify-center overflow-hidden">
-<img alt="Barley" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Dry organic barley grains" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAdZLL3vQwYRMvJzqXw4io76_Xag1xefB74DsXhYfXMJN0oTrbqRD-WwIWL2q9w0jEFEd8OCu08tkCoDhhmwPDcIPGPtoBNffFr6fHGFuOlqDX-eQvPnaovukpxrwCQyCSr9u5NiAvAPccVO5RhRvJiy20fgidrMNybkbRHBCKrWenrCVPPQvOwmv-WaDo_pWKSlRF2q7cLWt44F34L94oUY2jhhB2ESlTutiN_W03OjUvHNKWYrQ10aL8lsjUDpLR7mdVyWqy4jw"/>
-</div>
-<div>
-<span class="text-[10px] font-bold text-primary uppercase bg-primary/10 px-2 py-0.5 rounded">Grains</span>
-<h3 class="font-bold text-sm mt-1">Premium Two-Row Barley</h3>
-<p class="text-xs text-slate-500 dark:text-slate-400">Stock: 22.0 Metric Tons</p>
-</div>
-<div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-100 dark:border-primary/5">
-<span class="font-extrabold text-primary">$210.00</span>
-<button class="w-8 h-8 rounded-lg bg-primary text-background-dark flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform">
-<span class="material-symbols-outlined">add</span>
-</button>
-</div>
-</div>
-<!-- Product Card 5 -->
-<div class="bg-white dark:bg-background-dark/40 border border-slate-200 dark:border-primary/10 rounded-xl p-4 flex flex-col gap-3 hover:border-primary/40 hover:shadow-lg transition-all cursor-pointer group">
-<div class="h-32 w-full bg-slate-100 dark:bg-primary/5 rounded-lg flex items-center justify-center overflow-hidden">
-<img alt="Nitrogen Fertilizer" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Sack of industrial nitrogen fertilizer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDndeHCAcEZVlQki-a7Za3XFFBp9jUeo5EuaMkAclk6TSJuldqDboK2xvs543Bhk1TTiFmxRIR61c9lphCGugTZICtVyd5-a-zQx3AAeHV9gHMGRl__bflP_lK1dGB7_rl9FWArez5cVH7Y5Htf7jA22Pxpi-Qb8-DFzVZjZDEa56eR5wrDXDoD7fTczAc0Tw6ow8xwQYMyDTe2d06QCyvzp_qWvxe5WcCGQ_G9_EZW_3XitEonMqm-knJhB3djSbSvTP1Xd9C-gVE"/>
-</div>
-<div>
-<span class="text-[10px] font-bold text-primary uppercase bg-primary/10 px-2 py-0.5 rounded">Fertilizers</span>
-<h3 class="font-bold text-sm mt-1">Urea Fertilizer (50kg)</h3>
-<p class="text-xs text-slate-500 dark:text-slate-400">Stock: 450 Sacks</p>
-</div>
-<div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-100 dark:border-primary/5">
-<span class="font-extrabold text-primary">$42.00</span>
-<button class="w-8 h-8 rounded-lg bg-primary text-background-dark flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform">
-<span class="material-symbols-outlined">add</span>
-</button>
-</div>
-</div>
-<!-- Product Card 6 -->
-<div class="bg-white dark:bg-background-dark/40 border border-slate-200 dark:border-primary/10 rounded-xl p-4 flex flex-col gap-3 hover:border-primary/40 hover:shadow-lg transition-all cursor-pointer group">
-<div class="h-32 w-full bg-slate-100 dark:bg-primary/5 rounded-lg flex items-center justify-center overflow-hidden">
-<img alt="Oat feed" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Oats used for animal fodder" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaWCGT9SNqpfW1-UKgRUfruMz-gH37prISqCLlWZH_oU86JSUe_ruvfbic6MxtS83A-F9XDULlC3vrcqNKPxOisjY3jOPkA_gUUssFHLTOoldGRhjWDgJGIP-yZwiuaKwIgvq8jy14_ELCVbh-Ldavb7Fhu4EpjSLkZGmKIZRKWi1e4GwU1VMyiRoTyrxGpxy5YmP4Imk586N3Bt0_GGs7VAiIxlRgMkg33K2tv1_r5URzb3rmfaeh-d7I8AgRoxndzEzqkmrxu4w"/>
-</div>
-<div>
-<span class="text-[10px] font-bold text-primary uppercase bg-primary/10 px-2 py-0.5 rounded">Animal Feed</span>
-<h3 class="font-bold text-sm mt-1">Rolled Oats Fodder</h3>
-<p class="text-xs text-slate-500 dark:text-slate-400">Stock: 15.1 Metric Tons</p>
-</div>
-<div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-100 dark:border-primary/5">
-<span class="font-extrabold text-primary">$195.00</span>
-<button class="w-8 h-8 rounded-lg bg-primary text-background-dark flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform">
-<span class="material-symbols-outlined">add</span>
-</button>
-</div>
-</div>
-</div>
-</div>
-<!-- Right Side: Cart Summary -->
-<div class="w-full lg:w-[400px] flex flex-col bg-white dark:bg-background-dark/80 border border-slate-200 dark:border-primary/10 rounded-2xl shadow-2xl h-[calc(100vh-140px)] sticky top-24 overflow-hidden">
-<!-- Cart Header -->
-<div class="p-6 border-b border-slate-100 dark:border-primary/10">
-<div class="flex items-center justify-between mb-2">
-<h3 class="text-lg font-extrabold flex items-center gap-2">
-<span class="material-symbols-outlined text-primary">shopping_cart</span>
+    <!-- Top Navigation Bar -->
+    <header
+        class="border-b border-primary/10 bg-background-light dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-[1600px] mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-background-dark">
+                        <span class="material-symbols-outlined font-bold">inventory_2</span>
+                    </div>
+                    <h1 class="text-xl font-bold tracking-tight">StockFlow <span class="text-primary">Pro</span></h1>
+                </div>
+                <nav class="hidden md:flex items-center gap-6">
+                    <a class="text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+                    <a class="text-sm font-medium text-primary border-b-2 border-primary py-5" href="#">Sales</a>
+                    <a class="text-sm font-medium hover:text-primary transition-colors" href="#">Inventory</a>
+                    <a class="text-sm font-medium hover:text-primary transition-colors" href="#">Reports</a>
+                </nav>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="hidden lg:flex flex-col items-end mr-4">
+                    <span class="text-xs text-slate-500 dark:text-slate-400">Warehouse Terminal</span>
+                    <span class="text-sm font-semibold">Central Grain Silo A</span>
+                </div>
+                <button
+                    class="p-2 rounded-lg bg-slate-200 dark:bg-primary/10 text-slate-700 dark:text-primary hover:bg-primary/20 transition-all">
+                    <span class="material-symbols-outlined">notifications</span>
+                </button>
+                <div
+                    class="h-8 w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden">
+                    <img alt="User Profile" class="w-full h-full object-cover" data-alt="User avatar illustration"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0i0j_hUZSKuZ2cpSndtkkBiilkDHtwAZFvDGpTaU6oOTfsqnzjGD6HafBsiE-P6jhREJiruKXnebORqFqU-OvH5VaU_RAsPU1b5ldKgCuJm2KEFsBEBN_lXq31_QCl_pZUB70UHZpwbgKgVd-gkVTj3N0HdpjIdnmNF4ACxHH9beA2ElGj0mmfjxWeT6Tx0NP7lv9Pl5tS2uxXQk1cN7ARpxvkcbXwg3he7ZXT9mluoQ1Td32FWgB0P05KGyhBd9HGS-07SYzcic" />
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="flex-1 max-w-[1600px] mx-auto w-full flex flex-col lg:flex-row gap-6 p-6">
+        <!-- Left Side: Product Selection & Search -->
+        <div class="flex-1 flex flex-col gap-6 overflow-hidden">
+            <!-- Breadcrumbs & Title -->
+            <div class="flex flex-col gap-1">
+                <div class="flex items-center gap-2 text-xs text-slate-500 uppercase tracking-wider font-semibold">
+                    <span>Sales</span>
+                    <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                    <span class="text-primary">New Sale POS</span>
+                </div>
+                <h2 class="text-2xl font-extrabold">Create New Sale</h2>
+            </div>
+            <!-- Selection Controls -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Customer Selection -->
+                <div class="relative">
+                    <label
+                        class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block uppercase tracking-tight">Select
+                        Customer</label>
+                    <div class="relative group">
+                        <span
+                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary">person_search</span>
+                        <select
+                            class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none appearance-none transition-all">
+                            <option>Walk-in Customer</option>
+                            <option>Green Valley Farms Ltd.</option>
+                            <option>Northern Poultry Cooperative</option>
+                            <option>Sunrise Livestock Supplies</option>
+                        </select>
+                        <span
+                            class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
+                    </div>
+                </div>
+                <!-- Product Search -->
+                <div>
+                    <label
+                        class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block uppercase tracking-tight">Search
+                        Catalog</label>
+                    <div class="relative group">
+                        <span
+                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary">search</span>
+                        <input
+                            class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none transition-all"
+                            placeholder="Search by name, SKU or barcode..." type="text" />
+                    </div>
+                </div>
+            </div>
+            <!-- Category Filter Tabs -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+                <button
+                    class="px-5 py-2 rounded-full bg-primary text-background-dark text-sm font-bold whitespace-nowrap">All
+                    Items</button>
+                <button
+                    class="px-5 py-2 rounded-full bg-slate-200 dark:bg-primary/10 text-slate-700 dark:text-slate-300 text-sm font-semibold hover:bg-primary/20 transition-all whitespace-nowrap">Grains
+                    &amp; Seeds</button>
+                <button
+                    class="px-5 py-2 rounded-full bg-slate-200 dark:bg-primary/10 text-slate-700 dark:text-slate-300 text-sm font-semibold hover:bg-primary/20 transition-all whitespace-nowrap">Animal
+                    Feed</button>
+                <button
+                    class="px-5 py-2 rounded-full bg-slate-200 dark:bg-primary/10 text-slate-700 dark:text-slate-300 text-sm font-semibold hover:bg-primary/20 transition-all whitespace-nowrap">Fertilizers</button>
+                <button
+                    class="px-5 py-2 rounded-full bg-slate-200 dark:bg-primary/10 text-slate-700 dark:text-slate-300 text-sm font-semibold hover:bg-primary/20 transition-all whitespace-nowrap">Bulk
+                    Supplies</button>
+            </div>
+            <!-- Product Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto pr-2 pb-8">
+                <!-- Product Card 1 -->
+                <div
+                    class="bg-white dark:bg-background-dark/40 border border-slate-200 dark:border-primary/10 rounded-xl p-4 flex flex-col gap-3 hover:border-primary/40 hover:shadow-lg transition-all cursor-pointer group">
+                    <div
+                        class="h-32 w-full bg-slate-100 dark:bg-primary/5 rounded-lg flex items-center justify-center overflow-hidden">
+                        <img alt="Yellow Corn"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            data-alt="Close up of yellow corn kernels"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcUYGfmwYspyIv4CfHI9NUyGl7yQKNHxjY3nokg_tDzYMSrmxq0a3r2sxQAK9OI0q_fTPCo1nrQkEsBDW2mfWK0zZAVRrdUsnUl5rrrPK29e38bBz2IWLAjr_ZCADoZDaZHH9q7So6QhA89JnD--e6F6uv897fqv0wP4G0jWd3ha4X2RPVEAx6ea--yLiHEZJDKEchxEDEPtHwlrWxyod1pAg7T8IMuqMjXretONpoHKxlFMAs5Cq8SE5xLlfRD3jRgq4pYJipsH0" />
+                    </div>
+                    <div>
+                        <span
+                            class="text-[10px] font-bold text-primary uppercase bg-primary/10 px-2 py-0.5 rounded">Grains</span>
+                        <h3 class="font-bold text-sm mt-1">Bulk Yellow Corn (MT)</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Stock: 45.2 Metric Tons</p>
+                    </div>
+                    <div
+                        class="flex items-center justify-between mt-auto pt-2 border-t border-slate-100 dark:border-primary/5">
+                        <span class="font-extrabold text-primary">$240.00</span>
+                        <button
+                            class="w-8 h-8 rounded-lg bg-primary text-background-dark flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform">
+                            <span class="material-symbols-outlined">add</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Product Card 2 -->
+                <div
+                    class="bg-white dark:bg-background-dark/40 border border-slate-200 dark:border-primary/10 rounded-xl p-4 flex flex-col gap-3 hover:border-primary/40 hover:shadow-lg transition-all cursor-pointer group">
+                    <div
+                        class="h-32 w-full bg-slate-100 dark:bg-primary/5 rounded-lg flex items-center justify-center overflow-hidden">
+                        <img alt="Soybean Meal"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            data-alt="High quality soybean meal in sacks"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWUcWk9vlfiYy5sKJ7kDhq6UrfA0e5gBRqxi2BOJaUvxrMxQpodxq1-X0vbc-LYAwrWVpux3cryWaJ-4iSFg5w3qlFsvWbJzfaQGSryx32XnU6bBKyWRsbpaDaSdsP6S9f63cPrsAEsGWj6uMVJd7l4ztR9Mnc9jYfBV5FkRer2moU6cH-C53y7WK3qCAZjYk5YkvGH8O6j9ylQPSoRJDERPuBB3BXo-tOvenbn_vB2n9a3TJ3m7XbaRXOmSTjq5eG_JIVbjn1tPg" />
+                    </div>
+                    <div>
+                        <span
+                            class="text-[10px] font-bold text-primary uppercase bg-primary/10 px-2 py-0.5 rounded">Animal
+                            Feed</span>
+                        <h3 class="font-bold text-sm mt-1">High-Protein Soy Meal</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Stock: 120 Sacks</p>
+                    </div>
+                    <div
+                        class="flex items-center justify-between mt-auto pt-2 border-t border-slate-100 dark:border-primary/5">
+                        <span class="font-extrabold text-primary">$18.50</span>
+                        <button
+                            class="w-8 h-8 rounded-lg bg-primary text-background-dark flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform">
+                            <span class="material-symbols-outlined">add</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Product Card 3 -->
+                <div
+                    class="bg-white dark:bg-background-dark/40 border border-slate-200 dark:border-primary/10 rounded-xl p-4 flex flex-col gap-3 hover:border-primary/40 hover:shadow-lg transition-all cursor-pointer group">
+                    <div
+                        class="h-32 w-full bg-slate-100 dark:bg-primary/5 rounded-lg flex items-center justify-center overflow-hidden">
+                        <img alt="Wheat Grain"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            data-alt="Golden wheat seeds macro shot"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVZlQz-ab-H31liTtUSnuUEial4Tl5wULW9GakV3V301O8HIftKnC2er32_BokNsknMdc1TK7rv8Wkxa_A_EOjcFjAG5THpA6p6bejG5-3tJFbJD5zL_9Rz5KLZM4pvvYSRp40-rF_1-kiOOgmZbTRZIuj9tGoBVEBJn1wSi3gV5rXQv_2rTV7ICdTh8IeyHTTLK-EDHsnXoGkg4ehJOzQQrHwpnlek-k3yIiprQGTYzcryA8xaFJKhW4qZkuNRIOTltGOx3D32Fk" />
+                    </div>
+                    <div>
+                        <span
+                            class="text-[10px] font-bold text-primary uppercase bg-primary/10 px-2 py-0.5 rounded">Grains</span>
+                        <h3 class="font-bold text-sm mt-1">Hard Red Winter Wheat</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Stock: 8.4 Metric Tons</p>
+                    </div>
+                    <div
+                        class="flex items-center justify-between mt-auto pt-2 border-t border-slate-100 dark:border-primary/5">
+                        <span class="font-extrabold text-primary">$315.00</span>
+                        <button
+                            class="w-8 h-8 rounded-lg bg-primary text-background-dark flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform">
+                            <span class="material-symbols-outlined">add</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Product Card 4 -->
+                <div
+                    class="bg-white dark:bg-background-dark/40 border border-slate-200 dark:border-primary/10 rounded-xl p-4 flex flex-col gap-3 hover:border-primary/40 hover:shadow-lg transition-all cursor-pointer group">
+                    <div
+                        class="h-32 w-full bg-slate-100 dark:bg-primary/5 rounded-lg flex items-center justify-center overflow-hidden">
+                        <img alt="Barley"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            data-alt="Dry organic barley grains"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAdZLL3vQwYRMvJzqXw4io76_Xag1xefB74DsXhYfXMJN0oTrbqRD-WwIWL2q9w0jEFEd8OCu08tkCoDhhmwPDcIPGPtoBNffFr6fHGFuOlqDX-eQvPnaovukpxrwCQyCSr9u5NiAvAPccVO5RhRvJiy20fgidrMNybkbRHBCKrWenrCVPPQvOwmv-WaDo_pWKSlRF2q7cLWt44F34L94oUY2jhhB2ESlTutiN_W03OjUvHNKWYrQ10aL8lsjUDpLR7mdVyWqy4jw" />
+                    </div>
+                    <div>
+                        <span
+                            class="text-[10px] font-bold text-primary uppercase bg-primary/10 px-2 py-0.5 rounded">Grains</span>
+                        <h3 class="font-bold text-sm mt-1">Premium Two-Row Barley</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Stock: 22.0 Metric Tons</p>
+                    </div>
+                    <div
+                        class="flex items-center justify-between mt-auto pt-2 border-t border-slate-100 dark:border-primary/5">
+                        <span class="font-extrabold text-primary">$210.00</span>
+                        <button
+                            class="w-8 h-8 rounded-lg bg-primary text-background-dark flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform">
+                            <span class="material-symbols-outlined">add</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Product Card 5 -->
+                <div
+                    class="bg-white dark:bg-background-dark/40 border border-slate-200 dark:border-primary/10 rounded-xl p-4 flex flex-col gap-3 hover:border-primary/40 hover:shadow-lg transition-all cursor-pointer group">
+                    <div
+                        class="h-32 w-full bg-slate-100 dark:bg-primary/5 rounded-lg flex items-center justify-center overflow-hidden">
+                        <img alt="Nitrogen Fertilizer"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            data-alt="Sack of industrial nitrogen fertilizer"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDndeHCAcEZVlQki-a7Za3XFFBp9jUeo5EuaMkAclk6TSJuldqDboK2xvs543Bhk1TTiFmxRIR61c9lphCGugTZICtVyd5-a-zQx3AAeHV9gHMGRl__bflP_lK1dGB7_rl9FWArez5cVH7Y5Htf7jA22Pxpi-Qb8-DFzVZjZDEa56eR5wrDXDoD7fTczAc0Tw6ow8xwQYMyDTe2d06QCyvzp_qWvxe5WcCGQ_G9_EZW_3XitEonMqm-knJhB3djSbSvTP1Xd9C-gVE" />
+                    </div>
+                    <div>
+                        <span
+                            class="text-[10px] font-bold text-primary uppercase bg-primary/10 px-2 py-0.5 rounded">Fertilizers</span>
+                        <h3 class="font-bold text-sm mt-1">Urea Fertilizer (50kg)</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Stock: 450 Sacks</p>
+                    </div>
+                    <div
+                        class="flex items-center justify-between mt-auto pt-2 border-t border-slate-100 dark:border-primary/5">
+                        <span class="font-extrabold text-primary">$42.00</span>
+                        <button
+                            class="w-8 h-8 rounded-lg bg-primary text-background-dark flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform">
+                            <span class="material-symbols-outlined">add</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Product Card 6 -->
+                <div
+                    class="bg-white dark:bg-background-dark/40 border border-slate-200 dark:border-primary/10 rounded-xl p-4 flex flex-col gap-3 hover:border-primary/40 hover:shadow-lg transition-all cursor-pointer group">
+                    <div
+                        class="h-32 w-full bg-slate-100 dark:bg-primary/5 rounded-lg flex items-center justify-center overflow-hidden">
+                        <img alt="Oat feed"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            data-alt="Oats used for animal fodder"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaWCGT9SNqpfW1-UKgRUfruMz-gH37prISqCLlWZH_oU86JSUe_ruvfbic6MxtS83A-F9XDULlC3vrcqNKPxOisjY3jOPkA_gUUssFHLTOoldGRhjWDgJGIP-yZwiuaKwIgvq8jy14_ELCVbh-Ldavb7Fhu4EpjSLkZGmKIZRKWi1e4GwU1VMyiRoTyrxGpxy5YmP4Imk586N3Bt0_GGs7VAiIxlRgMkg33K2tv1_r5URzb3rmfaeh-d7I8AgRoxndzEzqkmrxu4w" />
+                    </div>
+                    <div>
+                        <span
+                            class="text-[10px] font-bold text-primary uppercase bg-primary/10 px-2 py-0.5 rounded">Animal
+                            Feed</span>
+                        <h3 class="font-bold text-sm mt-1">Rolled Oats Fodder</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Stock: 15.1 Metric Tons</p>
+                    </div>
+                    <div
+                        class="flex items-center justify-between mt-auto pt-2 border-t border-slate-100 dark:border-primary/5">
+                        <span class="font-extrabold text-primary">$195.00</span>
+                        <button
+                            class="w-8 h-8 rounded-lg bg-primary text-background-dark flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform">
+                            <span class="material-symbols-outlined">add</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Right Side: Cart Summary -->
+        <div
+            class="w-full lg:w-[400px] flex flex-col bg-white dark:bg-background-dark/80 border border-slate-200 dark:border-primary/10 rounded-2xl shadow-2xl h-[calc(100vh-140px)] sticky top-24 overflow-hidden">
+            <!-- Cart Header -->
+            <div class="p-6 border-b border-slate-100 dark:border-primary/10">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-lg font-extrabold flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">shopping_cart</span>
                         Cart Summary
                     </h3>
-<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold">3 Items</span>
-</div>
-<p class="text-xs text-slate-500 dark:text-slate-400">POS Session: <span class="text-slate-700 dark:text-slate-200 font-medium">Terminal-42-A</span></p>
-</div>
-<!-- Cart Items List -->
-<div class="flex-1 overflow-y-auto p-6 space-y-4">
-<!-- Item 1 -->
-<div class="flex gap-4">
-<div class="w-12 h-12 rounded-lg bg-slate-100 dark:bg-primary/5 flex-shrink-0 flex items-center justify-center overflow-hidden">
-<img alt="Item Thumb" class="w-full h-full object-cover" data-alt="Small thumbnail of corn kernels" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4OKXiBboUK5id2RKv64yXMrvC99Trmi6gL9Kon70xRM3X_oHEz5sTB4iWPg2YWqhL0JVKlmruenvHmi0GlMXVtVFQ8dQqqNAUXKxRIm59uoLWUGk0cD4M0vIam9ECiJKIsyGmFfr6AXE8YHzr068onKiOu2_qYorATq-Gv9wILo0t1az11hzaGAMvg1AASSzwu6IIk8NpPmuZ31QC4faaQEtbBEWFnOZpWTAddMRrlkYIhgh6AGf_Q0pDkYoqedFUgTAr00z0T_A"/>
-</div>
-<div class="flex-1 min-w-0">
-<h4 class="text-sm font-bold truncate">Bulk Yellow Corn (MT)</h4>
-<div class="flex items-center justify-between mt-1">
-<div class="flex items-center gap-2">
-<button class="w-6 h-6 rounded bg-slate-200 dark:bg-primary/10 flex items-center justify-center text-xs hover:bg-primary/30">-</button>
-<span class="text-sm font-bold w-6 text-center">2</span>
-<button class="w-6 h-6 rounded bg-slate-200 dark:bg-primary/10 flex items-center justify-center text-xs hover:bg-primary/30">+</button>
-</div>
-<span class="text-sm font-bold">$480.00</span>
-</div>
-</div>
-</div>
-<!-- Item 2 -->
-<div class="flex gap-4">
-<div class="w-12 h-12 rounded-lg bg-slate-100 dark:bg-primary/5 flex-shrink-0 flex items-center justify-center overflow-hidden">
-<img alt="Item Thumb" class="w-full h-full object-cover" data-alt="Small thumbnail of soy meal" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgykka6GMyS5d13E5QMQr22GhBvvS_vKFNSCMX5zWYhkLHzykjYJXpb2H7c7iNyvy6eq7puQrApEZf0YDg39baw-zRCOS5KHddZJKEsMrNp23tbEQBEm2QVIXpfMzOZ27q-FJXTUcBgM0hvdlCtFrnHGQf_0L0CN-N6wwzr-O5flp67GodgiJ0lkDdZxD47EU6iH9lAxXKKqLokynZkprtC-hikc1jikwUTMrV9kQugONN4VDBZKKWgL_TFC2bIHpHDX_SiZjMd7k"/>
-</div>
-<div class="flex-1 min-w-0">
-<h4 class="text-sm font-bold truncate">High-Protein Soy Meal</h4>
-<div class="flex items-center justify-between mt-1">
-<div class="flex items-center gap-2">
-<button class="w-6 h-6 rounded bg-slate-200 dark:bg-primary/10 flex items-center justify-center text-xs hover:bg-primary/30">-</button>
-<span class="text-sm font-bold w-6 text-center">10</span>
-<button class="w-6 h-6 rounded bg-slate-200 dark:bg-primary/10 flex items-center justify-center text-xs hover:bg-primary/30">+</button>
-</div>
-<span class="text-sm font-bold">$185.00</span>
-</div>
-</div>
-</div>
-<!-- Item 3 -->
-<div class="flex gap-4">
-<div class="w-12 h-12 rounded-lg bg-slate-100 dark:bg-primary/5 flex-shrink-0 flex items-center justify-center overflow-hidden">
-<img alt="Item Thumb" class="w-full h-full object-cover" data-alt="Small thumbnail of fertilizer sack" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAS3SyInr6MtDrODLboHaTI5mTL41hb12qLx9psDbWt9hAwsQcHQWqL-Pv69dkRSofKSyOPj4Qv7BlEcrlXzLqqTJOQFJand7F-hq-GacldbQpYmlkMLuzCsyy7fH-jWF6hi2mBOGKNo-gZ6eQ7w7YiCbiq344cxovMJ2pbyDMkgyNk_D_MHnb49_ayiEsZooMvQGBCwF8asF7Q7IX31UfB2zLLdygHQylIGV0lk19BJ57_ktGVgeDtQbizoHZLnvYy9XlVM-xMlaE"/>
-</div>
-<div class="flex-1 min-w-0">
-<h4 class="text-sm font-bold truncate">Urea Fertilizer (50kg)</h4>
-<div class="flex items-center justify-between mt-1">
-<div class="flex items-center gap-2">
-<button class="w-6 h-6 rounded bg-slate-200 dark:bg-primary/10 flex items-center justify-center text-xs hover:bg-primary/30">-</button>
-<span class="text-sm font-bold w-6 text-center">5</span>
-<button class="w-6 h-6 rounded bg-slate-200 dark:bg-primary/10 flex items-center justify-center text-xs hover:bg-primary/30">+</button>
-</div>
-<span class="text-sm font-bold">$210.00</span>
-</div>
-</div>
-</div>
-</div>
-<!-- Payment & Checkout -->
-<div class="p-6 bg-slate-50 dark:bg-primary/5 border-t border-slate-100 dark:border-primary/10 space-y-4">
-<!-- Payment Method -->
-<div>
-<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 block">Payment Method</label>
-<div class="grid grid-cols-3 gap-2">
-<button class="flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 border-primary bg-primary/10 text-primary">
-<span class="material-symbols-outlined text-lg">payments</span>
-<span class="text-[10px] font-bold">Cash</span>
-</button>
-<button class="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-slate-200 dark:border-primary/20 hover:border-primary/40 text-slate-500 transition-all">
-<span class="material-symbols-outlined text-lg">smartphone</span>
-<span class="text-[10px] font-bold">Mobile</span>
-</button>
-<button class="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-slate-200 dark:border-primary/20 hover:border-primary/40 text-slate-500 transition-all">
-<span class="material-symbols-outlined text-lg">credit_card</span>
-<span class="text-[10px] font-bold">Credit</span>
-</button>
-</div>
-</div>
-<!-- Totals -->
-<div class="space-y-2 py-2">
-<div class="flex justify-between text-sm">
-<span class="text-slate-500">Subtotal</span>
-<span class="font-bold">$875.00</span>
-</div>
-<div class="flex justify-between text-sm">
-<span class="text-slate-500">Tax (2%)</span>
-<span class="font-bold">$17.50</span>
-</div>
-<div class="flex justify-between text-xl font-extrabold text-primary border-t border-slate-200 dark:border-primary/20 pt-4 mt-2">
-<span>Grand Total</span>
-<span>$892.50</span>
-</div>
-</div>
-<!-- Confirm Button -->
-<button class="w-full bg-primary hover:bg-primary/90 text-background-dark font-extrabold py-4 rounded-xl flex items-center justify-center gap-3 shadow-lg shadow-primary/20 transform transition-all active:scale-95">
-<span class="material-symbols-outlined font-bold">print</span>
+                    <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold">3 Items</span>
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400">POS Session: <span
+                        class="text-slate-700 dark:text-slate-200 font-medium">Terminal-42-A</span></p>
+            </div>
+            <!-- Cart Items List -->
+            <div class="flex-1 overflow-y-auto p-6 space-y-4">
+                <!-- Item 1 -->
+                <div class="flex gap-4">
+                    <div
+                        class="w-12 h-12 rounded-lg bg-slate-100 dark:bg-primary/5 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                        <img alt="Item Thumb" class="w-full h-full object-cover"
+                            data-alt="Small thumbnail of corn kernels"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4OKXiBboUK5id2RKv64yXMrvC99Trmi6gL9Kon70xRM3X_oHEz5sTB4iWPg2YWqhL0JVKlmruenvHmi0GlMXVtVFQ8dQqqNAUXKxRIm59uoLWUGk0cD4M0vIam9ECiJKIsyGmFfr6AXE8YHzr068onKiOu2_qYorATq-Gv9wILo0t1az11hzaGAMvg1AASSzwu6IIk8NpPmuZ31QC4faaQEtbBEWFnOZpWTAddMRrlkYIhgh6AGf_Q0pDkYoqedFUgTAr00z0T_A" />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-sm font-bold truncate">Bulk Yellow Corn (MT)</h4>
+                        <div class="flex items-center justify-between mt-1">
+                            <div class="flex items-center gap-2">
+                                <button
+                                    class="w-6 h-6 rounded bg-slate-200 dark:bg-primary/10 flex items-center justify-center text-xs hover:bg-primary/30">-</button>
+                                <span class="text-sm font-bold w-6 text-center">2</span>
+                                <button
+                                    class="w-6 h-6 rounded bg-slate-200 dark:bg-primary/10 flex items-center justify-center text-xs hover:bg-primary/30">+</button>
+                            </div>
+                            <span class="text-sm font-bold">$480.00</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Item 2 -->
+                <div class="flex gap-4">
+                    <div
+                        class="w-12 h-12 rounded-lg bg-slate-100 dark:bg-primary/5 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                        <img alt="Item Thumb" class="w-full h-full object-cover" data-alt="Small thumbnail of soy meal"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgykka6GMyS5d13E5QMQr22GhBvvS_vKFNSCMX5zWYhkLHzykjYJXpb2H7c7iNyvy6eq7puQrApEZf0YDg39baw-zRCOS5KHddZJKEsMrNp23tbEQBEm2QVIXpfMzOZ27q-FJXTUcBgM0hvdlCtFrnHGQf_0L0CN-N6wwzr-O5flp67GodgiJ0lkDdZxD47EU6iH9lAxXKKqLokynZkprtC-hikc1jikwUTMrV9kQugONN4VDBZKKWgL_TFC2bIHpHDX_SiZjMd7k" />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-sm font-bold truncate">High-Protein Soy Meal</h4>
+                        <div class="flex items-center justify-between mt-1">
+                            <div class="flex items-center gap-2">
+                                <button
+                                    class="w-6 h-6 rounded bg-slate-200 dark:bg-primary/10 flex items-center justify-center text-xs hover:bg-primary/30">-</button>
+                                <span class="text-sm font-bold w-6 text-center">10</span>
+                                <button
+                                    class="w-6 h-6 rounded bg-slate-200 dark:bg-primary/10 flex items-center justify-center text-xs hover:bg-primary/30">+</button>
+                            </div>
+                            <span class="text-sm font-bold">$185.00</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Item 3 -->
+                <div class="flex gap-4">
+                    <div
+                        class="w-12 h-12 rounded-lg bg-slate-100 dark:bg-primary/5 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                        <img alt="Item Thumb" class="w-full h-full object-cover"
+                            data-alt="Small thumbnail of fertilizer sack"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAS3SyInr6MtDrODLboHaTI5mTL41hb12qLx9psDbWt9hAwsQcHQWqL-Pv69dkRSofKSyOPj4Qv7BlEcrlXzLqqTJOQFJand7F-hq-GacldbQpYmlkMLuzCsyy7fH-jWF6hi2mBOGKNo-gZ6eQ7w7YiCbiq344cxovMJ2pbyDMkgyNk_D_MHnb49_ayiEsZooMvQGBCwF8asF7Q7IX31UfB2zLLdygHQylIGV0lk19BJ57_ktGVgeDtQbizoHZLnvYy9XlVM-xMlaE" />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-sm font-bold truncate">Urea Fertilizer (50kg)</h4>
+                        <div class="flex items-center justify-between mt-1">
+                            <div class="flex items-center gap-2">
+                                <button
+                                    class="w-6 h-6 rounded bg-slate-200 dark:bg-primary/10 flex items-center justify-center text-xs hover:bg-primary/30">-</button>
+                                <span class="text-sm font-bold w-6 text-center">5</span>
+                                <button
+                                    class="w-6 h-6 rounded bg-slate-200 dark:bg-primary/10 flex items-center justify-center text-xs hover:bg-primary/30">+</button>
+                            </div>
+                            <span class="text-sm font-bold">$210.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Payment & Checkout -->
+            <div class="p-6 bg-slate-50 dark:bg-primary/5 border-t border-slate-100 dark:border-primary/10 space-y-4">
+                <!-- Payment Method -->
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 block">Payment
+                        Method</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button
+                            class="flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 border-primary bg-primary/10 text-primary">
+                            <span class="material-symbols-outlined text-lg">payments</span>
+                            <span class="text-[10px] font-bold">Cash</span>
+                        </button>
+                        <button
+                            class="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-slate-200 dark:border-primary/20 hover:border-primary/40 text-slate-500 transition-all">
+                            <span class="material-symbols-outlined text-lg">smartphone</span>
+                            <span class="text-[10px] font-bold">Mobile</span>
+                        </button>
+                        <button
+                            class="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-slate-200 dark:border-primary/20 hover:border-primary/40 text-slate-500 transition-all">
+                            <span class="material-symbols-outlined text-lg">credit_card</span>
+                            <span class="text-[10px] font-bold">Credit</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Totals -->
+                <div class="space-y-2 py-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-500">Subtotal</span>
+                        <span class="font-bold">$875.00</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-500">Tax (2%)</span>
+                        <span class="font-bold">$17.50</span>
+                    </div>
+                    <div
+                        class="flex justify-between text-xl font-extrabold text-primary border-t border-slate-200 dark:border-primary/20 pt-4 mt-2">
+                        <span>Grand Total</span>
+                        <span>$892.50</span>
+                    </div>
+                </div>
+                <!-- Confirm Button -->
+                <button
+                    class="w-full bg-primary hover:bg-primary/90 text-background-dark font-extrabold py-4 rounded-xl flex items-center justify-center gap-3 shadow-lg shadow-primary/20 transform transition-all active:scale-95">
+                    <span class="material-symbols-outlined font-bold">print</span>
                     CONFIRM &amp; PRINT RECEIPT
                 </button>
-</div>
-</div>
-</main>
-<!-- Hotkeys Toast (Bottom Left) -->
-<div class="fixed bottom-6 left-6 flex items-center gap-4 bg-background-dark/90 border border-primary/20 backdrop-blur-md px-4 py-2 rounded-full shadow-2xl">
-<div class="flex items-center gap-1.5 text-xs">
-<kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-primary border border-primary/30 font-mono">F2</kbd>
-<span class="text-slate-400">Search</span>
-</div>
-<div class="w-px h-3 bg-primary/20"></div>
-<div class="flex items-center gap-1.5 text-xs">
-<kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-primary border border-primary/30 font-mono">ENT</kbd>
-<span class="text-slate-400">Confirm</span>
-</div>
-<div class="w-px h-3 bg-primary/20"></div>
-<div class="flex items-center gap-1.5 text-xs text-primary font-bold">
-<span class="material-symbols-outlined text-sm">schedule</span>
+            </div>
+        </div>
+    </main>
+    <!-- Hotkeys Toast (Bottom Left) -->
+    <div
+        class="fixed bottom-6 left-6 flex items-center gap-4 bg-background-dark/90 border border-primary/20 backdrop-blur-md px-4 py-2 rounded-full shadow-2xl">
+        <div class="flex items-center gap-1.5 text-xs">
+            <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-primary border border-primary/30 font-mono">F2</kbd>
+            <span class="text-slate-400">Search</span>
+        </div>
+        <div class="w-px h-3 bg-primary/20"></div>
+        <div class="flex items-center gap-1.5 text-xs">
+            <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-primary border border-primary/30 font-mono">ENT</kbd>
+            <span class="text-slate-400">Confirm</span>
+        </div>
+        <div class="w-px h-3 bg-primary/20"></div>
+        <div class="flex items-center gap-1.5 text-xs text-primary font-bold">
+            <span class="material-symbols-outlined text-sm">schedule</span>
             14:25:02
         </div>
-</div>
-</body></html>
+    </div>
+</body>
+
+</html>

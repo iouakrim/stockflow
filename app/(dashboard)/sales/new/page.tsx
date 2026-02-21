@@ -20,14 +20,17 @@ export default async function NewSalePage() {
         return <div className="p-4 text-destructive font-bold">Error: User missing tenant_id. Please configure profile.</div>
     }
 
-    // Fetch products
-    const { data: products } = await supabase.from("products").select("*").order("name", { ascending: true })
+    // Fetch products with supplier details
+    const { data: products } = await supabase
+        .from("products")
+        .select(`*, suppliers(name)`)
+        .order("name", { ascending: true })
 
     // Fetch customers
     const { data: customers } = await supabase.from("customers").select("id, name, phone").order("name", { ascending: true })
 
     return (
-        <div className="h-[calc(100vh-4rem)] flex flex-col p-4 md:p-6 lg:p-8 overflow-hidden">
+        <div className="h-[calc(100vh-4rem)] flex flex-col -mt-4 -mx-4 md:-mt-10 md:-mx-10 px-3 pt-3 flex-1 overflow-hidden">
             <POSClient products={products || []} customers={customers || []} />
         </div>
     )

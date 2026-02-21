@@ -5,7 +5,8 @@ import { createClient } from "@/lib/supabase/server"
 export async function processSaleCheckout(
     items: { product_id: string; quantity: number; unit_price: number; total_price: number }[],
     customerId?: string | null,
-    paymentMethod: 'cash' | 'card' | 'credit' | 'bank_transfer' = 'cash'
+    paymentMethod: 'cash' | 'card' | 'credit' | 'bank_transfer' = 'cash',
+    discount: number = 0
 ) {
     const supabase = createClient()
 
@@ -21,14 +22,15 @@ export async function processSaleCheckout(
     if (!profile?.tenant_id) throw new Error("Missing tenant profile")
 
     // The RPC `process_sale` was defined in the schema.sql:
-    // process_sale(p_tenant_id UUID, p_cashier_id UUID, p_customer_id UUID, p_payment_method text, p_items JSONB)
+    // process_sale(p_tenant_id UUID, p_cashier_id UUID, p_customer_id UUID, p_payment_method text, p_items JSONB, p_discount DECIMAL)
 
     const { data: saleId, error } = await supabase.rpc('process_sale', {
         p_tenant_id: profile.tenant_id,
         p_cashier_id: user.id,
         p_customer_id: customerId || null,
         p_payment_method: paymentMethod,
-        p_items: items
+        p_items: items,
+        p_discount: discount
     })
 
     if (error) {

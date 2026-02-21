@@ -5,6 +5,9 @@ export type CartItem = Product & { cartQuantity: number }
 
 type CartState = {
     items: CartItem[]
+    discount: number // Percentage (0-100) or Fixed Amount
+    discountType: 'percentage' | 'fixed'
+    setDiscount: (discount: number, type: 'percentage' | 'fixed') => void
     addItem: (product: Product) => void
     removeItem: (productId: string) => void
     updateQuantity: (productId: string, quantity: number) => void
@@ -14,7 +17,10 @@ type CartState = {
 
 export const useCartStore = create<CartState>((set) => ({
     items: [],
+    discount: 0,
+    discountType: 'percentage',
     total: 0,
+    setDiscount: (discount, type) => set({ discount, discountType: type }),
     addItem: (product) => set((state) => {
         const existing = state.items.find(item => item.id === product.id)
         let newItems = []
@@ -52,5 +58,5 @@ export const useCartStore = create<CartState>((set) => ({
             total: newItems.reduce((acc, item) => acc + (item.selling_price * item.cartQuantity), 0)
         }
     }),
-    clearCart: () => set({ items: [], total: 0 }),
+    clearCart: () => set({ items: [], total: 0, discount: 0, discountType: 'percentage' }),
 }))
