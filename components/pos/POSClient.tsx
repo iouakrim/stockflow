@@ -21,7 +21,8 @@ import {
     Zap,
     X,
     Loader2,
-    Phone
+    Phone,
+    Printer
 } from "lucide-react"
 
 import {
@@ -30,6 +31,11 @@ import {
     SheetTrigger,
     SheetClose
 } from "@/components/ui/sheet"
+
+import {
+    Dialog,
+    DialogContent
+} from "@/components/ui/dialog"
 
 import {
     Popover,
@@ -60,6 +66,7 @@ export function POSClient({ products, customers }: POSClientProps) {
     const [isProcessing, setIsProcessing] = useState(false)
     const [activeCategory, setActiveCategory] = useState("All")
     const [showSuccess, setShowSuccess] = useState(false)
+    const [completedSaleId, setCompletedSaleId] = useState<string | null>(null)
 
     // Quick Create Customer State
     const [localCustomers, setLocalCustomers] = useState(customers)
@@ -135,11 +142,9 @@ export function POSClient({ products, customers }: POSClientProps) {
 
             if (res.success) {
                 setShowSuccess(true)
-                setTimeout(() => {
-                    clearCart()
-                    setShowSuccess(false)
-                    router.refresh()
-                }, 1500)
+                if (res.saleId) {
+                    setCompletedSaleId(res.saleId)
+                }
             } else {
                 alert("Checkout failed: " + res.error)
             }
@@ -148,6 +153,14 @@ export function POSClient({ products, customers }: POSClientProps) {
         } finally {
             setIsProcessing(false)
         }
+    }
+
+    const handleNewSale = () => {
+        setCompletedSaleId(null)
+        setShowSuccess(false)
+        clearCart()
+        setSelectedCustomerId("walk-in")
+        router.refresh()
     }
 
     const CartHeader = () => (
@@ -630,6 +643,31 @@ export function POSClient({ products, customers }: POSClientProps) {
                     </SheetContent>
                 </Sheet>
             </div>
+
+            {/* Receipt Modal */}
+            <Dialog open={!!completedSaleId} onOpenChange={(open) => { if (!open) handleNewSale() }}>
+                <DialogContent className="max-w-md p-0 overflow-hidden bg-background border-primary/20 rounded-[2.5rem]">
+                    {completedSaleId && (
+                        <div className="flex flex-col h-[85vh] max-h-[800px]">
+                            <div className="p-5 border-b border-primary/10 flex justify-between items-center bg-card">
+                                <h2 className="font-black text-lg flex items-center gap-2">
+                                    <CheckCircle2 className="h-5 w-5 text-primary" />
+                                    Transaction Complete
+                                </h2>
+                                <Button onClick={() => window.open(`/receipt/${completedSaleId}`, '_blank')} variant="outline" size="sm" className="gap-2 rounded-xl text-primary border-primary/20 hover:bg-primary/10 font-black text-[10px] uppercase tracking-widest bg-primary/5">
+                                    <Printer className="w-4 h-4" /> Print
+                                </Button>
+                            </div>
+                            <iframe src={`/receipt/${completedSaleId}`} className="flex-1 w-full bg-white relative z-0" />
+                            <div className="p-5 bg-card border-t border-primary/10 flex flex-col items-center">
+                                <Button onClick={handleNewSale} className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-[#102219] font-black tracking-widest uppercase shadow-xl shadow-primary/20 text-xs">
+                                    Next Customer (New Sale)
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

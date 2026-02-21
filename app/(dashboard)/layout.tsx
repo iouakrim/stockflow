@@ -17,7 +17,9 @@ import {
     Building2,
     PlusCircle,
     Activity,
-    CreditCard
+    CreditCard,
+    PanelLeftClose,
+    PanelLeftOpen
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SignOutButton } from "@/components/auth/SignOutButton"
@@ -35,6 +37,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     const pathname = usePathname();
     const [userProfile, setUserProfile] = useState<{ full_name: string; role: string } | null>(null);
     const [warehouseInfo, setWarehouseInfo] = useState<{ name: string; id: string } | null>(null);
+    const [isCollapsed, setIsCollapsed] = useState(false);
     const supabase = createClient();
 
     useEffect(() => {
@@ -81,7 +84,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     const mobileNavItems = [
         { label: "Home", href: "/dashboard", icon: LayoutDashboard },
         { label: "Inventory", href: "/products", icon: Package },
-        { label: "POS", href: "/sales/new", icon: PlusCircle, primary: true },
+        { label: "POS", href: "/sales/new", icon: PlusCircle },
         { label: "Ledger", href: "/sales", icon: CreditCard },
         { label: "Account", href: "/settings", icon: Settings },
     ];
@@ -98,42 +101,47 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     return (
         <div className="flex h-screen bg-background dark:bg-[#102219] overflow-hidden selection:bg-primary/30 selection:text-primary transition-colors duration-500">
             {/* Desktop Sidebar */}
-            <aside className="hidden md:flex w-72 flex-col border-r border-primary/10 bg-white dark:bg-[#0a140f] z-30 transition-all duration-300">
-                <div className="p-8 flex items-center gap-3">
-                    <div className="size-11 rounded-xl bg-primary flex items-center justify-center text-[#102219] shadow-lg shadow-primary/20 animate-float">
+            <aside className={`hidden md:flex flex-col border-r border-primary/10 bg-white dark:bg-[#0a140f] z-30 transition-all duration-300 ${isCollapsed ? 'w-24' : 'w-72'}`}>
+                <div className={`p-8 flex items-center ${isCollapsed ? 'justify-center px-4' : 'gap-3'}`}>
+                    <div className="size-11 shrink-0 rounded-xl bg-primary flex items-center justify-center text-[#102219] shadow-lg shadow-primary/20 animate-float">
                         <Leaf className="h-6 w-6 fill-current" />
                     </div>
-                    <div className="flex flex-col">
-                        <h1 className="text-foreground text-lg font-black leading-tight tracking-tighter">StockFlow Pro</h1>
-                        <p className="text-primary text-[10px] font-black uppercase tracking-widest opacity-80">Agri-Logistics OS</p>
-                    </div>
+                    {!isCollapsed && (
+                        <div className="flex flex-col min-w-0">
+                            <h1 className="text-foreground text-lg font-black leading-tight tracking-tighter truncate">StockFlow Pro</h1>
+                            <p className="text-primary text-[10px] font-black uppercase tracking-widest opacity-80 truncate">Agri-Logistics OS</p>
+                        </div>
+                    )}
                 </div>
 
-                <nav className="flex-1 px-6 space-y-1.5 py-6 overflow-y-auto custom-scrollbar">
+                <nav className={`flex-1 space-y-1.5 py-6 overflow-y-auto custom-scrollbar ${isCollapsed ? 'px-4' : 'px-6'}`}>
                     {navItems.map((item) => (
                         <Link
                             key={item.href}
                             href={item.href}
-                            className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-300 group ${isActive(item.href)
+                            className={`flex items-center gap-3.5 py-3 rounded-xl text-sm font-bold transition-all duration-300 group ${isActive(item.href)
                                 ? "bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_-5px_rgba(17,212,115,0.2)]"
                                 : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
-                                }`}
+                                } ${isCollapsed ? 'justify-center px-0' : 'px-4'}`}
+                            title={isCollapsed ? item.label : undefined}
                         >
-                            <item.icon className={`h-5 w-5 transition-transform group-hover:scale-110 group-active:scale-95 ${isActive(item.href) ? "text-primary fill-current/10" : "text-muted-foreground group-hover:text-primary"}`} />
-                            {item.label}
+                            <item.icon className={`h-5 w-5 shrink-0 transition-transform group-hover:scale-110 group-active:scale-95 ${isActive(item.href) ? "text-primary fill-current/10" : "text-muted-foreground group-hover:text-primary"}`} />
+                            {!isCollapsed && <span className="truncate">{item.label}</span>}
                         </Link>
                     ))}
                 </nav>
 
                 <div className="p-6 border-t border-primary/5 bg-accent/5">
-                    <div className="bg-primary/5 rounded-2xl p-4 border border-primary/10 mb-4 mx-2">
-                        <div className="flex items-center gap-2 mb-2">
-                            <Activity className="size-3 text-primary animate-pulse" />
-                            <span className="text-[9px] font-black uppercase tracking-widest text-primary">System Node Active</span>
+                    {!isCollapsed && (
+                        <div className="bg-primary/5 rounded-2xl p-4 border border-primary/10 mb-4 mx-2">
+                            <div className="flex items-center gap-2 mb-2">
+                                <Activity className="size-3 shrink-0 text-primary animate-pulse" />
+                                <span className="text-[9px] font-black uppercase tracking-widest text-primary truncate">System Node Active</span>
+                            </div>
+                            <p className="text-[10px] text-muted-foreground/60 font-medium leading-tight">Last sync: 12s ago via Silo Matrix v4.2</p>
                         </div>
-                        <p className="text-[10px] text-muted-foreground/60 font-medium leading-tight">Last sync: 12s ago via Silo Matrix v4.2</p>
-                    </div>
-                    <SignOutButton />
+                    )}
+                    <SignOutButton collapsed={isCollapsed} />
                 </div>
             </aside>
 
@@ -142,6 +150,15 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 {/* Top Header */}
                 <header className="h-16 md:h-20 flex items-center justify-between px-6 md:px-8 bg-white/40 dark:bg-[#102219]/40 backdrop-blur-xl border-b border-primary/10 sticky top-0 z-20">
                     <div className="flex items-center gap-4 md:gap-8">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setIsCollapsed(!isCollapsed)}
+                            className="hidden md:flex relative size-11 rounded-2xl bg-accent/30 hover:bg-primary/10 hover:text-primary transition-all border border-transparent hover:border-primary/10"
+                        >
+                            {isCollapsed ? <PanelLeftOpen className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
+                        </Button>
+
                         <div className="md:hidden flex items-center gap-2">
                             <div className="size-9 rounded-xl bg-primary flex items-center justify-center text-[#102219] shadow-lg shadow-primary/20">
                                 <Leaf className="h-4.5 w-4.5 fill-current" />
@@ -209,38 +226,26 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                     {children}
                 </div>
 
-                {/* Mobile Bottom Navigation - "App Style" */}
-                <div className="md:hidden fixed bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-background via-background/90 to-transparent pointer-events-none z-40" />
-                <nav className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md h-20 bg-[#0a140f]/90 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] z-50 flex items-center justify-between px-3 shadow-2xl shadow-primary/10 overflow-visible">
+                {/* Mobile Bottom Navigation - X/WhatsApp Style */}
+                <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-background dark:bg-[#0a140f] border-t border-primary/10 z-50 flex items-center justify-around px-2 pb-safe">
                     {mobileNavItems.map((item) => {
                         const active = isActive(item.href);
                         return (
                             <Link
                                 key={item.href}
                                 href={item.href}
-                                className={`flex flex-col items-center justify-center gap-1.5 transition-all duration-500 flex-1 relative ${item.primary ? "overflow-visible" : ""}`}
+                                className={`flex flex-col items-center justify-center gap-1 flex-1 py-1 h-full w-full`}
                             >
-                                {item.primary ? (
-                                    <div className="relative -mt-12 group pointer-events-auto">
-                                        <div className="absolute inset-0 bg-primary/40 rounded-3xl blur-2xl opacity-20 group-active:opacity-60 transition-opacity" />
-                                        <div className="size-16 bg-primary rounded-[1.5rem] flex items-center justify-center shadow-2xl shadow-primary/40 border-[6px] border-[#0a140f] relative z-10 hover:scale-110 active:scale-90 transition-all">
-                                            <item.icon className="size-8 text-[#0a140f] stroke-[2.5px]" />
-                                        </div>
-                                        <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 text-[9px] font-black uppercase tracking-widest text-primary opacity-80">
-                                            {item.label}
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className={`p-2 rounded-2xl transition-all duration-300 pointer-events-auto group active:scale-90 flex flex-col items-center w-full`}>
-                                        <item.icon className={`size-6 transition-all duration-300 ${active ? "text-primary scale-110 fill-primary/10" : "text-muted-foreground/40 group-hover:text-primary/60"}`} />
-                                        <span className={`text-[9px] font-black uppercase tracking-tighter mt-1 transition-all duration-300 ${active ? "text-primary opacity-100" : "text-muted-foreground/20 group-hover:text-primary/40"}`}>
-                                            {item.label}
-                                        </span>
-                                        {active && (
-                                            <div className="absolute -bottom-2 size-1.5 rounded-full bg-primary shadow-[0_0_10px_#11d473] animate-pulse" />
-                                        )}
-                                    </div>
-                                )}
+                                <div className={`relative flex flex-col items-center justify-center p-1 rounded-full transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}>
+                                    <item.icon className={`h-[22px] w-[22px] stroke-[1.5px] ${active ? "fill-primary/20 stroke-[2px]" : ""}`} />
+                                    {/* Optional Notification Badge */}
+                                    {item.label === "Account" && (
+                                        <span className="absolute top-1 right-0.5 size-2 bg-destructive rounded-full border border-background" />
+                                    )}
+                                </div>
+                                <span className={`text-[10px] font-medium tracking-tight ${active ? "text-primary font-bold" : "text-muted-foreground"}`}>
+                                    {item.label}
+                                </span>
                             </Link>
                         );
                     })}

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
+import { ArrowLeft, User, Mail, Phone, MapPin, Save, UserPlus } from "lucide-react"
 
 export default function NewCustomerPage() {
     async function addCustomer(formData: FormData) {
@@ -53,41 +54,97 @@ export default function NewCustomerPage() {
     }
 
     return (
-        <div className="max-w-2xl mx-auto space-y-6">
-            <h1 className="text-2xl font-bold">New Customer</h1>
+        <div className="flex-1 space-y-8 animate-in fade-in duration-700 max-w-4xl mx-auto pb-20">
+            {/* Header */}
+            <div className="flex items-center gap-4 border-b border-primary/5 pb-6">
+                <Link href="/customers">
+                    <Button variant="ghost" size="icon" className="size-11 rounded-2xl bg-card/40 hover:bg-primary/10 hover:text-primary transition-all border border-primary/10">
+                        <ArrowLeft className="h-5 w-5" />
+                    </Button>
+                </Link>
+                <div>
+                    <h1 className="text-3xl font-black tracking-tighter text-foreground flex items-center gap-3">
+                        <UserPlus className="h-8 w-8 text-primary" /> Onboard New Client
+                    </h1>
+                    <p className="text-muted-foreground/60 text-xs font-black uppercase tracking-widest mt-1">Register a new verified entity into the matrix</p>
+                </div>
+            </div>
 
-            <form action={addCustomer}>
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Customer Details</CardTitle>
+            <form action={addCustomer} className="space-y-6">
+                <Card className="glass-card overflow-hidden border-primary/10 shadow-2xl">
+                    <CardHeader className="bg-primary/5 border-b border-primary/5">
+                        <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
+                            <User className="h-4 w-4 text-primary" /> Entity Profile Data
+                        </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="name">Full Name *</Label>
-                            <Input id="name" name="name" required placeholder="e.g. John Doe" />
+                    <CardContent className="p-8 space-y-8">
+                        {/* Name Input */}
+                        <div className="space-y-3">
+                            <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Full Legal Name <span className="text-destructive">*</span></Label>
+                            <div className="relative group">
+                                <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                <Input
+                                    id="name"
+                                    name="name"
+                                    required
+                                    className="h-14 bg-accent/50 border-none rounded-2xl pl-12 pr-4 text-sm font-bold focus-visible:ring-1 focus-visible:ring-primary transition-all placeholder:text-muted-foreground/30"
+                                    placeholder="e.g. Acme Corporation or John Doe"
+                                />
+                            </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="email">Email</Label>
-                                <Input id="email" name="email" type="email" placeholder="john@example.com" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {/* Email Input */}
+                            <div className="space-y-3">
+                                <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Primary Email</Label>
+                                <div className="relative group">
+                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                    <Input
+                                        id="email"
+                                        name="email"
+                                        type="email"
+                                        className="h-14 bg-accent/50 border-none rounded-2xl pl-12 pr-4 text-sm font-bold focus-visible:ring-1 focus-visible:ring-primary transition-all placeholder:text-muted-foreground/30"
+                                        placeholder="contact@entity.com"
+                                    />
+                                </div>
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="phone">Phone</Label>
-                                <Input id="phone" name="phone" placeholder="+123456789" />
+
+                            {/* Phone Input */}
+                            <div className="space-y-3">
+                                <Label htmlFor="phone" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Secure Contact Number</Label>
+                                <div className="relative group">
+                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                    <Input
+                                        id="phone"
+                                        name="phone"
+                                        className="h-14 bg-accent/50 border-none rounded-2xl pl-12 pr-4 text-sm font-bold focus-visible:ring-1 focus-visible:ring-primary transition-all placeholder:text-muted-foreground/30"
+                                        placeholder="+1 (555) 000-0000"
+                                    />
+                                </div>
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="address">Address</Label>
-                            <Input id="address" name="address" placeholder="Physical Address" />
+                        {/* Address Input */}
+                        <div className="space-y-3">
+                            <Label htmlFor="address" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Physical Location</Label>
+                            <div className="relative group">
+                                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                <Input
+                                    id="address"
+                                    name="address"
+                                    className="h-14 bg-accent/50 border-none rounded-2xl pl-12 pr-4 text-sm font-bold focus-visible:ring-1 focus-visible:ring-primary transition-all placeholder:text-muted-foreground/30"
+                                    placeholder="Warehouse 4, Industrial District..."
+                                />
+                            </div>
                         </div>
                     </CardContent>
-                    <CardFooter className="flex justify-end gap-2">
+                    <CardFooter className="bg-primary/[0.02] border-t border-primary/5 p-6 flex justify-end gap-4">
                         <Link href="/customers">
-                            <Button variant="outline" type="button">Cancel</Button>
+                            <Button variant="ghost" type="button" className="h-12 px-6 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-destructive/10 hover:text-destructive transition-colors">Abort Setup</Button>
                         </Link>
-                        <Button type="submit">Save Customer</Button>
+                        <Button type="submit" className="h-12 px-8 rounded-2xl bg-primary hover:bg-primary/90 text-[#102219] font-black uppercase tracking-widest text-xs gap-3 shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95">
+                            <Save className="h-4 w-4" /> Finalize Registration
+                        </Button>
                     </CardFooter>
                 </Card>
             </form>

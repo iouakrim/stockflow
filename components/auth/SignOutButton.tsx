@@ -3,7 +3,7 @@
 import { signOutUser } from "@/app/(dashboard)/settings/actions"
 import { LogOut } from "lucide-react"
 
-export function SignOutButton() {
+export function SignOutButton({ collapsed }: { collapsed?: boolean }) {
     const handleSignOut = async () => {
         const result = await signOutUser()
         if (result.success) {
@@ -16,9 +16,10 @@ export function SignOutButton() {
     return (
         <button
             onClick={handleSignOut}
-            className="w-full flex items-center gap-3 rounded-xl font-black text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer py-2.5 px-2 hover:bg-destructive/10 transition-colors"
+            className={`w-full flex items-center gap-3 rounded-xl font-black text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer py-2.5 px-2 hover:bg-destructive/10 transition-colors ${collapsed ? 'justify-center px-0' : ''}`}
+            title={collapsed ? "Sign Out" : undefined}
         >
-            <LogOut className="h-4 w-4" /> Sign Out
+            <LogOut className="h-4 w-4 shrink-0" /> {!collapsed && <span className="truncate">Sign Out</span>}
         </button>
     )
 }
