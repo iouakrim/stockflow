@@ -17,7 +17,6 @@ import {
     CheckCircle2,
     ChevronRight,
     ChevronDown,
-    Terminal,
     Zap,
     X,
     Loader2,
