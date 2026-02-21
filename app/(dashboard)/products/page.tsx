@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { cookies } from "next/headers"
+import { getTranslations } from "next-intl/server"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -60,22 +61,24 @@ export default async function ProductsPage() {
     const lowStockCount = products.filter(p => p.stock_quantity <= p.low_stock_threshold).length || 0
     const totalValue = products.reduce((acc, p) => acc + (p.stock_quantity * p.cost_price), 0) || 0
 
+    const t = await getTranslations("Inventory")
+
     return (
         <div className="flex-1 space-y-6 animate-in fade-in duration-700">
             {/* Page Header */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tighter text-foreground leading-none">Inventory Vault</h1>
+                    <h1 className="text-3xl font-black tracking-tighter text-foreground leading-none">{t("vault")}</h1>
                     <p className="text-xs text-muted-foreground/60 font-medium mt-1 uppercase tracking-widest underline underline-offset-4 decoration-primary/30">Local View: {warehouseName}</p>
                 </div>
 
                 <div className="flex items-center gap-3">
                     <Button variant="outline" className="border-primary/10 bg-card/40 backdrop-blur rounded-2xl h-12 px-6 font-bold text-xs gap-2 transition-all hover:bg-primary/5 active:scale-95">
-                        <Download className="h-4 w-4 text-primary" /> EXPORT CSV
+                        <Download className="h-4 w-4 text-primary" /> {t("exportCsv")}
                     </Button>
                     <Link href="/products/new">
                         <Button className="bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-xl shadow-primary/20 rounded-2xl gap-2 h-12 px-8 transition-all hover:scale-[1.02] active:scale-[0.98]">
-                            <Plus className="h-5 w-5 stroke-[3px]" /> ADD NEW SKU
+                            <Plus className="h-5 w-5 stroke-[3px]" /> {t("addSku")}
                         </Button>
                     </Link>
                 </div>
@@ -89,7 +92,7 @@ export default async function ProductsPage() {
                             <Boxes className="h-7 w-7" />
                         </div>
                         <div>
-                            <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">Total SKUs</p>
+                            <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">{t("totalSkus")}</p>
                             <p className="text-3xl font-black tracking-tighter">{totalSkus}</p>
                         </div>
                     </CardContent>
@@ -101,7 +104,7 @@ export default async function ProductsPage() {
                             <AlertCircle className="h-7 w-7" />
                         </div>
                         <div>
-                            <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">Stock Alerts</p>
+                            <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">{t("stockAlerts")}</p>
                             <p className={`text-3xl font-black tracking-tighter ${lowStockCount > 0 ? 'text-destructive' : ''}`}>{lowStockCount}</p>
                         </div>
                     </CardContent>
@@ -113,7 +116,7 @@ export default async function ProductsPage() {
                             <BarChart2 className="h-7 w-7" />
                         </div>
                         <div>
-                            <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">Inventory Value</p>
+                            <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">{t("inventoryValue")}</p>
                             <p className="text-3xl font-black tracking-tighter">${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
                         </div>
                     </CardContent>
@@ -163,7 +166,7 @@ export default async function ProductsPage() {
                                     <TableCell colSpan={7} className="text-center py-24 text-muted-foreground italic opacity-50">
                                         <div className="flex flex-col items-center gap-3">
                                             <Package className="h-8 w-8" />
-                                            <p className="text-xs font-black uppercase tracking-widest">Vault is currently empty</p>
+                                            <p className="text-xs font-black uppercase tracking-widest">{t("empty")}</p>
                                         </div>
                                     </TableCell>
                                 </TableRow>

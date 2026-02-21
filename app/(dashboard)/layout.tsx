@@ -34,6 +34,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { createClient } from "@/lib/supabase/client";
 import { WarehouseProvider, useWarehouse } from "@/components/providers/WarehouseProvider";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useTranslations } from "next-intl";
 
 function DashboardContent({ children }: { children: ReactNode }) {
     const pathname = usePathname();
@@ -49,12 +51,19 @@ function DashboardContent({ children }: { children: ReactNode }) {
                 // Fetch profile
                 const { data: profile } = await supabase
                     .from('profiles')
-                    .select('full_name, role, tenant_id')
+                    .select('full_name, role, tenant_id, preferred_language')
                     .eq('id', user.id)
                     .single();
 
                 if (profile) {
                     setUserProfile(profile);
+
+                    // Sync preferred language to cookie if cookie is missing
+                    const match = document.cookie.match(/(?:^|;)\s*NEXT_LOCALE=([^;]*)/);
+                    if (!match && profile.preferred_language) {
+                        document.cookie = `NEXT_LOCALE=${profile.preferred_language}; path=/; max-age=31536000; SameSite=Lax`;
+                        window.location.reload();
+                    }
                 }
             }
         }
@@ -62,23 +71,24 @@ function DashboardContent({ children }: { children: ReactNode }) {
     }, [supabase]);
 
     const { activeWarehouse, warehouses, setActiveWarehouse, isLoading } = useWarehouse()
+    const t = useTranslations("Sidebar");
 
     const navItems = [
-        { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-        { label: "Sales", href: "/sales", icon: ShoppingCart },
-        { label: "Products", href: "/products", icon: Package },
-        { label: "Customers", href: "/customers", icon: Users },
-        { label: "Suppliers", href: "/suppliers", icon: Building2 },
-        { label: "Reports", href: "/reports", icon: BarChart3 },
-        { label: "Settings", href: "/settings", icon: Settings },
+        { label: t("dashboard"), href: "/dashboard", icon: LayoutDashboard },
+        { label: t("pos"), href: "/sales/new", icon: ShoppingCart },
+        { label: t("inventory"), href: "/products", icon: Package },
+        { label: t("customers"), href: "/customers", icon: Users },
+        { label: t("suppliers"), href: "/suppliers", icon: Building2 },
+        { label: t("reports"), href: "/reports", icon: BarChart3 },
+        { label: t("settings"), href: "/settings", icon: Settings },
     ];
 
     const mobileNavItems = [
-        { label: "Home", href: "/dashboard", icon: LayoutDashboard },
-        { label: "Inventory", href: "/products", icon: Package },
-        { label: "POS", href: "/sales/new", icon: PlusCircle },
+        { label: t("dashboard"), href: "/dashboard", icon: LayoutDashboard },
+        { label: t("inventory"), href: "/products", icon: Package },
+        { label: t("pos"), href: "/sales/new", icon: PlusCircle },
         { label: "Ledger", href: "/sales", icon: CreditCard },
-        { label: "Account", href: "/settings", icon: Settings },
+        { label: t("settings"), href: "/settings", icon: Settings },
     ];
 
     const isActive = (path: string) => pathname === path;
@@ -203,6 +213,8 @@ function DashboardContent({ children }: { children: ReactNode }) {
                     </div>
 
                     <div className="flex items-center gap-3 md:gap-5">
+                        <LanguageSwitcher />
+
                         <Button variant="ghost" size="icon" className="relative size-10 md:size-11 rounded-xl md:rounded-2xl bg-accent/30 hover:bg-primary/10 hover:text-primary transition-all border border-transparent hover:border-primary/10">
                             <Bell className="h-5 w-5" />
                             <span className="absolute top-2 right-2 size-2 bg-destructive rounded-full border-2 border-[#102219] animate-pulse" />

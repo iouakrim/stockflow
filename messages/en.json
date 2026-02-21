@@ -1,0 +1,30 @@
+{
+    "Sidebar": {
+        "dashboard": "Dashboard",
+        "inventory": "Inventory",
+        "pos": "Point of Sale",
+        "suppliers": "Suppliers",
+        "customers": "Customers",
+        "reports": "Reports",
+        "settings": "Settings"
+    },
+    "POS": {
+        "search": "Search or scan barcode...",
+        "checkout": "CHECKOUT",
+        "clearCart": "CLEAR CART",
+        "discount": "Discount",
+        "total": "Total",
+        "subtotal": "Subtotal",
+        "walkIn": "WALK-IN CLIENT",
+        "selectCustomer": "SELECT CLIENT"
+    },
+    "Inventory": {
+        "vault": "Inventory Vault",
+        "addSku": "ADD SKU",
+        "exportCsv": "EXPORT CSV",
+        "totalSkus": "Total SKUs",
+        "stockAlerts": "Stock Alerts",
+        "inventoryValue": "Inventory Value",
+        "empty": "Vault is currently empty"
+    }
+}

@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from "react"
 import { Product } from "@/types"
 import { useCartStore } from "./CartStore"
+import { useTranslations } from "next-intl"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -57,6 +58,7 @@ interface POSClientProps {
 
 export function POSClient({ products, customers }: POSClientProps) {
     const { items, addItem, removeItem, updateQuantity, total, clearCart, discount, discountType, setDiscount } = useCartStore()
+    const t = useTranslations("POS")
     const [searchTerm, setSearchTerm] = useState("")
     const [selectedCustomerId, setSelectedCustomerId] = useState<string>("walk-in")
     const [isCustomerOpen, setIsCustomerOpen] = useState(false)
@@ -188,7 +190,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                     onClick={clearCart}
                     className="h-8 rounded-lg text-xs font-bold text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-1.5 px-3"
                 >
-                    <Trash2 className="h-3 w-3" /> CLEAR CART
+                    <Trash2 className="h-3 w-3" /> {t("clearCart")}
                 </Button>
             </div>
         )
@@ -321,18 +323,18 @@ export function POSClient({ products, customers }: POSClientProps) {
             <div className="bg-primary/[0.03] p-4 rounded-3xl border border-primary/10 space-y-2 shadow-inner">
                 {discountAmount > 0 && (
                     <div className="flex justify-between items-center text-xs font-bold text-muted-foreground mb-2 pb-2 border-b border-primary/5">
-                        <span className="uppercase tracking-widest">Subtotal</span>
+                        <span className="uppercase tracking-widest">{t("subtotal")}</span>
                         <span className="line-through opacity-50">${subtotal.toFixed(2)}</span>
                     </div>
                 )}
                 {discountAmount > 0 && (
                     <div className="flex justify-between items-center text-xs font-bold text-emerald-500 mb-2 pb-2 border-b border-primary/5">
-                        <span className="uppercase tracking-widest">Discount applied</span>
+                        <span className="uppercase tracking-widest">{t("discount")}</span>
                         <span>-${discountAmount.toFixed(2)}</span>
                     </div>
                 )}
                 <div className="flex justify-between items-end">
-                    <span className="text-xs font-black uppercase text-primary tracking-[0.2em] mb-1">Total</span>
+                    <span className="text-xs font-black uppercase text-primary tracking-[0.2em] mb-1">{t("total")}</span>
                     <span className="text-3xl font-black tracking-tighter text-foreground leading-none">${grandTotal.toFixed(2)}</span>
                 </div>
             </div>
@@ -353,7 +355,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                     </div>
                 ) : (
                     <div className="flex items-center gap-3">
-                        <Zap className="h-5 w-5 fill-current" /> EXECUTE (F4)
+                        <Zap className="h-5 w-5 fill-current" /> {t("checkout")}
                     </div>
                 )}
             </Button>
@@ -384,8 +386,8 @@ export function POSClient({ products, customers }: POSClientProps) {
                                                 <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-primary opacity-40 group-focus-within:opacity-100 transition-opacity" />
                                                 <span className="truncate">
                                                     {selectedCustomerId === "walk-in"
-                                                        ? "WALK-IN (STANDARD)"
-                                                        : localCustomers.find((c) => c.id === selectedCustomerId)?.name?.toUpperCase() || "SELECT CLIENT"}
+                                                        ? t("walkIn")
+                                                        : localCustomers.find((c) => c.id === selectedCustomerId)?.name?.toUpperCase() || t("selectCustomer")}
                                                 </span>
                                             </div>
                                             <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -408,7 +410,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                                                         {selectedCustomerId === "walk-in" && (
                                                             <div className="size-2 bg-primary rounded-full absolute left-4 top-1/2 -translate-y-1/2" />
                                                         )}
-                                                        WALK-IN (STANDARD)
+                                                        {t("walkIn")}
                                                     </CommandItem>
                                                     {customers.map((c) => (
                                                         <CommandItem
@@ -506,7 +508,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                                 ref={searchInputRef}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                placeholder="SEARCH OR SCAN (F2)..."
+                                placeholder={t("search")}
                                 className="h-14 pl-11 bg-card/40 border-primary/10 rounded-2xl font-bold transition-all focus:ring-1 focus:ring-primary shadow-sm hover:border-primary/30 placeholder:opacity-40 uppercase"
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter' && filteredProducts.length === 1) {

@@ -46,6 +46,7 @@ CREATE TABLE profiles (
   full_name TEXT,
   role user_role DEFAULT 'cashier'::user_role NOT NULL,
   warehouse_access UUID[] DEFAULT '{}'::UUID[], -- Array of warehouse IDs this user can access
+  preferred_language TEXT DEFAULT 'fr',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

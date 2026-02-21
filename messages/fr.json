@@ -1,0 +1,30 @@
+{
+    "Sidebar": {
+        "dashboard": "Tableau de Bord",
+        "inventory": "Inventaire",
+        "pos": "Caisse (POS)",
+        "suppliers": "Fournisseurs",
+        "customers": "Clients",
+        "reports": "Rapports",
+        "settings": "Configurations"
+    },
+    "POS": {
+        "search": "Chercher un produit ou scanner le code-barres...",
+        "checkout": "ENCAISSER",
+        "clearCart": "VIDER LE PANIER",
+        "discount": "Remise",
+        "total": "Total",
+        "subtotal": "Sous-total",
+        "walkIn": "CLIENT COMPTOIR",
+        "selectCustomer": "SÉLECTIONNER UN CLIENT"
+    },
+    "Inventory": {
+        "vault": "Coffre d'Inventaire",
+        "addSku": "AJOUTER UN PRODUIT",
+        "exportCsv": "EXPORTER CSV",
+        "totalSkus": "Total Produits",
+        "stockAlerts": "Alertes de Stock",
+        "inventoryValue": "Valeur du Stock",
+        "empty": "L'inventaire est actuellement vide"
+    }
+}
