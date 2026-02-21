@@ -28,20 +28,40 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { DashboardChart } from "./DashboardChart"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
-export default async function DashboardPage() {
+export default async function DashboardPage({ searchParams }: { searchParams: { filter?: string } }) {
     const supabase = createClient()
 
-    // 1. Today's Revenue
-    const todayStart = new Date()
-    todayStart.setHours(0, 0, 0, 0)
+    const filter = searchParams?.filter || 'today';
+    let startDate = new Date();
+    startDate.setHours(0, 0, 0, 0);
 
-    const { data: todaySales } = await supabase
+    let filterLabel = "Today";
+    if (filter === '7d') {
+        startDate.setDate(startDate.getDate() - 6);
+        filterLabel = "Last 7 Days";
+    } else if (filter === '30d') {
+        startDate.setDate(startDate.getDate() - 29);
+        filterLabel = "Last 30 Days";
+    } else if (filter === 'all') {
+        startDate = new Date(0);
+        filterLabel = "All Time";
+    }
+
+    // 1. Filtered Revenue
+    const { data: salesData } = await supabase
         .from("sales")
         .select("total")
-        .gte("created_at", todayStart.toISOString())
+        .gte("created_at", startDate.toISOString())
 
-    const totalRevenue = todaySales?.reduce((acc, sale) => acc + Number(sale.total), 0) || 0
+    const totalRevenue = salesData?.reduce((acc, sale) => acc + Number(sale.total), 0) || 0
 
     // 2. Current Stock
     const { count: productCount } = await supabase
@@ -76,6 +96,40 @@ export default async function DashboardPage() {
         .order("created_at", { ascending: false })
         .limit(5)
 
+    // 6. Last 7 Days Sales for Chart
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
+    const { data: weekSales } = await supabase
+        .from("sales")
+        .select("total, created_at")
+        .gte("created_at", sevenDaysAgo.toISOString())
+        .order("created_at", { ascending: true });
+
+    const salesByDay: Record<string, number> = {};
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(sevenDaysAgo);
+        d.setDate(d.getDate() + i);
+        const dayStr = d.toLocaleDateString('fr-FR', { weekday: 'short' });
+        salesByDay[dayStr] = 0;
+    }
+
+    if (weekSales) {
+        weekSales.forEach((s) => {
+            const d = new Date(s.created_at);
+            const dayStr = d.toLocaleDateString('fr-FR', { weekday: 'short' });
+            if (salesByDay[dayStr] !== undefined) {
+                salesByDay[dayStr] += Number(s.total);
+            }
+        });
+    }
+
+    const chartData = Object.keys(salesByDay).map(day => ({
+        name: day.charAt(0).toUpperCase() + day.slice(1).replace('.', ''),
+        Revenue: salesByDay[day]
+    }));
+
     return (
         <div className="flex-1 space-y-6 animate-in fade-in duration-700 pb-12">
             {/* Page Header Section */}
@@ -85,9 +139,27 @@ export default async function DashboardPage() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" className="border-primary/10 bg-card/40 backdrop-blur rounded-2xl h-12 px-6 font-bold text-xs gap-2 transition-all hover:bg-primary/5 hover:border-primary/30 active:scale-95 group">
-                        <Calendar className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" /> Last 30 Days <ChevronDown className="h-3.5 w-3.5 opacity-40 ml-1" />
-                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" className="border-primary/10 bg-card/40 backdrop-blur rounded-2xl h-12 px-6 font-bold text-xs gap-2 transition-all hover:bg-primary/5 hover:border-primary/30 active:scale-95 group">
+                                <Calendar className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" /> {filterLabel} <ChevronDown className="h-3.5 w-3.5 opacity-40 ml-1" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48 rounded-xl">
+                            <DropdownMenuItem asChild className="text-xs font-bold py-2.5 cursor-pointer">
+                                <Link href="/dashboard?filter=today">Today</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild className="text-xs font-bold py-2.5 cursor-pointer">
+                                <Link href="/dashboard?filter=7d">Last 7 Days</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild className="text-xs font-bold py-2.5 cursor-pointer">
+                                <Link href="/dashboard?filter=30d">Last 30 Days</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild className="text-xs font-bold py-2.5 cursor-pointer">
+                                <Link href="/dashboard?filter=all">All Time</Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                     <Link href="/sales/new">
                         <Button className="bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-xl shadow-primary/20 rounded-2xl gap-2 h-12 px-8 transition-all hover:scale-[1.02] active:scale-[0.98]">
                             <Plus className="h-5 w-5 stroke-[3px]" /> NEW TRANSACTION
@@ -100,10 +172,10 @@ export default async function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Revenue Card */}
                 <Card className="glass-card overflow-hidden group hover:scale-[1.02] transition-all duration-300 shimmer">
-                    <CardContent className="p-7">
-                        <div className="flex items-center justify-between mb-6">
-                            <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:shadow-[0_0_20px_rgba(17,212,115,0.2)] transition-all">
-                                <TrendingUp className="h-6 w-6" />
+                    <CardContent className="p-5">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="size-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:shadow-[0_0_20px_rgba(17,212,115,0.2)] transition-all">
+                                <TrendingUp className="h-5 w-5" />
                             </div>
                             <div className="flex flex-col items-end">
                                 <span className="text-[10px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-lg border border-primary/20 flex items-center gap-1">
@@ -113,7 +185,7 @@ export default async function DashboardPage() {
                         </div>
                         <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1.5">Terminal Revenue</p>
                         <div className="flex items-baseline gap-1">
-                            <h3 className="text-3xl font-black tracking-tighter">${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+                            <h3 className="text-2xl font-black tracking-tighter">${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
                             <span className="text-xs font-bold text-primary/40 leading-none">USD</span>
                         </div>
                     </CardContent>
@@ -124,10 +196,10 @@ export default async function DashboardPage() {
 
                 {/* Stock Card */}
                 <Card className="glass-card overflow-hidden group hover:scale-[1.02] transition-all duration-300">
-                    <CardContent className="p-7">
-                        <div className="flex items-center justify-between mb-6">
-                            <div className="size-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.2)] transition-all">
-                                <Boxes className="h-6 w-6" />
+                    <CardContent className="p-5">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="size-10 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.2)] transition-all">
+                                <Boxes className="h-5 w-5" />
                             </div>
                             <div className="flex flex-col items-end">
                                 <span className="text-[10px] font-black text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded-lg border border-blue-500/20">LIVE UNIT</span>
@@ -135,7 +207,7 @@ export default async function DashboardPage() {
                         </div>
                         <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1.5">Inventory Count</p>
                         <div className="flex items-baseline gap-1">
-                            <h3 className="text-3xl font-black tracking-tighter">{productCount || 0}</h3>
+                            <h3 className="text-2xl font-black tracking-tighter">{productCount || 0}</h3>
                             <span className="text-xs font-bold text-blue-500/40 leading-none">SKUS</span>
                         </div>
                     </CardContent>
@@ -146,10 +218,10 @@ export default async function DashboardPage() {
 
                 {/* Alerts Card */}
                 <Card className={`glass-card overflow-hidden group hover:scale-[1.02] transition-all duration-300 border-l-4 ${lowStockCount > 0 ? 'border-l-destructive/50' : 'border-l-primary/50'}`}>
-                    <CardContent className="p-7">
-                        <div className="flex items-center justify-between mb-6">
-                            <div className={`size-12 rounded-2xl flex items-center justify-center ${lowStockCount > 0 ? 'bg-destructive/10 text-destructive' : 'bg-primary/10 text-primary'} transition-all`}>
-                                <AlertTriangle className="h-6 w-6" />
+                    <CardContent className="p-5">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className={`size-10 rounded-2xl flex items-center justify-center ${lowStockCount > 0 ? 'bg-destructive/10 text-destructive' : 'bg-primary/10 text-primary'} transition-all`}>
+                                <AlertTriangle className="h-5 w-5" />
                             </div>
                             <span className={`text-[10px] font-black px-2 py-1 rounded-lg border uppercase tracking-widest ${lowStockCount > 0 ? 'bg-destructive/10 text-destructive border-destructive/20 animate-pulse' : 'bg-primary/10 text-primary border-primary/20'}`}>
                                 {lowStockCount > 0 ? 'Immediate Action' : 'Optimal'}
@@ -157,7 +229,7 @@ export default async function DashboardPage() {
                         </div>
                         <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1.5">Critical Alerts</p>
                         <div className="flex items-baseline gap-1">
-                            <h3 className={`text-3xl font-black tracking-tighter ${lowStockCount > 0 ? 'text-destructive' : ''}`}>{lowStockCount}</h3>
+                            <h3 className={`text-2xl font-black tracking-tighter ${lowStockCount > 0 ? 'text-destructive' : ''}`}>{lowStockCount}</h3>
                             <span className="text-xs font-bold opacity-30 leading-none">ITEMS</span>
                         </div>
                     </CardContent>
@@ -165,16 +237,16 @@ export default async function DashboardPage() {
 
                 {/* Credit Card */}
                 <Card className="glass-card overflow-hidden group hover:scale-[1.02] transition-all duration-300">
-                    <CardContent className="p-7">
-                        <div className="flex items-center justify-between mb-6">
-                            <div className="size-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 transition-all">
-                                <Wallet className="h-6 w-6" />
+                    <CardContent className="p-5">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="size-10 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 transition-all">
+                                <Wallet className="h-5 w-5" />
                             </div>
                             <span className="text-[10px] font-black text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-lg border border-amber-500/20">STABLE</span>
                         </div>
                         <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1.5">Outstanding Debt</p>
                         <div className="flex items-baseline gap-1">
-                            <h3 className="text-3xl font-black tracking-tighter">${totalCredits.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+                            <h3 className="text-2xl font-black tracking-tighter">${totalCredits.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
                             <span className="text-xs font-bold text-amber-500/40 leading-none">USD</span>
                         </div>
                     </CardContent>
@@ -202,42 +274,8 @@ export default async function DashboardPage() {
                             </div>
                         </div>
                     </CardHeader>
-                    <CardContent className="p-8 pt-10">
-                        <div className="h-[320px] w-full relative group">
-                            <svg className="w-full h-full overflow-visible" viewBox="0 0 1000 300" preserveAspectRatio="none">
-                                <defs>
-                                    <linearGradient id="premium-gradient" x1="0%" x2="0%" y1="0%" y2="100%">
-                                        <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.25" />
-                                        <stop offset="40%" stopColor="hsl(var(--primary))" stopOpacity="0.1" />
-                                        <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
-                                    </linearGradient>
-                                    <filter id="glow">
-                                        <feGaussianBlur stdDeviation="4" result="coloredBlur" />
-                                        <feMerge>
-                                            <feMergeNode in="coloredBlur" />
-                                            <feMergeNode in="SourceGraphic" />
-                                        </feMerge>
-                                    </filter>
-                                </defs>
-                                <path
-                                    d="M0,240 C100,230 150,260 250,220 C350,180 400,100 500,140 C600,180 700,60 850,90 C950,110 980,40 1000,30 L1000,300 L0,300 Z"
-                                    fill="url(#premium-gradient)"
-                                />
-                                <path
-                                    d="M0,240 C100,230 150,260 250,220 C350,180 400,100 500,140 C600,180 700,60 850,90 C950,110 980,40 1000,30"
-                                    fill="none"
-                                    stroke="hsl(var(--primary))"
-                                    strokeWidth="5"
-                                    strokeLinecap="round"
-                                    filter="url(#glow)"
-                                />
-                            </svg>
-                            <div className="flex justify-between mt-8 items-center border-t border-primary/5 pt-6">
-                                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-                                    <span key={day} className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{day}</span>
-                                ))}
-                            </div>
-                        </div>
+                    <CardContent className="p-8 pt-6">
+                        <DashboardChart data={chartData} />
                     </CardContent>
                 </Card>
 
@@ -286,29 +324,6 @@ export default async function DashboardPage() {
                         </div>
                     </CardContent>
                 </Card>
-            </div>
-
-            {/* Premium SaaS Upgrade CTA */}
-            <div className="relative group overflow-hidden rounded-[2.5rem] border border-primary/20 p-1">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-blue-500/10 to-primary/20 animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
-                <div className="relative bg-black/40 backdrop-blur-3xl rounded-[2.3rem] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
-                    <div className="space-y-4 text-center md:text-left">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary border border-primary/30">
-                            <Zap className="size-3 fill-current" />
-                            <span className="text-[10px] font-black uppercase tracking-widest">Enterprise Access</span>
-                        </div>
-                        <h2 className="text-3xl md:text-4xl font-black tracking-tighter max-w-xl">Scale your logistics with <span className="text-primary italic">StockFlow AI Intelligence</span></h2>
-                        <p className="text-muted-foreground/60 font-medium max-w-md">Unlock predictive inventory routing, automated multi-currency global billing, and dedicated technical support.</p>
-                    </div>
-                    <div className="flex flex-col gap-3 w-full md:w-auto">
-                        <Button className="bg-primary hover:bg-primary/90 text-[#102219] font-black h-14 px-10 rounded-2xl shadow-xl shadow-primary/20 group">
-                            UPGRADE TO PRO <ArrowUpRight className="ml-2 size-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                        </Button>
-                        <p className="text-[10px] text-center text-muted-foreground/40 font-black uppercase tracking-widest flex items-center justify-center gap-2">
-                            <Shield className="size-3" /> SECURE DEPLOYMENT GUARANTEED
-                        </p>
-                    </div>
-                </div>
             </div>
 
             {/* Quick Management Section */}
