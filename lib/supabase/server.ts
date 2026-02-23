@@ -27,3 +27,25 @@ export const createClient = () => {
         }
     )
 }
+
+export const getTenantSettings = async () => {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { currency: "DH" }
+
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('tenant_id')
+        .eq('id', user.id)
+        .single()
+
+    if (!profile?.tenant_id) return { currency: "DH" }
+
+    const { data: tenant } = await supabase
+        .from('tenants')
+        .select('currency')
+        .eq('id', profile.tenant_id)
+        .single()
+
+    return { currency: tenant?.currency || "DH" }
+}

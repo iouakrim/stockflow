@@ -2,6 +2,7 @@
 
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, Cell } from "recharts"
 import { useTranslations } from "next-intl"
+import { useSettings } from "@/components/providers/SettingsProvider"
 
 interface ReportsBarChartProps {
     data: { name: string; value: number }[];
@@ -10,6 +11,7 @@ interface ReportsBarChartProps {
 
 export function ReportsBarChart({ data, color = "#3b82f6" }: ReportsBarChartProps) {
     const t = useTranslations("Reports")
+    const { currency } = useSettings()
     return (
         <div className="h-[300px] w-full mt-4">
             <ResponsiveContainer width="100%" height="100%">
@@ -29,7 +31,7 @@ export function ReportsBarChart({ data, color = "#3b82f6" }: ReportsBarChartProp
                         fontSize={10}
                         tickLine={false}
                         axisLine={false}
-                        tickFormatter={(value) => `$${value}`}
+                        tickFormatter={(value) => `${value} ${currency}`}
                         width={60}
                         style={{ fontWeight: 900 }}
                     />
@@ -43,7 +45,7 @@ export function ReportsBarChart({ data, color = "#3b82f6" }: ReportsBarChartProp
                         }}
                         cursor={{ fill: 'var(--primary)', opacity: 0.1 }}
                         itemStyle={{ fontWeight: 900, color: 'hsl(var(--foreground))' }}
-                        formatter={(value: number) => [`$${value.toLocaleString()}`, t("value")]}
+                        formatter={(value: number) => [`${value.toLocaleString()} ${currency}`, t("value")]}
                     />
                     <Bar dataKey="value" radius={[6, 6, 0, 0]}>
                         {data.map((entry, index) => (

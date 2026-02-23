@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo, useEffect, useRef } from "react"
+import { toast } from "sonner"
 import { Product } from "@/types"
 import { useCartStore } from "./CartStore"
 import { useTranslations } from "next-intl"
@@ -50,6 +51,7 @@ import {
 } from "@/components/ui/command"
 import { processSaleCheckout, quickCreateCustomer } from "@/app/(dashboard)/sales/actions"
 import { useRouter } from "next/navigation"
+import { useSettings } from "@/components/providers/SettingsProvider"
 
 interface POSClientProps {
     products: Product[]
@@ -58,6 +60,7 @@ interface POSClientProps {
 
 export function POSClient({ products, customers }: POSClientProps) {
     const { items, addItem, removeItem, updateQuantity, total, clearCart, discount, discountType, setDiscount } = useCartStore()
+    const { currency } = useSettings()
     const t = useTranslations("POS")
     const [searchTerm, setSearchTerm] = useState("")
     const [selectedCustomerId, setSelectedCustomerId] = useState<string>("walk-in")
@@ -67,6 +70,7 @@ export function POSClient({ products, customers }: POSClientProps) {
     const [isSupplierOpen, setIsSupplierOpen] = useState(false)
     const [showSuccess, setShowSuccess] = useState(false)
     const [completedSaleId, setCompletedSaleId] = useState<string | null>(null)
+    const [paymentMode, setPaymentMode] = useState<'cash' | 'credit'>('cash')
 
     // Quick Create Customer State
     const [localCustomers, setLocalCustomers] = useState(customers)
@@ -76,6 +80,12 @@ export function POSClient({ products, customers }: POSClientProps) {
     const [isCreatingCustomer, setIsCreatingCustomer] = useState(false)
 
     useEffect(() => setLocalCustomers(customers), [customers])
+
+    useEffect(() => {
+        if (selectedCustomerId === 'walk-in' && paymentMode === 'credit') {
+            setPaymentMode('cash')
+        }
+    }, [selectedCustomerId, paymentMode])
 
     const searchInputRef = useRef<HTMLInputElement>(null)
     const router = useRouter()
@@ -153,7 +163,7 @@ export function POSClient({ products, customers }: POSClientProps) {
             const res = await processSaleCheckout(
                 saleItems,
                 customerId,
-                'cash', // Defaulting to cash for MVP
+                paymentMode,
                 discountAmount // Pass numeric discount amount
             )
 
@@ -213,13 +223,13 @@ export function POSClient({ products, customers }: POSClientProps) {
                                 {item.name[0]}
                             </div>
 
-                            <div className="flex-1 min-w-0 relative z-10">
-                                <p className="font-bold text-xs truncate tracking-tight uppercase group-hover:text-primary transition-colors">{item.name}</p>
-                                <p className="text-[9px] text-muted-foreground/60 font-black uppercase tracking-widest mt-0.5">${item.selling_price.toFixed(2)} / {item.unit ? t(item.unit.toLowerCase()) : t("un")}</p>
+                            <div className="flex-1 min-w-0 relative z-10 flex flex-col justify-center">
+                                <p className="font-bold text-[11px] leading-tight line-clamp-2 tracking-tight uppercase group-hover:text-primary transition-colors mb-0.5">{item.name}</p>
+                                <p className="text-[8px] text-muted-foreground/60 font-black uppercase tracking-widest">{item.selling_price.toFixed(2)} <span className="text-[7px] opacity-70">{currency}</span> / {item.unit ? t(item.unit.toLowerCase()) : t("un")}</p>
                             </div>
 
                             <div className="flex flex-col items-end gap-1.5 shrink-0 relative z-10">
-                                <p className="font-black text-sm tracking-tighter text-foreground leading-none">${(item.selling_price * item.cartQuantity).toFixed(2)}</p>
+                                <p className="font-black text-sm tracking-tighter text-foreground leading-none">{(item.selling_price * item.cartQuantity).toFixed(2)} <span className="text-[10px] ml-0.5 opacity-70">{currency}</span></p>
                                 <div className="flex items-center gap-1.5 bg-accent/50 rounded-xl p-1 border border-primary/5">
                                     <button
                                         onClick={() => updateQuantity(item.id, item.cartQuantity - 1)}
@@ -315,8 +325,39 @@ export function POSClient({ products, customers }: POSClientProps) {
                                 setDiscount(val, 'fixed')
                             }}
                         />
-                        <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground pointer-events-none">$</span>
+                        <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[9px] font-black text-muted-foreground pointer-events-none">{currency}</span>
                     </div>
+                </div>
+            </div>
+
+            <div className="bg-primary/[0.02] p-4 rounded-3xl border border-primary/5 space-y-3">
+                <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t("paymentMode")}</span>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => setPaymentMode('cash')}
+                        className={`flex-1 h-10 rounded-xl text-[10px] font-black transition-all border uppercase tracking-wider ${paymentMode === 'cash'
+                            ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20'
+                            : 'bg-background text-muted-foreground border-primary/10 hover:border-primary/30 hover:bg-primary/5'
+                            }`}
+                    >
+                        {t("paid")}
+                    </button>
+                    <button
+                        onClick={() => {
+                            if (selectedCustomerId === 'walk-in') {
+                                setIsCustomerOpen(true)
+                                toast.error("Veuillez sélectionner un client pour le crédit")
+                            } else {
+                                setPaymentMode('credit')
+                            }
+                        }}
+                        className={`flex-1 h-10 rounded-xl text-[10px] font-black transition-all border uppercase tracking-wider ${paymentMode === 'credit'
+                            ? 'bg-orange-500 text-white border-orange-500 shadow-md shadow-orange-500/20'
+                            : 'bg-background text-muted-foreground border-primary/10 hover:border-primary/30 hover:bg-primary/5'
+                            }`}
+                    >
+                        {t("credit")}
+                    </button>
                 </div>
             </div>
 
@@ -324,18 +365,18 @@ export function POSClient({ products, customers }: POSClientProps) {
                 {discountAmount > 0 && (
                     <div className="flex justify-between items-center text-xs font-bold text-muted-foreground mb-2 pb-2 border-b border-primary/5">
                         <span className="uppercase tracking-widest">{t("subtotal")}</span>
-                        <span className="line-through opacity-50">${subtotal.toFixed(2)}</span>
+                        <span className="line-through opacity-50">{subtotal.toFixed(2)} <span className="text-[9px] ml-0.5">{currency}</span></span>
                     </div>
                 )}
                 {discountAmount > 0 && (
                     <div className="flex justify-between items-center text-xs font-bold text-emerald-500 mb-2 pb-2 border-b border-primary/5">
                         <span className="uppercase tracking-widest">{t("discount")}</span>
-                        <span>-${discountAmount.toFixed(2)}</span>
+                        <span>-{discountAmount.toFixed(2)} <span className="text-[9px] ml-0.5">{currency}</span></span>
                     </div>
                 )}
                 <div className="flex justify-between items-end">
                     <span className="text-xs font-black uppercase text-primary tracking-[0.2em] mb-1">{t("total")}</span>
-                    <span className="text-3xl font-black tracking-tighter text-foreground leading-none">${grandTotal.toFixed(2)}</span>
+                    <span className="text-3xl font-black tracking-tighter text-foreground leading-none">{grandTotal.toFixed(2)} <span className="text-sm font-black ml-1 opacity-40">{currency}</span></span>
                 </div>
             </div>
 
@@ -633,15 +674,13 @@ export function POSClient({ products, customers }: POSClientProps) {
                                             {/* Left: Product Details */}
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-1">{product.category || t("general")}</p>
-                                                <h3 className="font-black text-base uppercase tracking-tight truncate group-hover:text-primary transition-colors">
+                                                <h3 className="font-black text-sm uppercase tracking-tight line-clamp-2 group-hover:text-primary transition-colors leading-tight min-h-[2.5rem] flex items-center">
                                                     {product.name}
                                                 </h3>
                                                 {product.suppliers && (
                                                     <p className="text-[10px] font-bold text-primary/70 uppercase tracking-widest mt-0.5 truncate" title={(product.suppliers as any).name}>{(product.suppliers as any).name}</p>
                                                 )}
-                                                {product.sku && (
-                                                    <span className="text-[9px] font-mono font-bold text-muted-foreground/40 bg-accent/80 px-2 py-1 rounded-md mt-2 inline-block border border-primary/5">{product.sku}</span>
-                                                )}
+
                                             </div>
 
                                             {/* Right: Stock & Price Info */}
@@ -652,9 +691,7 @@ export function POSClient({ products, customers }: POSClientProps) {
 
                                                 {/* Price Moved to Right */}
                                                 <div className="flex flex-col items-end">
-                                                    <span className="font-black text-xl tracking-tighter text-emerald-500/90 group-hover:text-emerald-500 transition-colors leading-none">
-                                                        ${product.selling_price.toFixed(2)}
-                                                    </span>
+                                                    {product.selling_price.toFixed(2)} <span className="text-xs ml-0.5 opacity-60">{currency}</span>
                                                     <span className="text-[9px] uppercase font-black text-muted-foreground/50 mt-1">/ {product.unit ? t(product.unit.toLowerCase()) : t("un")}</span>
                                                 </div>
                                             </div>
@@ -778,7 +815,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                                 <span>{items.length} {t("itms")}</span>
                             </div>
                             <div className="flex items-center gap-4">
-                                <span className="text-lg tracking-tighter">${grandTotal.toFixed(2)}</span>
+                                <span className="text-lg tracking-tighter">{grandTotal.toFixed(2)} <span className="text-xs opacity-50 ml-1">{currency}</span></span>
                                 <ChevronRight className="h-5 w-5" />
                             </div>
                         </Button>

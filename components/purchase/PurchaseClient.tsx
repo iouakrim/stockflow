@@ -4,6 +4,7 @@ import { useState, useMemo } from "react"
 import { useTranslations } from "next-intl"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
+import { useSettings } from "@/components/providers/SettingsProvider"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -23,6 +24,7 @@ import {
 
 export function PurchaseClient({ products, suppliers, warehouseId, warehouseName }: any) {
     const t = useTranslations("Inventory") // Wait, I should just use generic strings if I don't have dedicated translations yet
+    const { currency } = useSettings()
     const router = useRouter()
     const supabase = createClient()
 
@@ -184,7 +186,7 @@ export function PurchaseClient({ products, suppliers, warehouseId, warehouseName
                         <div>
                             <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-2">Total Arrivage HT</h3>
                             <div className="text-4xl font-black tracking-tighter text-foreground mb-6">
-                                ${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                {total.toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-xl opacity-30 ml-1 select-none">{currency}</span>
                             </div>
                         </div>
 
@@ -229,7 +231,7 @@ export function PurchaseClient({ products, suppliers, warehouseId, warehouseName
                                                     <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{p.sku || 'N/A'}</p>
                                                 </div>
                                                 <div className="flex items-center gap-3">
-                                                    <span className="font-mono text-xs text-muted-foreground font-bold">${p.cost_price}</span>
+                                                    <span className="font-mono text-xs text-muted-foreground font-bold">{p.cost_price} <span className="text-[10px] opacity-40">{currency}</span></span>
                                                     <div className="size-6 rounded-md bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-background transition-colors">
                                                         <Plus className="h-3 w-3" />
                                                     </div>
@@ -254,14 +256,14 @@ export function PurchaseClient({ products, suppliers, warehouseId, warehouseName
                             </h4>
                             <div className="flex gap-3 overflow-x-auto custom-scrollbar pb-2">
                                 {products.filter((p: any) => p.supplier_id === supplierId).map((p: any) => (
-                                    <div 
-                                        key={p.id} 
+                                    <div
+                                        key={p.id}
                                         onClick={() => addToCart(p)}
                                         className="shrink-0 w-[160px] bg-card border border-primary/10 hover:border-primary/40 rounded-xl p-3 cursor-pointer group transition-all shadow-sm shadow-black/5"
                                     >
                                         <h5 className="font-black text-xs truncate group-hover:text-primary transition-colors" title={p.name}>{p.name}</h5>
                                         <div className="flex items-center justify-between mt-3 pt-2 border-t border-primary/5">
-                                            <span className="font-mono text-[10px] font-bold text-muted-foreground uppercase">PU: ${p.cost_price}</span>
+                                            <span className="font-mono text-[10px] font-bold text-muted-foreground uppercase">PU: {p.cost_price} <span className="text-[8px] opacity-40">{currency}</span></span>
                                             <div className="size-5 rounded bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-background transition-colors">
                                                 <Plus className="h-3 w-3" />
                                             </div>
@@ -309,20 +311,20 @@ export function PurchaseClient({ products, suppliers, warehouseId, warehouseName
                                         <div className="flex flex-col gap-1">
                                             <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Prix Unitaire HT</label>
                                             <div className="relative">
-                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-xs">$</span>
                                                 <Input
                                                     type="number"
                                                     value={item.unit_cost === 0 ? '' : item.unit_cost}
                                                     onChange={(e) => updateUnitCost(item.product_id, e.target.value)}
-                                                    className="h-9 w-24 pl-6 text-sm font-bold bg-background border-primary/20 focus:border-primary"
+                                                    className="h-9 w-24 pl-3 pr-8 text-sm font-bold bg-background border-primary/20 focus:border-primary"
                                                 />
+                                                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground/30 font-bold text-[10px] select-none">{currency}</span>
                                             </div>
                                         </div>
 
                                         <div className="flex flex-col gap-1 items-end min-w-[70px]">
                                             <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Total HT</label>
                                             <span className="text-sm font-black text-primary">
-                                                ${(item.unit_cost * item.quantity).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                                {(item.unit_cost * item.quantity).toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-[10px] opacity-40 ml-0.5">{currency}</span>
                                             </span>
                                         </div>
 

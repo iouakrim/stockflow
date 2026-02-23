@@ -6,11 +6,11 @@ import { useTranslations } from "next-intl"
 export function SettingsTabs({ currentTab, isAdmin }: { currentTab: string, isAdmin: boolean }) {
     const t = useTranslations("Sidebar")
     const tabs = [
-        ...(isAdmin ? [{ key: "Users & Roles", label: t("usersAndRoles") }] : []),
-        { key: "General Settings", label: t("generalSettings") },
-        { key: "Appearance", label: t("appearance") },
-        { key: "Security", label: t("security") },
-        { key: "Notifications", label: t("notifications") }
+        ...(isAdmin ? [
+            { key: "Users & Roles", label: t("usersAndRoles") },
+            { key: "General Settings", label: t("generalSettings") }
+        ] : []),
+        { key: "Appearance", label: t("appearance") }
     ]
 
     return (

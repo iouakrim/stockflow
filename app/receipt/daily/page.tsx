@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server"
+import { createClient, getTenantSettings } from "@/lib/supabase/server"
 import { getTranslations } from "next-intl/server"
 import { Calculator, Calendar as CalendarIcon, FileSpreadsheet } from "lucide-react"
 import { PrintActions } from "../[id]/PrintActions"
@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic"
 
 export default async function DailyReceiptPage() {
     const supabase = createClient()
+    const { currency } = await getTenantSettings()
 
     const now = new Date()
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString()
@@ -130,22 +131,22 @@ export default async function DailyReceiptPage() {
                     <div className="space-y-1 pb-2 border-b border-dashed border-gray-300">
                         <div className="flex justify-between items-center text-xs">
                             <span className="font-bold uppercase text-gray-800 text-[10px]">{t("totalRevenue")}</span>
-                            <span className="font-mono font-black">${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                            <span className="font-mono font-black">{totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-[9px] opacity-70 ml-0.5">{currency}</span></span>
                         </div>
                         <div className="flex justify-between items-center text-[9px]">
                             <span className="font-medium uppercase text-gray-600 pl-1 border-l border-gray-300">{t("totalCash")}</span>
-                            <span className="font-mono font-bold">${cashTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                            <span className="font-mono font-bold">{cashTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-[8px] opacity-70 ml-0.5">{currency}</span></span>
                         </div>
                         <div className="flex justify-between items-center text-[9px]">
                             <span className="font-medium uppercase text-gray-600 pl-1 border-l border-gray-300">{t("totalCard")}</span>
-                            <span className="font-mono font-bold">${cardTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                            <span className="font-mono font-bold">{cardTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-[8px] opacity-70 ml-0.5">{currency}</span></span>
                         </div>
                         {totalDiscounts > 0 && (
                             <div className="flex justify-between items-center text-[9px] mt-1 text-black">
                                 <span className="font-bold uppercase tracking-wider pl-1 py-0.5 border-l border-black">
                                     {t("discounts")}
                                 </span>
-                                <span className="font-mono font-bold">-${totalDiscounts.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                                <span className="font-mono font-bold">-{totalDiscounts.toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-[8px] opacity-70 ml-0.5">{currency}</span></span>
                             </div>
                         )}
                     </div>
@@ -173,7 +174,7 @@ export default async function DailyReceiptPage() {
                                         <div className="font-mono font-bold text-gray-500 text-[8px]">
                                             {data.quantity > 500 && data.unit !== 'UN' ? `${(data.quantity / 1000).toFixed(2)} ${t("tons")}` : `${data.quantity} ${data.unit === 'UN' ? t("units") : t("kilograms")}`}
                                         </div>
-                                        <div className="font-mono font-bold w-[45px] text-right">${data.total.toLocaleString(undefined, { minimumFractionDigits: 0 })}</div>
+                                        <div className="font-mono font-bold w-[45px] text-right">{data.total.toLocaleString(undefined, { minimumFractionDigits: 0 })} <span className="text-[7px] opacity-70 ml-0.5">{currency}</span></div>
                                     </div>
                                 </div>
                             ))}

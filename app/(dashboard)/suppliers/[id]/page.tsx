@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server"
+import { createClient, getTenantSettings } from "@/lib/supabase/server"
 import { getTranslations } from "next-intl/server"
 import { notFound, redirect } from "next/navigation"
 import Link from "next/link"
@@ -25,6 +25,8 @@ export default async function SupplierDetailsPage({ params }: { params: { id: st
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) redirect("/login")
+
+    const { currency } = await getTenantSettings()
 
     // Fetch supplier
     const { data: supplier } = await supabase
@@ -159,7 +161,7 @@ export default async function SupplierDetailsPage({ params }: { params: { id: st
                         {[
                             { label: t("assetPortfolio"), value: products?.length || 0, icon: Boxes, color: 'text-primary' },
                             { label: t("inventoryAggregate"), value: products?.reduce((acc, p) => acc + p.stock_quantity, 0) || 0, icon: ShoppingBag, color: 'text-blue-500' },
-                            { label: t("capitalExposure"), value: `$${totalStockValue.toLocaleString()}`, icon: Tag, color: 'text-emerald-500' }
+                            { label: t("capitalExposure"), value: <>{totalStockValue.toLocaleString()} <span className="text-sm opacity-50 ml-1 font-black">{currency}</span></>, icon: Tag, color: 'text-emerald-500' }
                         ].map((stat, i) => (
                             <div key={i} className="glass-card rounded-[2rem] p-7 border border-primary/5 flex items-center justify-between group hover:border-primary/20 transition-all">
                                 <div>
@@ -233,7 +235,7 @@ export default async function SupplierDetailsPage({ params }: { params: { id: st
                                                         </Badge>
                                                     </td>
                                                     <td className="px-6 text-right font-black text-sm tracking-tighter">
-                                                        ${product.cost_price.toFixed(2)}
+                                                        {product.cost_price.toFixed(2)} <span className="text-[10px] ml-1 opacity-50">{currency}</span>
                                                     </td>
                                                     <td className="px-6 text-center">
                                                         <div className="flex flex-col">

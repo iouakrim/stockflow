@@ -1,5 +1,6 @@
-import { createClient } from "@/lib/supabase/server"
+import { createClient, getTenantSettings } from "@/lib/supabase/server"
 import { getTranslations } from "next-intl/server"
+import { redirect } from "next/navigation"
 import {
     TrendingUp,
     ArrowUpRight,
@@ -28,6 +29,8 @@ export default async function ReportsPage({ searchParams }: { searchParams: { fi
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) redirect("/login")
+
+    const { currency } = await getTenantSettings()
 
     const { data: profile } = await supabase
         .from('profiles')
@@ -61,7 +64,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: { fi
     const customerCount = customers?.length || 0
 
     const performanceMetrics = [
-        { label: t("grossRevenue"), value: `$${totalRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, trend: "+12.1%", positive: true },
+        { label: t("grossRevenue"), value: `${totalRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })} ${currency}`, trend: "+12.1%", positive: true },
         { label: t("stockHealth"), value: `${totalProducts > 0 ? Math.round(((totalProducts - lowStock) / totalProducts) * 100) : 0}%`, trend: "-0.5%", positive: false },
         { label: t("verifiedClients"), value: customerCount.toString(), trend: "+4.2%", positive: true },
         { label: t("skuVelocity"), value: totalProducts.toString(), trend: "+3.2%", positive: true },

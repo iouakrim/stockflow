@@ -2,6 +2,7 @@
 
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from "recharts"
 import { useTranslations } from "next-intl"
+import { useSettings } from "@/components/providers/SettingsProvider"
 
 interface DashboardChartProps {
     data: { name: string; Revenue: number }[];
@@ -9,6 +10,7 @@ interface DashboardChartProps {
 
 export function DashboardChart({ data }: DashboardChartProps) {
     const t = useTranslations("Dashboard")
+    const { currency } = useSettings()
     return (
         <div className="h-[320px] w-full mt-4">
             <ResponsiveContainer width="100%" height="100%">
@@ -34,7 +36,7 @@ export function DashboardChart({ data }: DashboardChartProps) {
                         fontSize={10}
                         tickLine={false}
                         axisLine={false}
-                        tickFormatter={(value) => `$${value}`}
+                        tickFormatter={(value) => `${value} ${currency}`}
                         width={60}
                         style={{ fontWeight: 900 }}
                     />
@@ -47,7 +49,7 @@ export function DashboardChart({ data }: DashboardChartProps) {
                             boxShadow: '0 4px 20px -5px rgba(0,0,0,0.1)'
                         }}
                         itemStyle={{ color: 'hsl(var(--primary))', fontWeight: 900 }}
-                        formatter={(value: number) => [`$${value.toLocaleString()}`, t("revenue")]}
+                        formatter={(value: number) => [`${value.toLocaleString()} ${currency}`, t("revenue")]}
                     />
                     <Line
                         type="monotone"

@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server"
+import { createClient, getTenantSettings } from "@/lib/supabase/server"
 import { getTranslations } from "next-intl/server"
 import { cookies } from "next/headers"
 
@@ -39,6 +39,7 @@ import {
 export default async function DashboardPage({ searchParams }: { searchParams: { filter?: string } }) {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
+    const { currency } = await getTenantSettings()
 
     // Fetch profile and access
     const { data: profile } = await supabase
@@ -212,8 +213,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
                         </div>
                         <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1.5">{t("revenue")}</p>
                         <div className="flex items-baseline gap-1">
-                            <h3 className="text-2xl font-black tracking-tighter" suppressHydrationWarning>${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
-                            <span className="text-xs font-bold text-primary/40 leading-none">USD</span>
+                            <h3 className="text-2xl font-black tracking-tighter" suppressHydrationWarning>{totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-xs opacity-40 ml-1">{currency}</span></h3>
                         </div>
                     </CardContent>
                     <div className="h-1 bg-primary/10 w-full overflow-hidden">
@@ -273,8 +273,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
                         </div>
                         <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1.5">{t("outstandingDebt")}</p>
                         <div className="flex items-baseline gap-1">
-                            <h3 className="text-2xl font-black tracking-tighter" suppressHydrationWarning>${totalCredits.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
-                            <span className="text-xs font-bold text-amber-500/40 leading-none">USD</span>
+                            <h3 className="text-2xl font-black tracking-tighter" suppressHydrationWarning>{totalCredits.toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-xs opacity-40 ml-1">{currency}</span></h3>
                         </div>
                     </CardContent>
                     <div className="h-1 bg-amber-500/10 w-full overflow-hidden">
@@ -336,7 +335,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
                                         <div className="flex-1 min-w-0 pr-2">
                                             <div className="flex items-center justify-between gap-2">
                                                 <h4 className="text-sm font-black truncate tracking-tight group-hover:text-primary transition-colors">#{sale.receipt_number}</h4>
-                                                <span className="text-[10px] font-black text-primary" suppressHydrationWarning>${Number(sale.total).toLocaleString()}</span>
+                                                <span className="text-[10px] font-black text-primary" suppressHydrationWarning>{Number(sale.total).toLocaleString()} <span className="text-[9px] opacity-40 ml-0.5">{currency}</span></span>
                                             </div>
                                             <p className="text-xs text-muted-foreground font-medium mt-0.5 truncate opacity-70">
                                                 {(Array.isArray(sale.customers) ? sale.customers[0]?.name : sale.customers?.name) || t("standardClient")}

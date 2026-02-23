@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server"
+import { createClient, getTenantSettings } from "@/lib/supabase/server"
 import { getTranslations } from "next-intl/server"
 import { Customer } from "@/types"
 import Link from "next/link"
@@ -15,6 +15,7 @@ import { Card, CardContent } from "@/components/ui/card"
 
 export default async function CustomersPage() {
     const supabase = createClient()
+    const { currency } = await getTenantSettings()
 
     const { data: customers, error } = await supabase
         .from("customers")
@@ -53,7 +54,7 @@ export default async function CustomersPage() {
                     <CardContent className="p-7">
                         <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">{t("totalOutstandingCredit")}</p>
                         <div className="flex items-end gap-3">
-                            <h3 className="text-3xl font-black tracking-tighter" suppressHydrationWarning>${totalOutstanding.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+                            <h3 className="text-3xl font-black tracking-tighter" suppressHydrationWarning>{totalOutstanding.toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-sm font-black ml-1 opacity-40">{currency}</span></h3>
                             <span className="text-destructive text-[9px] font-black uppercase tracking-widest bg-destructive/10 px-2 py-0.5 rounded-full mb-1 border border-destructive/20">{t("liability")}</span>
                         </div>
                     </CardContent>
@@ -144,7 +145,7 @@ export default async function CustomersPage() {
                                     <TableCell className="text-right px-4">
                                         <div className="flex flex-col">
                                             <span className={`text-base font-black tracking-tighter ${Number(customer.credit_balance) > 0 ? 'text-destructive' : 'text-primary'}`} suppressHydrationWarning>
-                                                ${Number(customer.credit_balance).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                                {Number(customer.credit_balance).toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-[10px] ml-0.5 opacity-70">{currency}</span>
                                             </span>
                                             <span className="text-[9px] text-muted-foreground/40 font-black uppercase tracking-widest mt-0.5">{t("capturedBalance")}</span>
                                         </div>

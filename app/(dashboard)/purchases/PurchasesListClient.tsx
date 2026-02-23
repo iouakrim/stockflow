@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
+import { useSettings } from "@/components/providers/SettingsProvider"
 import {
     Table,
     TableBody,
@@ -30,6 +31,7 @@ export function PurchasesListClient({ warehouseId }: { warehouseId: string }) {
     const supabase = createClient()
     const router = useRouter()
     const locale = useLocale()
+    const { currency } = useSettings()
 
     const [purchases, setPurchases] = useState<any[]>([])
     const [isLoading, setIsLoading] = useState(true)
@@ -164,7 +166,7 @@ export function PurchasesListClient({ warehouseId }: { warehouseId: string }) {
                                             <TableCell className="text-right px-6">
                                                 <div className="flex flex-col items-end">
                                                     <span className="text-lg font-black tracking-tighter text-foreground">
-                                                        ${Number(p.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                                        {currency}{Number(p.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                                                     </span>
                                                     <span className="text-[9px] text-primary/50 font-black uppercase tracking-widest flex items-center gap-1 mt-1 group-hover:text-primary transition-colors">
                                                         {expandedRow === p.id ? "Masquer détails" : "Voir détails"} <ArrowUpRight className={`h-3 w-3 transition-transform ${expandedRow === p.id ? 'rotate-180' : ''}`} />
@@ -186,10 +188,10 @@ export function PurchasesListClient({ warehouseId }: { warehouseId: string }) {
                                                                 <div key={idx} className="bg-background border border-primary/10 rounded-xl p-4 shadow-sm flex items-center justify-between">
                                                                     <div>
                                                                         <p className="font-black text-xs truncate max-w-[150px]" title={item.products?.name}>{item.products?.name}</p>
-                                                                        <p className="text-[9px] text-muted-foreground uppercase tracking-widest mt-1">Qté: {item.quantity} x ${item.unit_cost}</p>
+                                                                        <p className="text-[9px] text-muted-foreground uppercase tracking-widest mt-1">Qté: {item.quantity} x {currency}{item.unit_cost}</p>
                                                                     </div>
                                                                     <div className="text-right">
-                                                                        <p className="font-black text-primary text-sm">${item.total_cost}</p>
+                                                                        <p className="font-black text-primary text-sm">{currency}{item.total_cost}</p>
                                                                     </div>
                                                                 </div>
                                                             ))}

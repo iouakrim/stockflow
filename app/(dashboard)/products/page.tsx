@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server"
+import { createClient, getTenantSettings } from "@/lib/supabase/server"
 import { cookies } from "next/headers"
 import { getTranslations } from "next-intl/server"
 import Link from "next/link"
@@ -31,6 +31,7 @@ export default async function ProductsPage() {
         .eq("id", user?.id)
         .single()
 
+    const { currency } = await getTenantSettings()
     const isFullAccess = profile?.role === 'admin' || profile?.role === 'super-admin'
     const hasAccess = isFullAccess || (profile?.warehouse_access?.includes(activeWarehouseId || ''))
 
@@ -136,7 +137,7 @@ export default async function ProductsPage() {
                         <div>
                             <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">{t("inventoryValue")}</p>
                             <div className="flex items-end gap-3">
-                                <h3 className="text-3xl font-black tracking-tighter" suppressHydrationWarning>${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+                                <h3 className="text-3xl font-black tracking-tighter" suppressHydrationWarning>{totalValue.toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-xs opacity-40 ml-1">{currency}</span></h3>
                                 <span className="text-primary text-[9px] font-black uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded-full mb-1 border border-primary/20">{t("verified")}</span>
                             </div>
                         </div>
@@ -229,7 +230,7 @@ export default async function ProductsPage() {
                                                 </div>
                                             </TableCell>
                                             <TableCell className="text-right font-black text-sm tracking-tighter px-4">
-                                                ${product.selling_price.toFixed(2)}
+                                                {product.selling_price.toFixed(2)} <span className="text-[10px] opacity-40 ml-0.5">{currency}</span>
                                             </TableCell>
                                             <TableCell>
                                                 <div className={`flex items-center justify-center gap-1.5 text-[9px] font-black uppercase tracking-[0.1em] ${isLow ? 'text-destructive bg-destructive/10' : 'text-primary bg-primary/10'} py-1.5 px-3 rounded-xl border ${isLow ? 'border-destructive/20' : 'border-primary/20'}`}>

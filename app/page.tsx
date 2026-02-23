@@ -210,7 +210,7 @@ export default function LandingPage() {
             <div key={tier} className={`p-10 rounded-[2.5rem] border ${i === 1 ? 'border-primary bg-primary/5' : 'border-white/5 bg-white/5'} flex flex-col items-center text-center space-y-6`}>
               <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">{tier} Protocol</span>
               <div className="space-y-1">
-                <span className="text-4xl font-black leading-none">{i === 0 ? '$99' : i === 1 ? '$299' : 'Custom'}</span>
+                <span className="text-4xl font-black leading-none">{i === 0 ? '999' : i === 1 ? '2999' : 'Custom'} <span className="text-lg opacity-40">{i < 2 ? 'DH' : ''}</span></span>
                 <p className="text-[10px] text-white/20 font-black uppercase tracking-widest">Per Node / Month</p>
               </div>
               <Link href="/plans" className="w-full">

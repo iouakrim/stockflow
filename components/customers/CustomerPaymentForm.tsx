@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { processCreditPayment } from "@/app/(dashboard)/customers/actions"
+import { useSettings } from "@/components/providers/SettingsProvider"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -23,6 +24,7 @@ import {
 } from "lucide-react"
 
 export function CustomerPaymentForm({ customer }: { customer: { id: string; name: string } }) {
+    const { currency } = useSettings()
     const [amount, setAmount] = useState<string>("")
     const [paymentMethod, setPaymentMethod] = useState<'cash' | 'bank_transfer' | 'mobile_money'>('cash')
     const [notes, setNotes] = useState("")
@@ -70,18 +72,18 @@ export function CustomerPaymentForm({ customer }: { customer: { id: string; name
                 <CardContent className="p-8 space-y-8">
                     {/* Amount Input */}
                     <div className="space-y-3">
-                        <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest pl-1">Payment Amount ($)</Label>
+                        <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest pl-1">Payment Amount ({currency})</Label>
                         <div className="relative group">
-                            <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-primary group-focus-within:scale-110 transition-transform">$</span>
                             <Input
                                 type="number"
                                 step="0.01"
                                 placeholder="0.00"
-                                className="h-20 text-4xl font-black pl-12 bg-accent/50 border-none rounded-2xl focus-visible:ring-1 focus-visible:ring-primary text-primary transition-all pr-8"
+                                className="h-20 text-4xl font-black pl-8 bg-accent/50 border-none rounded-2xl focus-visible:ring-1 focus-visible:ring-primary text-primary transition-all pr-20"
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
                                 required
                             />
+                            <span className="absolute right-6 top-1/2 -translate-y-1/2 text-xl font-black text-primary/30 group-focus-within:text-primary transition-colors select-none">{currency}</span>
                         </div>
                     </div>
 

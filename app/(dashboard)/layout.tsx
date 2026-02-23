@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { createClient } from "@/lib/supabase/client";
 import { WarehouseProvider, useWarehouse } from "@/components/providers/WarehouseProvider";
+import { SettingsProvider } from "@/components/providers/SettingsProvider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslations } from "next-intl";
 
@@ -283,9 +284,11 @@ function DashboardContent({ children }: { children: ReactNode }) {
 export default function DashboardLayout({ children }: { children: ReactNode }) {
     return (
         <WarehouseProvider>
-            <DashboardContent>
-                {children}
-            </DashboardContent>
+            <SettingsProvider>
+                <DashboardContent>
+                    {children}
+                </DashboardContent>
+            </SettingsProvider>
         </WarehouseProvider>
     )
 }

@@ -25,7 +25,7 @@ export default function OnboardingPage() {
     // Form States
     const [tenantName, setTenantName] = useState("")
     const [taxId, setTaxId] = useState("")
-    const [currency, setCurrency] = useState("USD")
+    const [currency, setCurrency] = useState("DH")
     const [reportingPeriod, setReportingPeriod] = useState("Monthly")
     const [brandColor, setBrandColor] = useState("#0fbd66")
 
@@ -160,7 +160,7 @@ export default function OnboardingPage() {
                                                 >
                                                     <option value="USD">USD - United States Dollar</option>
                                                     <option value="EUR">EUR - Euro</option>
-                                                    <option value="MAD">MAD - Moroccan Dirham</option>
+                                                    <option value="DH">DH - Dirham Marocain</option>
                                                 </select>
                                             </div>
                                             <div className="space-y-2">

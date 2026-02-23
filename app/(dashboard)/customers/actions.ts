@@ -35,16 +35,18 @@ export async function processCreditPayment(
         const newBalance = Number(customer.credit_balance) - amount
 
         // 1. Log the payment
-        const { error: paymentError } = await supabase
+        const { data: paymentData, error: paymentError } = await supabase
             .from("credit_payments")
             .insert({
                 tenant_id: profile.tenant_id,
                 customer_id: customerId,
                 amount: amount,
-                payment_method: paymentMethod,
+                payment_method: paymentMethod as any,
                 notes: notes || null,
                 received_by: user.id
             })
+            .select("id")
+            .single()
 
         if (paymentError) return { success: false, error: "Failed to record payment: " + paymentError.message }
 
@@ -60,7 +62,7 @@ export async function processCreditPayment(
         revalidatePath(`/customers/${customerId}`)
         revalidatePath("/customers")
 
-        return { success: true }
+        return { success: true, paymentId: paymentData?.id }
     } catch (err: unknown) {
         return { success: false, error: err instanceof Error ? err.message : "Process failed" }
     }

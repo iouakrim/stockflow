@@ -27,7 +27,7 @@ CREATE TABLE tenants (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name TEXT NOT NULL,
   tax_id TEXT,
-  currency TEXT DEFAULT 'USD',
+  currency TEXT DEFAULT 'DH',
   reporting_period TEXT DEFAULT 'monthly',
   brand_color TEXT DEFAULT '#0fbd66',
   logo_url TEXT,
@@ -325,7 +325,18 @@ BEGIN
 
   -- 5. Create sale record linked to specific warehouse
   INSERT INTO sales (tenant_id, warehouse_id, receipt_number, customer_id, cashier_id, subtotal, discount, total, amount_paid, payment_method)
-  VALUES (p_tenant_id, p_warehouse_id, v_receipt_number, p_customer_id, p_cashier_id, v_subtotal, p_discount, v_total, v_total, p_payment_method)
+  VALUES (
+    p_tenant_id, 
+    p_warehouse_id, 
+    v_receipt_number, 
+    p_customer_id, 
+    p_cashier_id, 
+    v_subtotal, 
+    p_discount, 
+    v_total, 
+    CASE WHEN p_payment_method = 'credit' THEN 0 ELSE v_total END, 
+    p_payment_method
+  )
   RETURNING id INTO v_sale_id;
 
   -- 6. Process items and update stock PER WAREHOUSE

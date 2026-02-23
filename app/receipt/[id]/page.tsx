@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server"
+import { createClient, getTenantSettings } from "@/lib/supabase/server"
 import { getTranslations } from "next-intl/server"
 import { notFound } from "next/navigation"
 import { Boxes, CircleCheckBig, Truck } from "lucide-react"
@@ -7,6 +7,7 @@ import { PrintActions } from "./PrintActions"
 export default async function ReceiptPage({ params, searchParams }: { params: { id: string }, searchParams?: { [key: string]: string | string[] | undefined } }) {
     const supabase = createClient()
     const isPickup = searchParams?.type === 'pickup'
+    const { currency } = await getTenantSettings()
 
     // Fetch sale with nested items and customer
     const { data: sale } = await supabase
@@ -98,11 +99,11 @@ export default async function ReceiptPage({ params, searchParams }: { params: { 
                                             <span className="font-mono font-black text-black mr-1">
                                                 {item.quantity > 500 && item.products?.unit !== 'UN' ? `${(item.quantity / 1000).toFixed(2)} ${t("tons")}` : `${item.quantity} ${item.products?.unit === 'UN' ? t("units") : t("kilograms")}`}
                                             </span>
-                                            <span className="opacity-50">x</span> <span className="font-mono">${Number(item.unit_price).toFixed(2)}</span>
+                                            <span className="opacity-50">x</span> <span className="font-mono">{Number(item.unit_price).toFixed(2)} <span className="text-[9px] opacity-70">{currency}</span></span>
                                             {item.products?.barcode && <div className="text-[8px] text-gray-400 font-mono mt-1">#{item.products.barcode}</div>}
                                         </div>
                                         <div className="font-black text-black font-mono">
-                                            ${Number(item.total_price).toFixed(2)}
+                                            {Number(item.total_price).toFixed(2)} <span className="text-[10px] opacity-70 ml-0.5">{currency}</span>
                                         </div>
                                     </div>
                                 )}
@@ -119,17 +120,17 @@ export default async function ReceiptPage({ params, searchParams }: { params: { 
                             <>
                                 <div className="flex justify-between text-gray-600">
                                     <span>{t("subtotal")}</span>
-                                    <span className="font-mono">${Number(sale.subtotal).toFixed(2)}</span>
+                                    <span className="font-mono">{Number(sale.subtotal).toFixed(2)} <span className="text-[9px] opacity-70 ml-0.5">{currency}</span></span>
                                 </div>
                                 <div className="flex justify-between text-red-600">
                                     <span>{t("discount")}</span>
-                                    <span className="font-mono">-${Number(sale.discount).toFixed(2)}</span>
+                                    <span className="font-mono">-{Number(sale.discount).toFixed(2)} <span className="text-[9px] opacity-70 ml-0.5">{currency}</span></span>
                                 </div>
                             </>
                         )}
                         <div className="flex justify-between items-center text-lg font-black pt-2 pb-1 border-b-2 border-black border-double">
                             <span className="uppercase tracking-widest text-[11px]">{t("total")}</span>
-                            <span className="font-mono">${Number(sale.total).toFixed(2)}</span>
+                            <span className="font-mono">{Number(sale.total).toFixed(2)} <span className="text-xs opacity-50 ml-1">{currency}</span></span>
                         </div>
                     </div>
                 ) : (

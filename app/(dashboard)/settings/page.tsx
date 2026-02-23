@@ -1,5 +1,6 @@
-import { createClient } from "@/lib/supabase/server"
+import { createClient, getTenantSettings } from "@/lib/supabase/server"
 import { getTranslations } from "next-intl/server"
+import { redirect } from "next/navigation"
 import {
     ShieldCheck,
     Plus,
@@ -50,6 +51,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { InviteUserSheet } from "./InviteUserSheet"
 import { UserActionsDropdown } from "./UserActionsDropdown"
 import { ThemeSwitcher } from "./ThemeSwitcher"
+import { GeneralSettingsForm } from "./GeneralSettingsForm"
 
 export default async function SettingsPage({ searchParams }: { searchParams: { q?: string, role?: string, tab?: string } }) {
     const supabase = createClient()
@@ -58,16 +60,27 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
     // Fetch requester profile
     const { data: requesterProfile } = await supabase
         .from('profiles')
-        .select('role')
+        .select('role, tenant_id')
         .eq('id', user?.id)
         .single()
+
+    const { data: tenant } = await supabase
+        .from('tenants')
+        .select('*')
+        .eq('id', requesterProfile?.tenant_id)
+        .single()
+
+    const { currency } = await getTenantSettings()
 
     const isAdmin = requesterProfile?.role === 'admin' || requesterProfile?.role === 'super-admin'
 
     // Default tab logic based on role
-    let tab = searchParams?.tab || (isAdmin ? "Users & Roles" : "General Settings");
-    if (!isAdmin && tab === "Users & Roles") {
-        tab = "General Settings"
+    let tab = searchParams?.tab || (isAdmin ? "Users & Roles" : "Appearance");
+
+    // Security check: If not admin and trying to access admin tabs, redirect to Appearance
+    const adminTabs = ["Users & Roles", "General Settings"]
+    if (!isAdmin && adminTabs.includes(tab)) {
+        tab = "Appearance"
     }
 
     // Fetch warehouses for invitation form
@@ -224,48 +237,22 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
             )}
 
             {tab === "General Settings" && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6 animate-in fade-in duration-500">
+                <div className="max-w-2xl mt-6 animate-in fade-in duration-500">
                     <Card className="glass-card border-primary/10">
                         <CardHeader className="p-8 pb-4">
                             <CardTitle className="text-xl font-black tracking-tight">{t("facilityIdentity")}</CardTitle>
                             <CardDescription className="text-xs font-medium text-muted-foreground uppercase tracking-widest mt-1">{t("globalSystemNomenclature")}</CardDescription>
                         </CardHeader>
-                        <CardContent className="p-8 pt-0 space-y-6">
-                            <div className="space-y-3">
-                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">{t("entityDesignation")}</Label>
-                                <Input defaultValue="StockFlow Main Warehouse" className="h-12 rounded-2xl bg-card border-primary/10 focus-visible:ring-primary font-bold px-5" />
-                            </div>
-                            <div className="space-y-3">
-                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">{t("primaryCurrencyBase")}</Label>
-                                <Input defaultValue="USD ($)" className="h-12 rounded-2xl bg-card border-primary/10 focus-visible:ring-primary font-bold px-5" />
-                            </div>
-                            <div className="pt-4">
-                                <Button className="bg-primary text-[#102219] font-black rounded-2xl h-12 px-8 uppercase text-[10px] tracking-widest hover:scale-[1.02] shadow-xl shadow-primary/20">{t("commitChanges")}</Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="glass-card border-primary/10">
-                        <CardHeader className="p-8 pb-4">
-                            <CardTitle className="text-xl font-black tracking-tight">{t("timeAndLocalization")}</CardTitle>
-                            <CardDescription className="text-xs font-medium text-muted-foreground uppercase tracking-widest mt-1">{t("temporalAlignment")}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-8 pt-0 space-y-6">
-                            <div className="space-y-3">
-                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">{t("timezoneOffset")}</Label>
-                                <Input defaultValue="UTC ±00:00 Greenwich Mean Time" disabled className="h-12 rounded-2xl bg-primary/[0.02] border-primary/10 text-muted-foreground font-bold px-5 opacity-70" />
-                            </div>
-                            <div className="space-y-3">
-                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">{t("dateFormat")}</Label>
-                                <Input defaultValue="DD-MM-YYYY" className="h-12 rounded-2xl bg-card border-primary/10 focus-visible:ring-primary font-bold px-5" />
-                            </div>
-                            <div className="flex items-center justify-between pt-2">
-                                <div className="space-y-0.5">
-                                    <Label className="text-sm font-bold">{t("24HourClockStandard")}</Label>
-                                    <p className="text-[10px] font-medium text-muted-foreground">{t("forceMilitaryTime")}</p>
-                                </div>
-                                <Switch defaultChecked className="data-[state=checked]:bg-primary" />
-                            </div>
+                        <CardContent className="p-8 pt-0">
+                            <GeneralSettingsForm
+                                initialName={tenant?.name || ""}
+                                currency={currency}
+                                labels={{
+                                    entityDesignation: t("entityDesignation"),
+                                    primaryCurrencyBase: t("primaryCurrencyBase"),
+                                    commitChanges: t("commitChanges")
+                                }}
+                            />
                         </CardContent>
                     </Card>
                 </div>
@@ -276,80 +263,6 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                     <ThemeSwitcher />
                 </div>
             )}
-
-            {tab === "Security" && (
-                <div className="space-y-6 mt-6 animate-in fade-in duration-500">
-                    <Card className="glass-card border-primary/10">
-                        <CardHeader className="p-8 pb-4">
-                            <CardTitle className="text-xl font-black tracking-tight">{t("securityEnhancements")}</CardTitle>
-                            <CardDescription className="text-xs font-medium text-muted-foreground uppercase tracking-widest mt-1">{t("automatedDefenseMechanisms")}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-8 pt-0 space-y-8">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-b border-primary/10 pb-8">
-                                <div className="space-y-2">
-                                    <Label className="text-sm font-bold flex items-center gap-2">{t("twoFactorAuth")} <span className="text-[9px] px-2 py-0.5 rounded-md bg-primary/20 text-primary uppercase font-black tracking-widest">{t("recommended")}</span></Label>
-                                    <p className="text-xs text-muted-foreground font-medium max-w-sm">{t("requireCryptographicFactor")}</p>
-                                </div>
-                                <div className="flex items-center md:justify-end">
-                                    <Switch className="data-[state=checked]:bg-primary" />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-b border-primary/10 pb-8">
-                                <div className="space-y-2">
-                                    <Label className="text-sm font-bold">{t("automaticSessionTimeout")}</Label>
-                                    <p className="text-xs text-muted-foreground font-medium max-w-sm">{t("terminateIdleConnections")}</p>
-                                </div>
-                                <div className="flex items-center md:justify-end gap-4">
-                                    <span className="text-sm font-bold text-primary">15 Min</span>
-                                    <Switch defaultChecked className="data-[state=checked]:bg-primary" />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="space-y-2">
-                                    <Label className="text-sm font-bold">{t("ipAllowlistRestriction")}</Label>
-                                    <p className="text-xs text-muted-foreground font-medium max-w-sm">{t("blockOutsideAccess")}</p>
-                                </div>
-                                <div className="flex items-center md:justify-end">
-                                    <Button variant="outline" className="h-10 px-6 rounded-xl border-primary/20 text-primary hover:bg-primary/10 font-bold text-xs">{t("configureIpRouting")}</Button>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* Danger Zone */}
-                    <DangerZone />
-                </div>
-            )}
-
-            {tab === "Notifications" && (
-                <div className="mt-6 animate-in fade-in duration-500">
-                    <Card className="glass-card border-primary/10 max-w-3xl">
-                        <CardHeader className="p-8 pb-4">
-                            <CardTitle className="text-xl font-black tracking-tight">{t("alertPreferences")}</CardTitle>
-                            <CardDescription className="text-xs font-medium text-muted-foreground uppercase tracking-widest mt-1">{t("systemWideTransmission")}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-8 pt-0 space-y-6">
-                            {[
-                                { title: t("lowStockWarnings"), desc: "Instant push notifications when an item breaches minimum threshold.", checked: true },
-                                { title: t("largeTransactionAlerts"), desc: "Email notifications for any sale exceeding $5,000.", checked: true },
-                                { title: t("dailyAuditSummary"), desc: "End-of-day discrepancy report delivered at 23:59.", checked: false },
-                                { title: t("newAccessNodeLogin"), desc: "Trigger alert upon detection of login from an unknown terminal.", checked: true },
-                            ].map((item, i) => (
-                                <div key={i} className="flex items-start justify-between py-4 border-b border-primary/5 last:border-0 last:pb-0">
-                                    <div className="space-y-1">
-                                        <h5 className="font-bold text-sm tracking-tight">{item.title}</h5>
-                                        <p className="text-[11px] text-muted-foreground font-medium">{item.desc}</p>
-                                    </div>
-                                    <Switch defaultChecked={item.checked} className="data-[state=checked]:bg-primary mt-1" />
-                                </div>
-                            ))}
-                        </CardContent>
-                    </Card>
-                </div>
-            )}
-
         </div>
     )
 }

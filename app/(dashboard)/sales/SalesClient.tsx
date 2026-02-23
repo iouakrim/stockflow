@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react"
 import { useTranslations } from "next-intl"
+import { useSettings } from "@/components/providers/SettingsProvider"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -57,6 +58,7 @@ interface SalesClientProps {
 
 export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
     const t = useTranslations("Ledger")
+    const { currency } = useSettings()
 
     const [searchTerm, setSearchTerm] = useState("")
     const [timeFilter, setTimeFilter] = useState("all") // 'all', 'today', 'month'
@@ -238,11 +240,11 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                         <TableCell className="text-right">
                                             <div className="flex flex-col items-end">
                                                 <span className="text-base font-black tracking-tighter text-primary">
-                                                    $<span suppressHydrationWarning>{Number(sale.total).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                                                    <span suppressHydrationWarning>{Number(sale.total).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span> <span className="text-[10px] ml-1 opacity-50">{currency}</span>
                                                 </span>
                                                 {sale.discount && sale.discount > 0 ? (
                                                     <span className="text-[9px] text-red-500/80 font-black uppercase tracking-widest flex items-center gap-1">
-                                                        -{sale.discount.toFixed(2)} ({t("discount")})
+                                                        -{sale.discount.toFixed(2)} <span className="text-[8px] opacity-70">{currency}</span> ({t("discount")})
                                                     </span>
                                                 ) : (
                                                     <span className="text-[9px] text-primary/40 font-black uppercase tracking-widest">{t("capturedBalance")}</span>
@@ -415,7 +417,7 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                     <div className="bg-primary/[0.03] border-primary/10 border p-4 rounded-3xl flex flex-col gap-1 items-center justify-center text-center">
                                         <span className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">{t("totalValue")}</span>
                                         <span className="text-2xl font-black tracking-tighter text-primary">
-                                            $<span suppressHydrationWarning>{Number(previewDetailsSale.total).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                                            <span suppressHydrationWarning>{Number(previewDetailsSale.total).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span> <span className="text-sm ml-1 opacity-50">{currency}</span>
                                         </span>
                                     </div>
                                     <div className="bg-primary/[0.03] border-primary/10 border p-4 rounded-3xl flex flex-col gap-1 items-center justify-center text-center">
@@ -457,7 +459,7 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                         {previewDetailsSale.discount ? (
                                             <li className="flex justify-between items-center text-sm font-bold">
                                                 <span className="text-muted-foreground uppercase text-[10px] tracking-widest">{t("discountApplied")}</span>
-                                                <span className="text-red-500 uppercase">-${previewDetailsSale.discount.toFixed(2)}</span>
+                                                <span className="text-red-500 uppercase">-{previewDetailsSale.discount.toFixed(2)} <span className="text-[10px] ml-0.5 opacity-50">{currency}</span></span>
                                             </li>
                                         ) : null}
                                         <li className="flex justify-between items-center text-sm font-bold">
@@ -486,11 +488,11 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                                                 {productName || t("unknownProduct")}
                                                             </span>
                                                             <span className="text-[10px] font-black text-muted-foreground tracking-widest uppercase" suppressHydrationWarning>
-                                                                {item.quantity} × ${Number(item.unit_price).toFixed(2)}
+                                                                {item.quantity} × {Number(item.unit_price).toFixed(2)} <span className="text-[8px] ml-0.5 opacity-50">{currency}</span>
                                                             </span>
                                                         </div>
                                                         <div className="text-right shrink-0">
-                                                            <span className="font-black text-primary" suppressHydrationWarning>${Number(item.total_price).toFixed(2)}</span>
+                                                            <span className="font-black text-primary" suppressHydrationWarning>{Number(item.total_price).toFixed(2)} <span className="text-[10px] ml-1 opacity-50">{currency}</span></span>
                                                         </div>
                                                     </div>
                                                 )

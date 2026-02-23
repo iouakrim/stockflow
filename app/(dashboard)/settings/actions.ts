@@ -175,3 +175,32 @@ export async function sendUserResetPassword(email: string) {
     if (error) return { error: error.message }
     return { success: true }
 }
+
+/**
+ * Updates the organization (tenant) name.
+ */
+export async function updateTenantName(name: string) {
+    const supabase = createClient()
+
+    // 1. Authorization check
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: "Non authentifié" }
+
+    const { data: profile } = await supabase.from("profiles").select("role, tenant_id").eq("id", user.id).single()
+    if (profile?.role !== 'admin' && profile?.role !== 'super-admin') {
+        return { error: "Permission refusée" }
+    }
+
+    if (!profile.tenant_id) return { error: "Tenant non trouvé" }
+
+    // 2. Update tenant
+    const { error } = await supabase
+        .from("tenants")
+        .update({ name })
+        .eq("id", profile.tenant_id)
+
+    if (error) return { error: error.message }
+
+    revalidatePath("/settings")
+    return { success: true }
+}
