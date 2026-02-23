@@ -22,6 +22,7 @@
         "generalSettings": "Paramètres Généraux",
         "security": "Sécurité",
         "notifications": "Notifications",
+        "appearance": "Apparence",
         "warehousesNetwork": "Dépôts",
         "signOut": "Déconnexion"
     },
@@ -232,6 +233,7 @@
         "legumes": "Légumineuses",
         "oilseeds": "Oléagineux",
         "search": "Chercher par nom, SKU ou code-barres...",
+        "verified": "Vérifié",
         "productEntity": "Produit",
         "globalSku": "SKU Global",
         "classification": "Classification",
@@ -449,7 +451,14 @@
         "emailNotification": "Notification Automatique",
         "inviteInfo": "Une invitation sécurisée sera envoyée par email pour l'initialisation du mot de passe.",
         "sendInvite": "Lancer l'Invitation",
-        "resetPassword": "Réinitialiser le mot de passe"
+        "resetPassword": "Réinitialiser le mot de passe",
+        "themeSaaS": "Apparence du SaaS",
+        "customizeVisual": "Personnalisez votre identité visuelle",
+        "cobalt": "Cobalt (Bleu Pro)",
+        "amethyst": "Améthyste (Vibrant)",
+        "ruby": "Rubis (Élégant)",
+        "amber": "Ambre (Chaud)",
+        "slate": "Ardoise (Minimaliste)"
     },
     "Receipt": {
         "pickupTicket": "Ticket de Collecte",

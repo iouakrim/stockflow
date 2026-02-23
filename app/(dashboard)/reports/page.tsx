@@ -113,7 +113,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: { fi
         });
     }
 
-    const colors = ["#11d473", "#3b82f6", "#f59e0b", "#a855f7", "#ec4899", "#06b6d4"];
+    const colors = ["hsl(var(--primary))", "#3b82f6", "#f59e0b", "#a855f7", "#ec4899", "#06b6d4"];
     let pieData = Object.keys(categoryMap)
         .filter(k => categoryMap[k] > 0)
         .sort((a, b) => categoryMap[b] - categoryMap[a])

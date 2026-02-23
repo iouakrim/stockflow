@@ -49,6 +49,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 
 import { InviteUserSheet } from "./InviteUserSheet"
 import { UserActionsDropdown } from "./UserActionsDropdown"
+import { ThemeSwitcher } from "./ThemeSwitcher"
 
 export default async function SettingsPage({ searchParams }: { searchParams: { q?: string, role?: string, tab?: string } }) {
     const supabase = createClient()
@@ -267,6 +268,12 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
                             </div>
                         </CardContent>
                     </Card>
+                </div>
+            )}
+
+            {tab === "Appearance" && (
+                <div className="max-w-4xl mt-6 animate-in slide-in-from-bottom-5 duration-700">
+                    <ThemeSwitcher />
                 </div>
             )}
 

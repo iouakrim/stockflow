@@ -116,7 +116,7 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <Button asChild variant="outline" className="border-emerald-500/20 bg-emerald-500/5 backdrop-blur rounded-2xl h-12 px-6 font-black tracking-widest text-xs gap-2 transition-all hover:bg-emerald-500/10 active:scale-95 text-emerald-600 shadow-sm uppercase">
+                    <Button asChild variant="outline" className="border-primary/20 bg-primary/5 backdrop-blur rounded-2xl h-12 px-6 font-black tracking-widest text-xs gap-2 transition-all hover:bg-primary/10 active:scale-95 text-primary shadow-sm uppercase">
                         <Link href="/sales/reports">
                             <FileText className="h-4 w-4" /> {t("dailyZReport")}
                         </Link>
@@ -237,7 +237,7 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <div className="flex flex-col items-end">
-                                                <span className="text-base font-black tracking-tighter text-emerald-500">
+                                                <span className="text-base font-black tracking-tighter text-primary">
                                                     $<span suppressHydrationWarning>{Number(sale.total).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                                                 </span>
                                                 {sale.discount && sale.discount > 0 ? (
@@ -259,7 +259,7 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                         </TableCell>
                                         <TableCell className="text-center">
                                             <div className="inline-flex items-center justify-center gap-2 text-primary text-[10px] font-black uppercase tracking-[0.15em] bg-primary/10 py-1.5 px-3 rounded-xl border border-primary/20">
-                                                <div className="size-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_#11d473]" />
+                                                <div className="size-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_hsl(var(--primary))]" />
                                                 {t("processed")}
                                             </div>
                                         </TableCell>
@@ -269,7 +269,7 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                                     variant="ghost"
                                                     size="icon"
                                                     title={t("previewPickup")}
-                                                    className="size-9 rounded-xl text-emerald-600 hover:bg-emerald-500/10 hover:text-emerald-700 transition-all shrink-0 border border-emerald-500/20 bg-emerald-500/5"
+                                                    className="size-9 rounded-xl text-primary hover:bg-primary/10 hover:text-primary transition-all shrink-0 border border-primary/20 bg-primary/5"
                                                     onClick={() => {
                                                         setPreviewReceiptUrl(`/receipt/${sale.id}?type=pickup`)
                                                         setPreviewReceiptTitle("Pickup Ticket Preview")
@@ -414,14 +414,14 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="bg-primary/[0.03] border-primary/10 border p-4 rounded-3xl flex flex-col gap-1 items-center justify-center text-center">
                                         <span className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">{t("totalValue")}</span>
-                                        <span className="text-2xl font-black tracking-tighter text-emerald-500">
+                                        <span className="text-2xl font-black tracking-tighter text-primary">
                                             $<span suppressHydrationWarning>{Number(previewDetailsSale.total).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                                         </span>
                                     </div>
                                     <div className="bg-primary/[0.03] border-primary/10 border p-4 rounded-3xl flex flex-col gap-1 items-center justify-center text-center">
                                         <span className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">{t("status")}</span>
                                         <div className="inline-flex items-center justify-center gap-2 text-primary text-[10px] font-black uppercase tracking-[0.15em] bg-primary/10 py-1.5 px-3 rounded-xl border border-primary/20 mt-1">
-                                            <div className="size-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_#11d473]" />
+                                            <div className="size-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_hsl(var(--primary))]" />
                                             {t("processed")}
                                         </div>
                                     </div>

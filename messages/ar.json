@@ -22,6 +22,7 @@
         "generalSettings": "الإعدادات العامة",
         "security": "الأمان",
         "notifications": "التنبيهات",
+        "appearance": "المظهر",
         "warehousesNetwork": "المستودعات",
         "signOut": "تسجيل الخروج"
     },
@@ -232,6 +233,7 @@
         "legumes": "قطاني",
         "oilseeds": "بذور زيتية",
         "search": "ابحث بالاسم، الكود، أو الباركود...",
+        "verified": "مُتحقق",
         "productEntity": "المنتج",
         "globalSku": "رقم الكود (SKU)",
         "classification": "النوع",
@@ -449,7 +451,14 @@
         "emailNotification": "إشعار بالبريد الإلكتروني",
         "inviteInfo": "سيتم إرسال رابط دعوة آمن عبر البريد الإلكتروني لتعيين كلمة المرور.",
         "sendInvite": "إرسال الدعوة",
-        "resetPassword": "إعادة تعيين كلمة المرور"
+        "resetPassword": "إعادة تعيين كلمة المرور",
+        "themeSaaS": "مظهر النظام",
+        "customizeVisual": "تعديل الهوية البصرية",
+        "cobalt": "كوبالت (أزرق احترافي)",
+        "amethyst": "أرجواني (حيوي)",
+        "ruby": "ياقوتي (أنيق)",
+        "amber": "كهرماني (دافئ)",
+        "slate": "إردوازي (بسيط)"
     },
     "Receipt": {
         "pickupTicket": "تذكرة الاستلام",

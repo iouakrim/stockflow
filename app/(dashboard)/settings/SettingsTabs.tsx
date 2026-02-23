@@ -8,6 +8,7 @@ export function SettingsTabs({ currentTab, isAdmin }: { currentTab: string, isAd
     const tabs = [
         ...(isAdmin ? [{ key: "Users & Roles", label: t("usersAndRoles") }] : []),
         { key: "General Settings", label: t("generalSettings") },
+        { key: "Appearance", label: t("appearance") },
         { key: "Security", label: t("security") },
         { key: "Notifications", label: t("notifications") }
     ]

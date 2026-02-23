@@ -11,6 +11,7 @@ const manrope = Manrope({
 });
 
 import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 export const metadata: Metadata = {
   title: "StockFlow Pro",
@@ -27,13 +28,34 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} className="dark">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const state = localStorage.getItem('stockflow-theme');
+                  if (state) {
+                    const { palette } = JSON.parse(state).state;
+                    if (palette && palette !== 'default') {
+                      document.documentElement.setAttribute('data-theme', palette);
+                    }
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${manrope.variable} font-sans antialiased`}
       >
-        <NextIntlClientProvider messages={messages}>
-          {children}
-          <Toaster position="bottom-right" richColors theme="dark" />
-        </NextIntlClientProvider>
+        <ThemeProvider>
+          <NextIntlClientProvider messages={messages}>
+            {children}
+            <Toaster position="bottom-right" richColors theme="dark" />
+          </NextIntlClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

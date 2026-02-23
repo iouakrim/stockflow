@@ -84,7 +84,7 @@ function DashboardContent({ children }: { children: ReactNode }) {
             ? [{ label: t("reports"), href: "/reports", icon: BarChart3 }]
             : []),
         ...(['admin', 'super-admin', 'manager'].includes(userProfile?.role || '')
-            ? [{ label: "Audit / Mouvements", href: "/movements", icon: Activity }]
+            ? [{ label: "Audit", href: "/movements", icon: Activity }]
             : []),
         ...(['admin', 'super-admin'].includes(userProfile?.role || '')
             ? [{ label: t("warehousesNetwork"), href: "/warehouses", icon: Warehouse }]
@@ -143,9 +143,8 @@ function DashboardContent({ children }: { children: ReactNode }) {
                 </nav>
 
                 <div className="p-4 border-t border-primary/5 bg-accent/5">
-                    <SignOutButton collapsed={isCollapsed} />
                     {!isCollapsed && (
-                        <div className="mt-2 pt-2 border-t border-primary/5 flex justify-center items-center opacity-80 hover:opacity-100 transition-opacity">
+                        <div className="pt-2 flex justify-center items-center opacity-80 hover:opacity-100 transition-opacity">
                             <div className="px-3 py-1 rounded-full bg-primary/5 border border-primary/10 flex items-center gap-2">
                                 <div className="size-1.5 rounded-full bg-primary/40 animate-pulse" />
                                 <span className="font-mono text-[8px] font-black tracking-[0.2em] text-primary/60">V1.0.0</span>
@@ -231,42 +230,19 @@ function DashboardContent({ children }: { children: ReactNode }) {
 
                         <div className="h-6 w-px bg-primary/10 mx-1 hidden sm:block opacity-50" />
 
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <button className="flex items-center gap-2 md:gap-3 pl-1 md:pl-2 group transition-all">
-                                    <div className="text-right hidden xl:block">
-                                        <p className="text-xs font-black leading-none group-hover:text-primary transition-colors">{displayName}</p>
-                                        <p className="text-[9px] text-primary font-black uppercase mt-1 tracking-widest opacity-80">{displayRole}</p>
-                                    </div>
-                                    <div className="size-9 md:size-11 rounded-xl md:rounded-2xl border-2 border-primary/20 bg-primary/10 flex items-center justify-center group-hover:border-primary group-hover:scale-105 transition-all active:scale-95 shadow-lg shadow-primary/5 overflow-hidden">
-                                        <span className="text-xs md:text-sm font-black text-primary uppercase">
-                                            {initials}
-                                        </span>
-                                    </div>
-                                    <ChevronDown className="h-4 w-4 text-muted-foreground group-hover:text-primary hidden md:block opacity-40" />
-                                </button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-64 p-3 rounded-[1.5rem] border-primary/10 mt-3 shadow-2xl glass-card backdrop-blur-3xl" align="end">
-                                <DropdownMenuLabel className="font-black text-[10px] uppercase tracking-widest text-muted-foreground/60 mb-2 px-3">{t("systemIdentity")}</DropdownMenuLabel>
-                                <div className="flex items-center gap-3 px-3 py-4 bg-primary/5 rounded-2xl mb-2 border border-primary/10">
-                                    <div className="size-10 rounded-xl bg-primary flex items-center justify-center font-black text-xs text-background">{initials}</div>
-                                    <div className="flex flex-col">
-                                        <span className="text-sm font-black tracking-tight">{displayName}</span>
-                                        <span className="text-[10px] text-muted-foreground font-bold italic uppercase tracking-tighter">{t("levelSync", { role: displayRole })}</span>
-                                    </div>
-                                </div>
-                                <DropdownMenuItem className="rounded-xl font-bold gap-3 focus:bg-primary/10 focus:text-primary cursor-pointer py-3 px-4">
-                                    <Users className="h-4 w-4" /> {t("profileAnalytics")}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem className="rounded-xl font-bold gap-3 focus:bg-primary/10 focus:text-primary cursor-pointer py-3 px-4">
-                                    <Settings className="h-4 w-4" /> {t("nodePreferences")}
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator className="my-2 bg-primary/5" />
-                                <div className="p-1">
-                                    <SignOutButton />
-                                </div>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <div className="flex items-center gap-3 md:gap-4 pl-1 md:pl-2">
+                            <div className="text-right hidden xl:block">
+                                <p className="text-xs font-black leading-none">{displayName}</p>
+                                <p className="text-[9px] text-primary font-black uppercase mt-1 tracking-widest opacity-80">{displayRole}</p>
+                            </div>
+                            <div className="size-9 md:size-11 rounded-xl md:rounded-2xl border-2 border-primary/20 bg-primary/10 flex items-center justify-center shadow-lg shadow-primary/5 overflow-hidden">
+                                <span className="text-xs md:text-sm font-black text-primary uppercase">
+                                    {initials}
+                                </span>
+                            </div>
+                            <div className="h-6 w-px bg-primary/10 mx-1 hidden sm:block opacity-50" />
+                            <SignOutButton minimal />
+                        </div>
                     </div>
                 </header>
 

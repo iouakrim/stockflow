@@ -15,8 +15,8 @@ export function ReportsChart({ data }: ReportsChartProps) {
                 <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                     <defs>
                         <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#11d473" stopOpacity={0.3} />
-                            <stop offset="95%" stopColor="#11d473" stopOpacity={0} />
+                            <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                         </linearGradient>
                         <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
@@ -65,7 +65,7 @@ export function ReportsChart({ data }: ReportsChartProps) {
                     <Area
                         type="monotone"
                         dataKey="revenue"
-                        stroke="#11d473"
+                        stroke="hsl(var(--primary))"
                         strokeWidth={4}
                         fillOpacity={1}
                         fill="url(#colorRevenue)"
