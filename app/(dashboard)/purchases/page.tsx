@@ -27,7 +27,7 @@ export default async function PurchasesListPage() {
         return (
             <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
                 <p className="font-black text-xl text-red-500 uppercase tracking-widest italic opacity-80 underline underline-offset-8">Accès Refusé</p>
-                <p className="text-xs font-medium text-muted-foreground/60 max-w-xs text-center">Seuls les managers et administrateurs peuvent consulter l'historique des arrivages.</p>
+                <p className="text-xs font-medium text-muted-foreground/60 max-w-xs text-center">Seuls les managers et administrateurs peuvent consulter l&apos;historique des arrivages.</p>
             </div>
         )
     }
@@ -39,7 +39,7 @@ export default async function PurchasesListPage() {
         return (
             <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
                 <p className="font-black text-xl text-muted-foreground uppercase tracking-widest italic opacity-50">Aucun Dépôt Actif</p>
-                <p className="text-xs font-medium text-muted-foreground/60 max-w-xs text-center">Veuillez sélectionner un dépôt pour voir l'historique des arrivages.</p>
+                <p className="text-xs font-medium text-muted-foreground/60 max-w-xs text-center">Veuillez sélectionner un dépôt pour voir l&apos;historique des arrivages.</p>
             </div>
         )
     }
@@ -50,7 +50,7 @@ export default async function PurchasesListPage() {
         return (
             <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
                 <p className="font-black text-xl text-red-500 uppercase tracking-widest italic opacity-80 underline underline-offset-8">Accès Refusé</p>
-                <p className="text-xs font-medium text-muted-foreground/60 max-w-xs text-center">Vous n'avez pas l'autorisation de consulter ce dépôt.</p>
+                <p className="text-xs font-medium text-muted-foreground/60 max-w-xs text-center">Vous n&apos;avez pas l&apos;autorisation de consulter ce dépôt.</p>
             </div>
         )
     }

@@ -58,7 +58,7 @@ export function WarehouseProvider({ children }: { children: ReactNode }) {
                 query = query.in('id', profile.warehouse_access)
             }
 
-            const { data, error } = await query
+            const { data } = await query
 
             if (data && data.length > 0) {
                 setWarehouses(data)

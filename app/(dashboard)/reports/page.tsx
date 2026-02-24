@@ -136,7 +136,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: { fi
     if (products) {
         products.forEach(p => {
             // Supabase returns related objects or arrays, depending on the schema
-            const supplierObj = p.suppliers as any;
+            const supplierObj = p.suppliers as { name: string } | null;
             const supplierName = supplierObj?.name || t("unknownSupplier");
             const val = (p.stock_quantity || 0) * (p.cost_price || 0);
             if (!supplierMap[supplierName]) supplierMap[supplierName] = 0;

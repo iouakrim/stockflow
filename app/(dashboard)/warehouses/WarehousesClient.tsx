@@ -13,7 +13,6 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
 import {
     Sheet,
     SheetContent,
@@ -25,13 +24,17 @@ import {
     SheetClose
 } from "@/components/ui/sheet"
 import { Card, CardContent } from "@/components/ui/card"
-import { useWarehouse } from "@/components/providers/WarehouseProvider"
 import { createWarehouse, updateWarehouse, deleteWarehouse } from "./actions"
 
-export function WarehousesClient({ initialWarehouses }: { initialWarehouses: any[] }) {
+interface Warehouse {
+    id: string;
+    name: string;
+    address: string | null;
+}
+
+export function WarehousesClient({ initialWarehouses }: { initialWarehouses: Warehouse[] }) {
     const t = useTranslations("Settings")
     const router = useRouter()
-    const { setActiveWarehouse } = useWarehouse()
     const [isAdding, setIsAdding] = useState(false)
     const [isUpdating, setIsUpdating] = useState<string | null>(null)
     const [isDeleting, setIsDeleting] = useState<string | null>(null)
@@ -72,7 +75,7 @@ export function WarehousesClient({ initialWarehouses }: { initialWarehouses: any
         }
     }
 
-    const handleViewStock = (w: any) => {
+    const handleViewStock = (w: Warehouse) => {
         // Set cookie manually and redirect to ensure server-side data is correct on next page
         document.cookie = `stockflow_active_warehouse=${w.id}; path=/; max-age=31536000; SameSite=Lax`;
         localStorage.setItem('stockflow_active_warehouse', w.id);
@@ -138,7 +141,7 @@ export function WarehousesClient({ initialWarehouses }: { initialWarehouses: any
                         <p className="text-xs text-muted-foreground font-medium">{t("createFirstWarehouse")}</p>
                     </div>
                 ) : (
-                    initialWarehouses.map((w: any) => (
+                    initialWarehouses.map((w: Warehouse) => (
                         <Card key={w.id} className="glass-card group hover:scale-[1.02] transition-all duration-300 border-primary/10 overflow-hidden">
                             <div className="h-32 bg-primary/[0.03] w-full border-b border-primary/5 relative flex items-center justify-center overflow-hidden">
                                 <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)', backgroundSize: '16px 16px' }} />

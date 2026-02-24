@@ -16,13 +16,11 @@ import {
     AlertTriangle,
     Wallet,
     Plus,
-    FileOutput,
     ArrowUpRight,
     Boxes,
     ShoppingCart,
     Calendar,
     ChevronDown,
-    Users,
     Activity
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"

@@ -74,7 +74,7 @@ export function ThemeSwitcher() {
 
                 <div className="pt-4 p-4 rounded-2xl bg-primary/[0.03] border border-primary/10">
                     <p className="text-[10px] text-muted-foreground font-medium italic leading-relaxed">
-                        * Ces changements s'appliquent instantanément à tous les modules : Tableau de bord, POS, Inventaire et Rapports. La palette choisie est sauvegardée dans vos préférences locales.
+                        * Ces changements s&apos;appliquent instantanément à tous les modules : Tableau de bord, POS, Inventaire et Rapports. La palette choisie est sauvegardée dans vos préférences locales.
                     </p>
                 </div>
             </CardContent>

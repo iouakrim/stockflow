@@ -76,7 +76,7 @@ export async function inviteUser(data: { email: string, fullName: string, role: 
             .from("profiles")
             .update({
                 full_name: data.fullName,
-                role: data.role as any,
+                role: data.role,
                 warehouse_access: data.warehouseAccess
             })
             .eq("id", inviteData.user.id)
@@ -89,7 +89,7 @@ export async function inviteUser(data: { email: string, fullName: string, role: 
                 tenant_id: profile.tenant_id,
                 email: data.email,
                 full_name: data.fullName,
-                role: data.role as any,
+                role: data.role,
                 warehouse_access: data.warehouseAccess
             })
         if (insertError) return { error: insertError.message }
@@ -124,7 +124,7 @@ export async function updateUserAccess(userId: string, data: { role: string, war
     const { error } = await adminSupabase
         .from("profiles")
         .update({
-            role: data.role as any,
+            role: data.role,
             warehouse_access: data.warehouseAccess
         })
         .eq("id", userId)

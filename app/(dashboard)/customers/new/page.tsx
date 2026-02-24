@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { ArrowLeft, User, Mail, Phone, MapPin, Save, UserPlus } from "lucide-react"
 
-export default function NewCustomerPage() {
+export default async function NewCustomerPage() {
     async function addCustomer(formData: FormData) {
         "use server"
 

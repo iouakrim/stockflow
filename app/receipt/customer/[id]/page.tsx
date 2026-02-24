@@ -1,7 +1,7 @@
 import { createClient, getTenantSettings } from "@/lib/supabase/server"
 import { getTranslations } from "next-intl/server"
 import { notFound } from "next/navigation"
-import { Wallet, CheckCircle2, History, FileText } from "lucide-react"
+import { FileText } from "lucide-react"
 import { PrintActions } from "../../[id]/PrintActions"
 
 export default async function CustomerStatementPage({ params }: { params: { id: string } }) {

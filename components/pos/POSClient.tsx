@@ -25,9 +25,7 @@ import {
     Phone,
     Printer,
     Truck,
-    History,
-    DollarSign,
-    Check
+    History
 } from "lucide-react"
 
 import {
@@ -119,7 +117,7 @@ export function POSClient({ products, customers }: POSClientProps) {
         const supps: { id: string; name: string; count: number }[] = []
         products.forEach(p => {
             if (p.suppliers) {
-                const s = p.suppliers as any
+                const s = p.suppliers as { name: string }
                 const existing = supps.find(x => x.name === s.name)
                 if (existing) {
                     existing.count++
@@ -135,7 +133,7 @@ export function POSClient({ products, customers }: POSClientProps) {
         const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             p.barcode?.includes(searchTerm) ||
             p.sku?.toLowerCase().includes(searchTerm.toLowerCase())
-        const matchesSupplier = activeSupplier === t("all") || (p.suppliers as any)?.name === activeSupplier
+        const matchesSupplier = activeSupplier === t("all") || (p.suppliers as { name: string } | null)?.name === activeSupplier
         return matchesSearch && matchesSupplier
     })
 
@@ -687,7 +685,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                                                     {product.name}
                                                 </h3>
                                                 {product.suppliers && (
-                                                    <p className="text-[10px] font-bold text-primary/70 uppercase tracking-widest mt-0.5 truncate" title={(product.suppliers as any).name}>{(product.suppliers as any).name}</p>
+                                                    <p className="text-[10px] font-bold text-primary/70 uppercase tracking-widest mt-0.5 truncate" title={(product.suppliers as { name: string }).name}>{(product.suppliers as { name: string }).name}</p>
                                                 )}
 
                                             </div>

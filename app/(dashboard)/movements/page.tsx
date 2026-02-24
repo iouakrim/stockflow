@@ -4,7 +4,7 @@ import { cookies } from "next/headers"
 import { MovementsClient } from "./MovementsClient"
 import { getTranslations } from "next-intl/server"
 
-export default async function MovementsPage({ searchParams }: { searchParams: { page?: string, filter?: string } }) {
+export default async function MovementsPage() {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) redirect("/login")

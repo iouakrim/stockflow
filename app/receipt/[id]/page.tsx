@@ -1,7 +1,7 @@
 import { createClient, getTenantSettings } from "@/lib/supabase/server"
 import { getTranslations } from "next-intl/server"
 import { notFound } from "next/navigation"
-import { Boxes, CircleCheckBig, Truck } from "lucide-react"
+import { Boxes, Truck } from "lucide-react"
 import { PrintActions } from "./PrintActions"
 
 export default async function ReceiptPage({ params, searchParams }: { params: { id: string }, searchParams?: { [key: string]: string | string[] | undefined } }) {
@@ -82,7 +82,7 @@ export default async function ReceiptPage({ params, searchParams }: { params: { 
                     </div>
 
                     <div className={isPickup ? 'space-y-1.5' : 'space-y-4'}>
-                        {(sale.sale_items || []).map((item: any) => (
+                        {(sale.sale_items || []).map((item: { id: string; quantity: number; unit_price: number; total_price: number; products: { name: string; barcode: string | null; unit: string } | null }) => (
                             <div key={item.id} className="text-xs">
                                 <div className="flex justify-between items-start">
                                     <div className="font-bold text-black uppercase pr-4">{item.products?.name || t("unknownProduct")}</div>
@@ -139,7 +139,7 @@ export default async function ReceiptPage({ params, searchParams }: { params: { 
                         <div className="text-3xl font-black">
                             {(() => {
                                 // Calculate total quantity, ignore 'UN' 
-                                const totalWeight = (sale.sale_items || []).reduce((acc: number, item: any) => {
+                                const totalWeight = (sale.sale_items || []).reduce((acc: number, item: { quantity: number; products: { unit: string } | null }) => {
                                     if (item.products?.unit !== 'UN') {
                                         return acc + item.quantity;
                                     }

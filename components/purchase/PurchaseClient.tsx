@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { useTranslations } from "next-intl"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { useSettings } from "@/components/providers/SettingsProvider"
@@ -16,20 +15,46 @@ import {
     Truck,
     Building2,
     CheckCircle2,
-    FileText,
     ArrowLeft,
     Box,
     Package
 } from "lucide-react"
 
-export function PurchaseClient({ products, suppliers, warehouseId, warehouseName }: any) {
-    const t = useTranslations("Inventory") // Wait, I should just use generic strings if I don't have dedicated translations yet
+interface Product {
+    id: string;
+    name: string;
+    barcode?: string;
+    sku?: string;
+    cost_price: number;
+    supplier_id?: string;
+}
+
+interface Supplier {
+    id: string;
+    name: string;
+}
+
+interface CartItem {
+    product_id: string;
+    name: string;
+    unit_cost: number;
+    quantity: number;
+}
+
+interface PurchaseClientProps {
+    products: Product[];
+    suppliers: Supplier[];
+    warehouseId: string;
+    warehouseName: string;
+}
+
+export function PurchaseClient({ products, suppliers, warehouseId, warehouseName }: PurchaseClientProps) {
     const { currency } = useSettings()
     const router = useRouter()
     const supabase = createClient()
 
     const [searchTerm, setSearchTerm] = useState("")
-    const [cart, setCart] = useState<any[]>([])
+    const [cart, setCart] = useState<CartItem[]>([])
     const [supplierId, setSupplierId] = useState<string>("")
     const [referenceNumber, setReferenceNumber] = useState<string>("")
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -38,7 +63,7 @@ export function PurchaseClient({ products, suppliers, warehouseId, warehouseName
     const filteredProducts = useMemo(() => {
         if (!searchTerm) return []
         const lowerSearch = searchTerm.toLowerCase()
-        return products.filter((p: any) =>
+        return products.filter((p: Product) =>
             p.name.toLowerCase().includes(lowerSearch) ||
             (p.barcode && p.barcode.toLowerCase().includes(lowerSearch)) ||
             (p.sku && p.sku.toLowerCase().includes(lowerSearch))
@@ -54,7 +79,7 @@ export function PurchaseClient({ products, suppliers, warehouseId, warehouseName
     const { total } = calculateTotals()
 
     // Handlers
-    const addToCart = (product: any) => {
+    const addToCart = (product: Product) => {
         const existing = cart.find(i => i.product_id === product.id)
         if (existing) {
             setCart(cart.map(i => i.product_id === product.id ? { ...i, quantity: i.quantity + 1 } : i))
@@ -107,7 +132,7 @@ export function PurchaseClient({ products, suppliers, warehouseId, warehouseName
                 total_cost: item.unit_cost * item.quantity
             }))
 
-            const { data, error } = await supabase.rpc('process_purchase', {
+            const { error } = await supabase.rpc('process_purchase', {
                 p_tenant_id: profile?.tenant_id,
                 p_warehouse_id: warehouseId,
                 p_supplier_id: supplierId || null,
@@ -124,7 +149,7 @@ export function PurchaseClient({ products, suppliers, warehouseId, warehouseName
             setReferenceNumber("")
             setSupplierId("")
 
-        } catch (error: any) {
+        } catch (error) {
             console.error(error)
             toast.error(error.message || "Erreur lors de la réception.")
         } finally {
@@ -165,7 +190,7 @@ export function PurchaseClient({ products, suppliers, warehouseId, warehouseName
                                     onChange={(e) => setSupplierId(e.target.value)}
                                 >
                                     <option value="">Sélectionner un fournisseur...</option>
-                                    {suppliers.map((s: any) => (
+                                    {suppliers.map((s: Supplier) => (
                                         <option key={s.id} value={s.id}>{s.name}</option>
                                     ))}
                                 </select>
@@ -198,7 +223,7 @@ export function PurchaseClient({ products, suppliers, warehouseId, warehouseName
                             {isSubmitting ? (
                                 <span className="animate-pulse flex items-center gap-2"><Box className="h-5 w-5 animate-spin" /> Enregistrement...</span>
                             ) : (
-                                <><CheckCircle2 className="h-5 w-5 mr-2" /> Valider l'Arrivage</>
+                                <><CheckCircle2 className="h-5 w-5 mr-2" /> Valider l&apos;Arrivage</>
                             )}
                         </Button>
                     </div>
@@ -220,7 +245,7 @@ export function PurchaseClient({ products, suppliers, warehouseId, warehouseName
                             {searchTerm && (
                                 <div className="absolute top-16 left-0 right-0 bg-card border border-primary/10 rounded-2xl shadow-2xl z-50 max-h-64 overflow-y-auto p-2 animate-in fade-in slide-in-from-top-2">
                                     {filteredProducts.length > 0 ? (
-                                        filteredProducts.map((p: any) => (
+                                        filteredProducts.map((p: Product) => (
                                             <div
                                                 key={p.id}
                                                 onClick={() => addToCart(p)}
@@ -255,7 +280,7 @@ export function PurchaseClient({ products, suppliers, warehouseId, warehouseName
                                 <Package className="h-3 w-3" /> Catalogue Actuel du Fournisseur
                             </h4>
                             <div className="flex gap-3 overflow-x-auto custom-scrollbar pb-2">
-                                {products.filter((p: any) => p.supplier_id === supplierId).map((p: any) => (
+                                {products.filter((p: Product) => p.supplier_id === supplierId).map((p: Product) => (
                                     <div
                                         key={p.id}
                                         onClick={() => addToCart(p)}
@@ -270,7 +295,7 @@ export function PurchaseClient({ products, suppliers, warehouseId, warehouseName
                                         </div>
                                     </div>
                                 ))}
-                                {products.filter((p: any) => p.supplier_id === supplierId).length === 0 && (
+                                {products.filter((p: Product) => p.supplier_id === supplierId).length === 0 && (
                                     <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest py-3 px-2">
                                         Aucun produit lié à ce fournisseur
                                     </div>

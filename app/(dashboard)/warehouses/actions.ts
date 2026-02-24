@@ -7,7 +7,6 @@ export async function createWarehouse(formData: FormData) {
     const supabase = createClient()
     const name = formData.get("name") as string
     const address = formData.get("address") as string
-    const online_sync = formData.get("online_sync") === "on"
 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: "Non authentifié" }

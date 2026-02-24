@@ -24,10 +24,10 @@ export default function DashboardError({
                 <AlertCircle className="h-10 w-10 relative z-10" />
             </div>
 
-            <h2 className="text-3xl font-black tracking-tighter mb-4 text-foreground">Une erreur inattendue s'est produite</h2>
+            <h2 className="text-3xl font-black tracking-tighter mb-4 text-foreground">Une erreur inattendue s&apos;est produite</h2>
 
             <div className="max-w-md bg-card/50 backdrop-blur-sm border border-primary/10 rounded-2xl p-6 mb-8 shadow-inner font-mono text-xs text-left overflow-x-auto text-muted-foreground/80">
-                <p className="font-bold text-red-400 mb-2">// Message d'erreur technique :</p>
+                <p className="font-bold text-red-400 mb-2">{"//"} Message d&apos;erreur technique :</p>
                 <p>{error.message || "Erreur de rendu ou de récupération des données."}</p>
                 {error.digest && <p className="mt-2 text-[10px] opacity-50">Digest: {error.digest}</p>}
             </div>
@@ -42,7 +42,7 @@ export default function DashboardError({
 
                 <Button asChild variant="outline" className="h-14 px-8 rounded-2xl border-primary/20 hover:bg-primary/5 text-primary font-black uppercase tracking-[0.1em] shadow-sm active:scale-95 transition-all gap-2">
                     <Link href="/dashboard">
-                        <Home className="h-5 w-5" /> Retour à l'accueil
+                        <Home className="h-5 w-5" /> Retour à l&apos;accueil
                     </Link>
                 </Button>
             </div>

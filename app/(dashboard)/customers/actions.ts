@@ -41,7 +41,7 @@ export async function processCreditPayment(
                 tenant_id: profile.tenant_id,
                 customer_id: customerId,
                 amount: amount,
-                payment_method: paymentMethod as any,
+                payment_method: paymentMethod,
                 notes: notes || null,
                 received_by: user.id
             })

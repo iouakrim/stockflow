@@ -20,12 +20,10 @@ import {
 } from "@/components/ui/select"
 import {
     Package,
-    ArrowLeft,
     Save,
     Tag,
     DollarSign,
     Layers,
-    AlertCircle,
     Boxes,
     Truck,
     Loader2
@@ -45,7 +43,12 @@ const productSchema = z.object({
 
 type ProductFormValues = z.infer<typeof productSchema>
 
-export function ProductForm({ suppliers, tenantId }: { suppliers: any[], tenantId: string }) {
+interface Supplier {
+    id: string
+    name: string
+}
+
+export function ProductForm({ suppliers, tenantId }: { suppliers: Supplier[], tenantId: string }) {
     const router = useRouter()
     const { currency } = useSettings()
     const supabase = createClient()
@@ -92,17 +95,19 @@ export function ProductForm({ suppliers, tenantId }: { suppliers: any[], tenantI
             toast.success("Produit ajouté au catalogue avec succès")
             router.push("/products")
             router.refresh()
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error)
-            toast.error(error.message || "Erreur lors de la création du produit")
+            const message = error instanceof Error ? error.message : "Erreur lors de la création du produit"
+            toast.error(message)
         } finally {
             setIsSubmitting(false)
         }
     }
 
     return (
-        <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-20">
             <div className="lg:col-span-2 space-y-8">
+                {/* Section Base */}
                 <div className="glass-card rounded-[2.5rem] p-8 md:p-10 space-y-8 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
                         <Package className="size-32" />
@@ -153,7 +158,6 @@ export function ProductForm({ suppliers, tenantId }: { suppliers: any[], tenantI
                             </div>
                         </div>
 
-                        {/* Supplier Link */}
                         <div className="space-y-3">
                             <Label htmlFor="supplier_id" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 flex items-center gap-2">
                                 <Truck className="h-3 w-3" /> Fournisseur Préféré
@@ -176,6 +180,7 @@ export function ProductForm({ suppliers, tenantId }: { suppliers: any[], tenantI
                     </div>
                 </div>
 
+                {/* Section Valorisation */}
                 <div className="glass-card rounded-[2.5rem] p-8 md:p-10 space-y-8 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
                         <DollarSign className="size-32" />
@@ -189,147 +194,148 @@ export function ProductForm({ suppliers, tenantId }: { suppliers: any[], tenantI
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative">
+                        {/* Cost Price */}
                         <div className="space-y-3 p-6 rounded-3xl bg-amber-500/5 border border-amber-500/20 shadow-inner group/input focus-within:bg-amber-500/10 transition-colors">
                             <Label htmlFor="cost_price" className="text-[10px] font-black uppercase tracking-widest text-amber-600/60 ml-1 flex items-center justify-between">
-                                Prix d'achat <span className="bg-amber-500/20 text-amber-600 px-2 py-0.5 rounded-lg">PUMP</span>
+                                Prix d&apos;achat <span className="bg-amber-500/20 text-amber-600 px-2 py-0.5 rounded-lg">PUMP</span>
                             </Label>
                             <div className="relative">
-                                <div className="relative">
-                                    <Input
-                                        id="cost_price"
-                                        type="number"
-                                        step="0.01"
-                                        {...form.register("cost_price")}
-                                        className="h-14 bg-background/50 border-amber-500/20 rounded-2xl pl-6 pr-12 font-mono font-black text-lg focus:ring-amber-500 transition-all text-amber-500"
-                                        placeholder="0.00"
-                                    />
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black opacity-30 select-none">{currency}</span>
-                                    {form.formState.errors.cost_price && (
-                                        <p className="text-xs text-red-500 font-bold ml-2 mt-2">{form.formState.errors.cost_price.message}</p>
-                                    )}
-                                </div>
+                                <Input
+                                    id="cost_price"
+                                    type="number"
+                                    step="0.01"
+                                    {...form.register("cost_price")}
+                                    className="h-14 bg-background/50 border-amber-500/20 rounded-2xl pl-6 pr-12 font-mono font-black text-lg focus:ring-amber-500 transition-all text-amber-500"
+                                    placeholder="0.00"
+                                />
+                                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black opacity-30 select-none">{currency}</span>
+                            </div>
+                            {form.formState.errors.cost_price && (
+                                <p className="text-xs text-red-500 font-bold ml-2 mt-2">{form.formState.errors.cost_price.message}</p>
+                            )}
+                        </div>
+
+                        {/* Selling Price */}
+                        <div className="space-y-3 p-6 rounded-3xl bg-emerald-500/5 border border-emerald-500/20 shadow-inner group/input focus-within:bg-emerald-500/10 transition-colors">
+                            <Label htmlFor="selling_price" className="text-[10px] font-black uppercase tracking-widest text-emerald-600/60 ml-1 flex items-center justify-between">
+                                Prix de vente public <span className="bg-emerald-500/20 text-emerald-600 px-2 py-0.5 rounded-lg">PVP</span>
+                            </Label>
+                            <div className="relative">
+                                <Input
+                                    id="selling_price"
+                                    type="number"
+                                    step="0.01"
+                                    {...form.register("selling_price")}
+                                    className="h-14 bg-background/50 border-emerald-500/20 rounded-2xl pl-6 pr-12 font-mono font-black text-lg focus:ring-emerald-500 transition-all text-emerald-500"
+                                    placeholder="0.00"
+                                />
+                                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black opacity-30 select-none">{currency}</span>
+                            </div>
+                            {form.formState.errors.selling_price && (
+                                <p className="text-xs text-red-500 font-bold ml-2 mt-2">{form.formState.errors.selling_price.message}</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="space-y-8">
+                {/* Section Traçabilité */}
+                <div className="glass-card rounded-[2.5rem] p-8 md:p-10 space-y-8 relative overflow-hidden group h-full flex flex-col">
+                    <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
+                        <Layers className="size-32" />
+                    </div>
+
+                    <div className="flex flex-col flex-1 relative">
+                        <div className="flex items-center gap-4 mb-2">
+                            <div className="size-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20">
+                                <Boxes className="h-5 w-5" />
+                            </div>
+                            <h3 className="text-xl font-black tracking-tight uppercase">Traçabilité</h3>
+                        </div>
+
+                        <div className="space-y-8 mt-6">
+                            <div className="space-y-3">
+                                <Label htmlFor="sku" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 flex items-center justify-between">
+                                    SKU Code
+                                    <span className="text-[8px] bg-primary/10 text-primary px-1.5 py-0.5 rounded opacity-50">OPTIONNEL</span>
+                                </Label>
+                                <Input
+                                    id="sku"
+                                    {...form.register("sku")}
+                                    className="h-14 bg-card/40 border-primary/10 rounded-2xl px-6 font-mono font-black focus:ring-blue-500 transition-all uppercase tracking-widest"
+                                    placeholder="PROD-XXX-000"
+                                />
                             </div>
 
-                            <div className="space-y-3 p-6 rounded-3xl bg-emerald-500/5 border border-emerald-500/20 shadow-inner group/input focus-within:bg-emerald-500/10 transition-colors">
-                                <Label htmlFor="selling_price" className="text-[10px] font-black uppercase tracking-widest text-emerald-600/60 ml-1 flex items-center justify-between">
-                                    Prix de vente public <span className="bg-emerald-500/20 text-emerald-600 px-2 py-0.5 rounded-lg">PVP</span>
+                            <div className="space-y-3">
+                                <Label htmlFor="barcode" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 flex items-center justify-between">
+                                    Code-Barres EAN/UPC
+                                    <span className="text-[8px] bg-primary/10 text-primary px-1.5 py-0.5 rounded opacity-50">OPTIONNEL</span>
                                 </Label>
                                 <div className="relative">
-                                    <div className="relative">
-                                        <Input
-                                            id="selling_price"
-                                            type="number"
-                                            step="0.01"
-                                            {...form.register("selling_price")}
-                                            className="h-14 bg-background/50 border-emerald-500/20 rounded-2xl pl-6 pr-12 font-mono font-black text-lg focus:ring-emerald-500 transition-all text-emerald-500"
-                                            placeholder="0.00"
-                                        />
-                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black opacity-30 select-none">{currency}</span>
-                                        {form.formState.errors.selling_price && (
-                                            <p className="text-xs text-red-500 font-bold ml-2 mt-2">{form.formState.errors.selling_price.message}</p>
-                                        )}
+                                    <Input
+                                        id="barcode"
+                                        {...form.register("barcode")}
+                                        className="h-14 bg-card/40 border-primary/10 rounded-2xl pl-6 pr-12 font-mono font-black focus:ring-blue-500 transition-all tracking-widest"
+                                        placeholder="0000000000000"
+                                    />
+                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center opacity-30">
+                                        <ScanLineIcon className="h-5 w-5" />
                                     </div>
                                 </div>
+                            </div>
+
+                            <div className="space-y-3 flex-1 mt-auto">
+                                <Label htmlFor="description" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">Notes / Description</Label>
+                                <Input
+                                    id="description"
+                                    {...form.register("description")}
+                                    className="h-14 bg-card/40 border-primary/10 rounded-2xl px-6 font-medium focus:ring-blue-500 transition-all"
+                                    placeholder="Notes de produit"
+                                />
                             </div>
                         </div>
-                    </div>
 
-                    <div className="space-y-8">
-                        <div className="glass-card rounded-[2.5rem] p-8 md:p-10 space-y-8 relative overflow-hidden group h-full flex flex-col">
-                            <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
-                                <Layers className="size-32" />
-                            </div>
-
-                            <div className="flex flex-col flex-1 relative">
-                                <div className="flex items-center gap-4 mb-2">
-                                    <div className="size-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20">
-                                        <Boxes className="h-5 w-5" />
-                                    </div>
-                                    <h3 className="text-xl font-black tracking-tight uppercase">Traçabilité</h3>
-                                </div>
-
-                                <div className="space-y-8 mt-6">
-                                    <div className="space-y-3">
-                                        <Label htmlFor="sku" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 flex items-center justify-between">
-                                            SKU Code
-                                            <span className="text-[8px] bg-primary/10 text-primary px-1.5 py-0.5 rounded opacity-50">OPTIONNEL</span>
-                                        </Label>
-                                        <Input
-                                            id="sku"
-                                            {...form.register("sku")}
-                                            className="h-14 bg-card/40 border-primary/10 rounded-2xl px-6 font-mono font-black focus:ring-blue-500 transition-all uppercase tracking-widest"
-                                            placeholder="PROD-XXX-000"
-                                        />
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        <Label htmlFor="barcode" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 flex items-center justify-between">
-                                            Code-Barres EAN/UPC
-                                            <span className="text-[8px] bg-primary/10 text-primary px-1.5 py-0.5 rounded opacity-50">OPTIONNEL</span>
-                                        </Label>
-                                        <div className="relative">
-                                            <Input
-                                                id="barcode"
-                                                {...form.register("barcode")}
-                                                className="h-14 bg-card/40 border-primary/10 rounded-2xl pl-6 pr-12 font-mono font-black focus:ring-blue-500 transition-all tracking-widest"
-                                                placeholder="0000000000000"
-                                            />
-                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center opacity-30">
-                                                <ScanLineIcon className="h-5 w-5" /> {/* Placeholder icon */}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-3 flex-1 mt-auto">
-                                        <Label htmlFor="description" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">Notes / Description</Label>
-                                        <Input
-                                            id="description"
-                                            {...form.register("description")}
-                                            className="h-14 bg-card/40 border-primary/10 rounded-2xl px-6 font-medium focus:ring-blue-500 transition-all"
-                                            placeholder="Notes de produit"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="mt-12 flex-1 flex flex-col justify-end">
-                                    <Button
-                                        type="submit"
-                                        disabled={isSubmitting}
-                                        className="w-full h-16 bg-primary hover:bg-primary/90 text-background font-black text-lg uppercase tracking-[0.1em] rounded-2xl shadow-xl shadow-primary/20 transition-all active:scale-95 group/btn"
-                                    >
-                                        {isSubmitting ? (
-                                            <><Loader2 className="mr-2 h-6 w-6 animate-spin" /> Enregistrement...</>
-                                        ) : (
-                                            <><Save className="mr-2 h-6 w-6 group-hover/btn:scale-110 transition-transform" /> Confirmer la Création</>
-                                        )}
-                                    </Button>
-                                </div>
-                            </div>
+                        <div className="mt-12 flex-1 flex flex-col justify-end">
+                            <Button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="w-full h-16 bg-primary hover:bg-primary/90 text-background font-black text-lg uppercase tracking-[0.1em] rounded-2xl shadow-xl shadow-primary/20 transition-all active:scale-95 group/btn"
+                            >
+                                {isSubmitting ? (
+                                    <><Loader2 className="mr-2 h-6 w-6 animate-spin" /> Enregistrement...</>
+                                ) : (
+                                    <><Save className="mr-2 h-6 w-6 group-hover/btn:scale-110 transition-transform" /> Confirmer la Création</>
+                                )}
+                            </Button>
                         </div>
                     </div>
-                </form>
-                )
+                </div>
+            </div>
+        </form>
+    )
 }
 
-                function ScanLineIcon(props: any) {
+function ScanLineIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
-                <svg
-                    {...props}
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                >
-                    <path d="M3 7V5a2 2 0 0 1 2-2h2" />
-                    <path d="M17 3h2a2 2 0 0 1 2 2v2" />
-                    <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
-                    <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
-                    <line x1="7" x2="17" y1="12" y2="12" />
-                </svg>
-                )
+        <svg
+            {...props}
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        >
+            <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+            <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+            <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+            <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+            <line x1="7" x2="17" y1="12" y2="12" />
+        </svg>
+    )
 }

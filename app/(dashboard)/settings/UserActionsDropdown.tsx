@@ -7,8 +7,6 @@ import {
     MoreHorizontal,
     Shield,
     Warehouse,
-    Mail,
-    User,
     Loader2,
     CheckCircle2,
     Trash2,
@@ -16,7 +14,6 @@ import {
     Settings2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
     Sheet,
@@ -24,7 +21,6 @@ import {
     SheetDescription,
     SheetHeader,
     SheetTitle,
-    SheetTrigger,
     SheetFooter,
     SheetClose
 } from "@/components/ui/sheet"
@@ -43,7 +39,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { updateUserAccess, deleteUser, sendUserResetPassword } from "./actions"
 
-export function UserActionsDropdown({ user, warehouses, currentUserId }: { user: any, warehouses: any[], currentUserId?: string }) {
+export function UserActionsDropdown({ user, warehouses, currentUserId }: { user: { id: string; full_name: string; email: string; role: string; warehouse_access?: string[] | null }, warehouses: { id: string; name: string; address?: string | null }[], currentUserId?: string }) {
     const t = useTranslations("Settings")
     const router = useRouter()
     const [editOpen, setEditOpen] = useState(false)

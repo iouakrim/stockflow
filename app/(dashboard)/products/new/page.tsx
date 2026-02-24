@@ -3,25 +3,7 @@ import { getTranslations } from "next-intl/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import {
-    Package,
-    ArrowLeft,
-    Save,
-    Tag,
-    DollarSign,
-    Layers,
-    Boxes,
-    Truck
-} from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { ProductForm } from "@/components/products/ProductForm"
 
 export default async function NewProductPage() {

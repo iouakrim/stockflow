@@ -1,6 +1,6 @@
 import { createClient, getTenantSettings } from "@/lib/supabase/server"
 import { getTranslations } from "next-intl/server"
-import { Calculator, Calendar as CalendarIcon, FileSpreadsheet } from "lucide-react"
+import { FileSpreadsheet } from "lucide-react"
 import { PrintActions } from "../[id]/PrintActions"
 
 // Ensure route is completely dynamic because it depends on current time

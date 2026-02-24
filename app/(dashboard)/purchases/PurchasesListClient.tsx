@@ -1,8 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import { createClient } from "@/lib/supabase/client"
-import { useRouter } from "next/navigation"
 import { useSettings } from "@/components/providers/SettingsProvider"
 import {
     Table,
@@ -18,7 +17,6 @@ import {
     Search,
     Truck,
     Plus,
-    Calendar,
     FileText,
     ArrowUpRight,
     Package
@@ -27,24 +25,35 @@ import Link from "next/link"
 import { useLocale } from "next-intl"
 import { toast } from "sonner"
 
+interface PurchaseItem {
+    quantity: number;
+    unit_cost: number;
+    total_cost: number;
+    products: { name: string; sku: string } | null;
+}
+
+interface Purchase {
+    id: string;
+    created_at: string;
+    reference_number: string | null;
+    total_amount: number;
+    notes: string | null;
+    suppliers: { name: string } | null;
+    profiles: { full_name: string } | null;
+    purchase_items: PurchaseItem[];
+}
+
 export function PurchasesListClient({ warehouseId }: { warehouseId: string }) {
     const supabase = createClient()
-    const router = useRouter()
     const locale = useLocale()
     const { currency } = useSettings()
 
-    const [purchases, setPurchases] = useState<any[]>([])
+    const [purchases, setPurchases] = useState<Purchase[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState("")
     const [expandedRow, setExpandedRow] = useState<string | null>(null)
 
-    useEffect(() => {
-        if (warehouseId) {
-            fetchPurchases()
-        }
-    }, [warehouseId])
-
-    async function fetchPurchases() {
+    const fetchPurchases = useCallback(async () => {
         try {
             setIsLoading(true)
             const { data, error } = await supabase
@@ -62,14 +71,20 @@ export function PurchasesListClient({ warehouseId }: { warehouseId: string }) {
                 .order('created_at', { ascending: false })
 
             if (error) throw error
-            setPurchases(data || [])
-        } catch (error: any) {
+            setPurchases((data as Purchase[]) || [])
+        } catch (error) {
             console.error('Error fetching purchases:', error)
             toast.error(error.message || "Impossible de charger les arrivages")
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [supabase, warehouseId])
+
+    useEffect(() => {
+        if (warehouseId) {
+            fetchPurchases()
+        }
+    }, [warehouseId, fetchPurchases])
 
     const filteredPurchases = purchases.filter(p =>
         (p.reference_number?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
@@ -131,8 +146,8 @@ export function PurchasesListClient({ warehouseId }: { warehouseId: string }) {
                                     </TableRow>
                                 ))
                             ) : filteredPurchases.length > 0 ? (
-                                filteredPurchases.map((p: any) => (
-                                    <>
+                                filteredPurchases.map((p: Purchase) => (
+                                    <React.Fragment key={p.id}>
                                         <TableRow
                                             key={p.id}
                                             className={`border-b border-primary/5 transition-colors cursor-pointer ${expandedRow === p.id ? 'bg-primary/5' : 'hover:bg-primary/[0.02]'}`}
@@ -184,7 +199,7 @@ export function PurchasesListClient({ warehouseId }: { warehouseId: string }) {
                                                             <Package className="h-4 w-4" /> Détail des articles reçus
                                                         </h4>
                                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                            {p.purchase_items?.map((item: any, idx: number) => (
+                                                            {p.purchase_items?.map((item: PurchaseItem, idx: number) => (
                                                                 <div key={idx} className="bg-background border border-primary/10 rounded-xl p-4 shadow-sm flex items-center justify-between">
                                                                     <div>
                                                                         <p className="font-black text-xs truncate max-w-[150px]" title={item.products?.name}>{item.products?.name}</p>
@@ -205,7 +220,7 @@ export function PurchasesListClient({ warehouseId }: { warehouseId: string }) {
                                                 </TableCell>
                                             </TableRow>
                                         )}
-                                    </>
+                                    </React.Fragment>
                                 ))
                             ) : (
                                 <TableRow>

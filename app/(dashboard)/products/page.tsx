@@ -39,7 +39,7 @@ export default async function ProductsPage() {
         return (
             <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
                 <p className="font-black text-xl text-red-500 uppercase tracking-widest italic opacity-80 underline underline-offset-8">Accès Restreint</p>
-                <p className="text-xs font-medium text-muted-foreground/60 max-w-xs text-center">Vous n'avez pas l'autorisation d'accéder à l'inventaire de ce dépôt.</p>
+                <p className="text-xs font-medium text-muted-foreground/60 max-w-xs text-center">Vous n&apos;avez pas l&apos;autorisation d&apos;accéder à l&apos;inventaire de ce dépôt.</p>
             </div>
         )
     }

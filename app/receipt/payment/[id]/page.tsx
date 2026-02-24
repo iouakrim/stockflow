@@ -83,7 +83,7 @@ export default async function PaymentReceiptPage({ params, searchParams }: { par
                     {payment.notes && (
                         <div className="pt-4 border-t border-dashed border-gray-200">
                             <span className="block text-gray-400 font-bold uppercase tracking-widest text-[9px] mb-2">{t("notes") || "Notes"}</span>
-                            <p className="text-xs font-black italic text-gray-600 leading-relaxed">"{payment.notes}"</p>
+                            <p className="text-xs font-black italic text-gray-600 leading-relaxed">{payment.notes}</p>
                         </div>
                     )}
                 </div>

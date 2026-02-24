@@ -1,43 +1,10 @@
 import { createClient, getTenantSettings } from "@/lib/supabase/server"
 import { getTranslations } from "next-intl/server"
-import { redirect } from "next/navigation"
-import {
-    ShieldCheck,
-    Plus,
-    Search,
-    Filter,
-    MoreHorizontal,
-    FilePenLine,
-    ClipboardList,
-    Info,
-    ArrowUpRight,
-    MapPin,
-    Building2,
-} from "lucide-react"
-import { DangerZone } from "./DangerZone"
+
 import { Button } from "@/components/ui/button"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { SearchInput } from "./SearchInput"
 import { RoleFilter } from "./RoleFilter"
 import { SettingsTabs } from "./SettingsTabs"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-    SheetFooter,
-    SheetClose
-} from "@/components/ui/sheet"
 import {
     Table,
     TableBody,
@@ -90,7 +57,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
         .order("name", { ascending: true })
 
     // Fetch real profiles - Only for Admins
-    let profiles: any[] = []
+    let profiles: { id: string; full_name: string | null; email: string | null; role: string; created_at: string; warehouse_access?: string[] | null }[] = []
     if (isAdmin) {
         const { data: profilesData } = await supabase
             .from("profiles")
@@ -115,13 +82,6 @@ export default async function SettingsPage({ searchParams }: { searchParams: { q
 
     const personnelCount = filteredProfiles.length;
     const t = await getTranslations("Settings")
-    const tSidebar = await getTranslations("Sidebar")
-
-    const roles = [
-        { title: "Admin", desc: "Unrestricted access to all warehouse zones, financial logs, and system configuration settings.", users: profiles?.filter(p => p.role === 'admin').length || 0, icon: ShieldCheck, color: "text-red-500", bg: "bg-red-500/10" },
-        { title: "Manager", desc: "Manage stock entries, approve bulk transfers, and view audit trails. No billing access.", users: profiles?.filter(p => p.role === 'manager').length || 0, icon: ClipboardList, color: "text-primary", bg: "bg-primary/10" },
-        { title: "Cashier", desc: "Input daily transactions and manage POS terminal. Limited access to inventory settings.", users: profiles?.filter(p => p.role === 'cashier').length || 0, icon: FilePenLine, color: "text-blue-500", bg: "bg-blue-500/10" },
-    ]
 
     return (
         <div className="flex-1 space-y-6 animate-in fade-in duration-700 pb-20">

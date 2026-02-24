@@ -22,7 +22,7 @@ interface DebtRepaymentModalProps {
         credit_balance: number;
     };
     currency: string;
-    labels: any;
+    labels: Record<string, string>;
 }
 
 export function DebtRepaymentModal({ customer, currency, labels }: DebtRepaymentModalProps) {

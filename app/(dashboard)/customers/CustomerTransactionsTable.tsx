@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-import { ArrowUpCircle, ArrowDownCircle, Clock, Package, ReceiptText, ChevronRight, Printer } from "lucide-react"
+import { ArrowUpCircle, ArrowDownCircle, Package, ReceiptText, ChevronRight, Printer } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
     Sheet,
@@ -13,11 +13,46 @@ import {
 } from "@/components/ui/sheet"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-export function CustomerTransactionsTable({ transactions, currency, labels }: { transactions: any[], currency: string, labels: any }) {
-    const [selectedSale, setSelectedSale] = useState<any>(null)
+interface SaleItem {
+    id: string;
+    quantity: number;
+    unit_price: number;
+    total_price: number;
+    products?: {
+        name: string;
+        unit?: string;
+    };
+}
+
+interface Transaction {
+    id: string;
+    created_at: string;
+    receipt_number: string;
+    type: 'payment' | 'sale';
+    total: number;
+    payment_method?: string;
+    notes?: string;
+    sale_items?: SaleItem[];
+}
+
+interface Labels {
+    date: string;
+    reference: string;
+    type: string;
+    amount: string;
+    noActivity: string;
+    paymentSettle: string;
+    saleDetails: string;
+    transactionTotal: string;
+    items: string;
+    totalAmount: string;
+}
+
+export function CustomerTransactionsTable({ transactions, currency, labels }: { transactions: Transaction[], currency: string, labels: Labels }) {
+    const [selectedSale, setSelectedSale] = useState<Transaction | null>(null)
     const [isOpen, setIsOpen] = useState(false)
 
-    const handleRowClick = (tx: any) => {
+    const handleRowClick = (tx: Transaction) => {
         setSelectedSale(tx)
         setIsOpen(true)
     }
@@ -42,7 +77,7 @@ export function CustomerTransactionsTable({ transactions, currency, labels }: { 
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            transactions.map((tx: any) => (
+                            transactions.map((tx: Transaction) => (
                                 <TableRow
                                     key={tx.id}
                                     onClick={() => handleRowClick(tx)}
@@ -124,12 +159,12 @@ export function CustomerTransactionsTable({ transactions, currency, labels }: { 
                                             {selectedSale.notes && (
                                                 <div className="pt-4 border-t border-dashed border-emerald-500/20">
                                                     <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Notes</p>
-                                                    <p className="text-xs font-bold italic opacity-70">"{selectedSale.notes}"</p>
+                                                    <p className="text-xs font-bold italic opacity-70">&quot;{selectedSale.notes}&quot;</p>
                                                 </div>
                                             )}
                                         </div>
                                     ) : (
-                                        selectedSale.sale_items?.map((item: any) => (
+                                        selectedSale.sale_items?.map((item: SaleItem) => (
                                             <div key={item.id} className="group p-4 rounded-2xl bg-primary/[0.02] border border-primary/5 hover:border-primary/10 transition-all">
                                                 <div className="flex justify-between items-start mb-2">
                                                     <span className="text-[11px] font-black uppercase tracking-tight leading-tight">{item.products?.name}</span>

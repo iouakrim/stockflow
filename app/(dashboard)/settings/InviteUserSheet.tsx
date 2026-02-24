@@ -4,7 +4,6 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import {
-    Plus,
     UserPlus,
     Shield,
     Warehouse,
@@ -33,10 +32,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
 import { inviteUser } from "./actions"
 
-export function InviteUserSheet({ warehouses }: { warehouses: any[] }) {
+export function InviteUserSheet({ warehouses }: { warehouses: { id: string; name: string; address?: string | null }[] }) {
     const t = useTranslations("Settings")
     const [isOpen, setIsOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)

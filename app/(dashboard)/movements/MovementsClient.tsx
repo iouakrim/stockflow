@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { useTranslations, useLocale } from "next-intl"
 import {
@@ -23,19 +23,26 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
+interface Movement {
+    id: string;
+    type: string;
+    quantity: number;
+    notes: string | null;
+    created_at: string;
+    reference_id: string | null;
+    products: { name: string; sku: string } | null;
+    profiles: { full_name: string } | null;
+}
+
 export function MovementsClient({ activeWarehouseId }: { activeWarehouseId?: string }) {
     const supabase = createClient()
-    const [movements, setMovements] = useState<any[]>([])
+    const [movements, setMovements] = useState<Movement[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState("")
     const locale = useLocale()
     const t = useTranslations("Inventory")
 
-    useEffect(() => {
-        fetchMovements()
-    }, [activeWarehouseId])
-
-    const fetchMovements = async () => {
+    const fetchMovements = useCallback(async () => {
         setIsLoading(true)
         try {
             let query = supabase.from('stock_movements').select(`
@@ -50,13 +57,17 @@ export function MovementsClient({ activeWarehouseId }: { activeWarehouseId?: str
 
             const { data, error } = await query
             if (error) throw error
-            setMovements(data || [])
+            setMovements((data as Movement[]) || [])
         } catch (error) {
             console.error(error)
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [activeWarehouseId, supabase])
+
+    useEffect(() => {
+        fetchMovements()
+    }, [fetchMovements])
 
     const filteredMovements = movements.filter(m => {
         if (!searchTerm) return true
@@ -127,7 +138,7 @@ export function MovementsClient({ activeWarehouseId }: { activeWarehouseId?: str
                                 </TableRow>
                             ))
                         ) : filteredMovements.length > 0 ? (
-                            filteredMovements.map((move: any) => (
+                            filteredMovements.map((move: Movement) => (
                                 <TableRow key={move.id} className="border-b border-primary/5 hover:bg-primary/[0.02] transition-colors group">
                                     <TableCell className="py-4 px-8">
                                         <span className="font-mono text-[10px] text-muted-foreground bg-primary/5 px-2 py-1 flex rounded-md border border-primary/10 max-w-[80px] break-all">#{move.id.slice(0, 8)}</span>

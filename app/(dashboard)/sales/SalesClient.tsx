@@ -10,13 +10,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import {
     Plus,
     Search,
-    Calendar,
-    MoreVertical,
     FileText,
     Receipt,
     History,
-    ChevronDown,
-    Download,
     CreditCard,
     Banknote,
     Truck,
@@ -51,12 +47,12 @@ interface SaleWithCustomer {
     }[];
 }
 
-interface SalesClientProps {
-    initialSales: SaleWithCustomer[];
-    warehouseName: string;
-}
+// interface SalesClientProps {
+//     initialSales: SaleWithCustomer[];
+//     warehouseName: string;
+// }
 
-export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
+export function SalesClient({ initialSales }: { initialSales: SaleWithCustomer[] }) {
     const t = useTranslations("Ledger")
     const { currency } = useSettings()
 
@@ -102,7 +98,7 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
         }
 
         return filtered
-    }, [initialSales, searchTerm, timeFilter])
+    }, [initialSales, searchTerm, timeFilter, t])
 
     const totalPages = Math.ceil(filteredSales.length / itemsPerPage)
     const paginatedSales = filteredSales.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)

@@ -1,6 +1,5 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import { useTranslations } from "next-intl"
 
 export function SettingsTabs({ currentTab, isAdmin }: { currentTab: string, isAdmin: boolean }) {
