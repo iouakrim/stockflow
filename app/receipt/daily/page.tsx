@@ -46,6 +46,25 @@ export default async function DailyReceiptPage() {
         .lt("created_at", endOfDay)
         .order("created_at", { ascending: true })
 
+    interface SaleItem {
+        quantity: number;
+        unit_price: number;
+        total_price: number;
+        products: { name: string; unit: string } | { name: string; unit: string }[] | null;
+    }
+
+    interface DailySale {
+        id: string;
+        receipt_number: string;
+        total: number;
+        payment_method: string;
+        discount: number | null;
+        created_at: string;
+        sale_items: SaleItem[];
+    }
+
+    const typedSales = (sales as unknown as DailySale[]) || []
+
     // Aggregations
     let totalRevenue = 0
     let totalDiscounts = 0
@@ -55,30 +74,28 @@ export default async function DailyReceiptPage() {
     // Total sold products
     const productTotals: Record<string, { quantity: number, total: number, unit: string }> = {}
 
-    if (sales) {
-        for (const sale of sales) {
-            totalRevenue += Number(sale.total)
-            if (sale.discount) totalDiscounts += Number(sale.discount)
+    for (const sale of typedSales) {
+        totalRevenue += Number(sale.total)
+        if (sale.discount) totalDiscounts += Number(sale.discount)
 
-            if (sale.payment_method === 'cash') cashTotal += Number(sale.total)
-            else if (sale.payment_method === 'card') cardTotal += Number(sale.total)
+        if (sale.payment_method === 'cash') cashTotal += Number(sale.total)
+        else if (sale.payment_method === 'card') cardTotal += Number(sale.total)
 
-            if (sale.sale_items) {
-                for (const item of sale.sale_items) {
-                    // Extract product data safely
-                    const productName = Array.isArray(item.products)
-                        ? item.products[0]?.name
-                        : item.products?.name || t("unknownProduct")
-                    const productUnit = Array.isArray(item.products)
-                        ? item.products[0]?.unit
-                        : item.products?.unit || "UN"
+        if (sale.sale_items) {
+            for (const item of sale.sale_items) {
+                // Extract product data safely
+                const productName = Array.isArray(item.products)
+                    ? item.products[0]?.name
+                    : item.products?.name || t("unknownProduct")
+                const productUnit = Array.isArray(item.products)
+                    ? item.products[0]?.unit
+                    : item.products?.unit || "UN"
 
-                    if (!productTotals[productName]) {
-                        productTotals[productName] = { quantity: 0, total: 0, unit: productUnit }
-                    }
-                    productTotals[productName].quantity += Number(item.quantity)
-                    productTotals[productName].total += Number(item.total_price)
+                if (!productTotals[productName]) {
+                    productTotals[productName] = { quantity: 0, total: 0, unit: productUnit }
                 }
+                productTotals[productName].quantity += Number(item.quantity)
+                productTotals[productName].total += Number(item.total_price)
             }
         }
     }

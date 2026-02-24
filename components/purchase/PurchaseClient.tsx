@@ -151,7 +151,8 @@ export function PurchaseClient({ products, suppliers, warehouseId, warehouseName
 
         } catch (error) {
             console.error(error)
-            toast.error(error.message || "Erreur lors de la réception.")
+            const message = error instanceof Error ? error.message : "Erreur lors de la réception."
+            toast.error(message)
         } finally {
             setIsSubmitting(false)
         }

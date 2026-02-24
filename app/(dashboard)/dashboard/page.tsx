@@ -336,7 +336,11 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
                                                 <span className="text-[10px] font-black text-primary" suppressHydrationWarning>{Number(sale.total).toLocaleString()} <span className="text-[9px] opacity-40 ml-0.5">{currency}</span></span>
                                             </div>
                                             <p className="text-xs text-muted-foreground font-medium mt-0.5 truncate opacity-70">
-                                                {(Array.isArray(sale.customers) ? sale.customers[0]?.name : sale.customers?.name) || t("standardClient")}
+                                                {(() => {
+                                                    const customers = sale.customers as { name: string } | { name: string }[] | null;
+                                                    const customerName = (Array.isArray(customers) ? customers[0]?.name : customers?.name) || t("standardClient");
+                                                    return customerName;
+                                                })()}
                                             </p>
                                             <p className="text-[9px] text-muted-foreground/40 font-black mt-2 uppercase tracking-tighter" suppressHydrationWarning>
                                                 {new Date(sale.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • {t("processed")}

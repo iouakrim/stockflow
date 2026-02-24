@@ -39,7 +39,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { updateUserAccess, deleteUser, sendUserResetPassword } from "./actions"
 
-export function UserActionsDropdown({ user, warehouses, currentUserId }: { user: { id: string; full_name: string; email: string; role: string; warehouse_access?: string[] | null }, warehouses: { id: string; name: string; address?: string | null }[], currentUserId?: string }) {
+export function UserActionsDropdown({ user, warehouses, currentUserId }: { user: { id: string; full_name: string | null; email: string | null; role: string; warehouse_access?: string[] | null }, warehouses: { id: string; name: string; address?: string | null }[], currentUserId?: string }) {
     const t = useTranslations("Settings")
     const router = useRouter()
     const [editOpen, setEditOpen] = useState(false)
@@ -66,7 +66,7 @@ export function UserActionsDropdown({ user, warehouses, currentUserId }: { user:
     }
 
     async function handleDelete() {
-        if (!confirm(`Toutes les données liées à ${user.full_name} seront conservées, mais l'utilisateur ne pourra plus se connecter. Confirmer la suppression ?`)) return
+        if (!confirm(`Toutes les données liées à ${user.full_name || t("unknown")} seront conservées, mais l'utilisateur ne pourra plus se connecter. Confirmer la suppression ?`)) return
         setIsLoading(true)
         const res = await deleteUser(user.id)
         setIsLoading(false)
@@ -78,6 +78,10 @@ export function UserActionsDropdown({ user, warehouses, currentUserId }: { user:
     }
 
     async function handleResetPassword() {
+        if (!user.email) {
+            alert("L'utilisateur n'a pas d'email configuré.")
+            return
+        }
         setIsLoading(true)
         const res = await sendUserResetPassword(user.email)
         setIsLoading(true) // Keep loading state for effect or success message

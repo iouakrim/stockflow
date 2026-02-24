@@ -54,8 +54,12 @@ import { processSaleCheckout, quickCreateCustomer } from "@/app/(dashboard)/sale
 import { useRouter } from "next/navigation"
 import { useSettings } from "@/components/providers/SettingsProvider"
 
+export interface ProductWithSupplier extends Product {
+    suppliers?: { name: string } | { name: string }[] | null;
+}
+
 interface POSClientProps {
-    products: Product[]
+    products: ProductWithSupplier[]
     customers: { id: string; name: string; phone: string | null }[]
 }
 
@@ -117,12 +121,14 @@ export function POSClient({ products, customers }: POSClientProps) {
         const supps: { id: string; name: string; count: number }[] = []
         products.forEach(p => {
             if (p.suppliers) {
-                const s = p.suppliers as { name: string }
-                const existing = supps.find(x => x.name === s.name)
-                if (existing) {
-                    existing.count++
-                } else {
-                    supps.push({ id: p.supplier_id || s.name, name: s.name, count: 1 })
+                const s = Array.isArray(p.suppliers) ? p.suppliers[0] : p.suppliers
+                if (s) {
+                    const existing = supps.find(x => x.name === s.name)
+                    if (existing) {
+                        existing.count++
+                    } else {
+                        supps.push({ id: p.supplier_id || s.name, name: s.name, count: 1 })
+                    }
                 }
             }
         })
@@ -133,7 +139,7 @@ export function POSClient({ products, customers }: POSClientProps) {
         const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             p.barcode?.includes(searchTerm) ||
             p.sku?.toLowerCase().includes(searchTerm.toLowerCase())
-        const matchesSupplier = activeSupplier === t("all") || (p.suppliers as { name: string } | null)?.name === activeSupplier
+        const matchesSupplier = activeSupplier === t("all") || (Array.isArray(p.suppliers) ? p.suppliers[0]?.name : p.suppliers?.name) === activeSupplier
         return matchesSearch && matchesSupplier
     })
 

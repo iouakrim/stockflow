@@ -34,7 +34,8 @@ export function ReportsPieChart({ data }: ReportsPieChartProps) {
                             boxShadow: '0 4px 20px -5px rgba(0,0,0,0.1)'
                         }}
                         itemStyle={{ fontWeight: 900, color: 'hsl(var(--foreground))' }}
-                        formatter={(value: number | string | undefined, name: string) => [`${value ?? 0}%`, name]}
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        formatter={(value: any, name: any) => [`${value ?? 0}%`, name]}
                     />
                 </PieChart>
             </ResponsiveContainer>

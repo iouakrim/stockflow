@@ -55,7 +55,8 @@ export function ProductForm({ suppliers, tenantId }: { suppliers: Supplier[], te
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const form = useForm<ProductFormValues>({
-        resolver: zodResolver(productSchema),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        resolver: zodResolver(productSchema) as any,
         defaultValues: {
             name: "",
             category: "",

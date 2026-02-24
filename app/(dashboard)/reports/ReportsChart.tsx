@@ -53,7 +53,8 @@ export function ReportsChart({ data }: ReportsChartProps) {
                             boxShadow: '0 4px 20px -5px rgba(0,0,0,0.1)'
                         }}
                         itemStyle={{ fontWeight: 900 }}
-                        formatter={(value: number | string | undefined, name: string) => [`${(Number(value) || 0).toLocaleString()} ${currency}`, t(name.toLowerCase())]}
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        formatter={(value: any, name: any) => [`${(Number(value) || 0).toLocaleString()} ${currency}`, t(name.toLowerCase())]}
                     />
                     <Area
                         type="monotone"

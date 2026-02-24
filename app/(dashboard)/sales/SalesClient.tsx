@@ -47,12 +47,12 @@ interface SaleWithCustomer {
     }[];
 }
 
-// interface SalesClientProps {
-//     initialSales: SaleWithCustomer[];
-//     warehouseName: string;
-// }
+interface SalesClientProps {
+    initialSales: SaleWithCustomer[];
+    warehouseName: string;
+}
 
-export function SalesClient({ initialSales }: { initialSales: SaleWithCustomer[] }) {
+export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
     const t = useTranslations("Ledger")
     const { currency } = useSettings()
 
@@ -111,6 +111,10 @@ export function SalesClient({ initialSales }: { initialSales: SaleWithCustomer[]
                     <h1 className="text-3xl font-black tracking-tighter text-foreground leading-none text-balance">
                         {t("transactionalLedger")}
                     </h1>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 mt-2 flex items-center gap-2">
+                        <span className="size-1.5 rounded-full bg-primary/40" />
+                        {warehouseName}
+                    </p>
                 </div>
 
                 <div className="flex items-center gap-3">

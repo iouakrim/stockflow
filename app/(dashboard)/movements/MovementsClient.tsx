@@ -30,8 +30,8 @@ interface Movement {
     notes: string | null;
     created_at: string;
     reference_id: string | null;
-    products: { name: string; sku: string } | null;
-    profiles: { full_name: string } | null;
+    products: { name: string; sku: string } | { name: string; sku: string }[] | null;
+    profiles: { full_name: string } | { full_name: string }[] | null;
 }
 
 export function MovementsClient({ activeWarehouseId }: { activeWarehouseId?: string }) {
@@ -72,8 +72,9 @@ export function MovementsClient({ activeWarehouseId }: { activeWarehouseId?: str
     const filteredMovements = movements.filter(m => {
         if (!searchTerm) return true
         const search = searchTerm.toLowerCase()
-        const prodName = m.products?.name?.toLowerCase() || ""
-        const sku = m.products?.sku?.toLowerCase() || ""
+        const product = Array.isArray(m.products) ? m.products[0] : m.products
+        const prodName = product?.name?.toLowerCase() || ""
+        const sku = product?.sku?.toLowerCase() || ""
         const actionText = m.notes?.toLowerCase() || ""
         return prodName.includes(search) || sku.includes(search) || actionText.includes(search)
     })
@@ -145,8 +146,15 @@ export function MovementsClient({ activeWarehouseId }: { activeWarehouseId?: str
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex flex-col">
-                                            <span className="font-black text-sm uppercase tracking-tight text-foreground/90">{move.products?.name || t("deletedProduct")}</span>
-                                            <span className="text-[10px] text-muted-foreground/50 font-black uppercase tracking-widest">{move.products?.sku || 'N/A'}</span>
+                                            {(() => {
+                                                const product = Array.isArray(move.products) ? move.products[0] : move.products;
+                                                return (
+                                                    <>
+                                                        <span className="font-black text-sm uppercase tracking-tight text-foreground/90">{product?.name || t("deletedProduct")}</span>
+                                                        <span className="text-[10px] text-muted-foreground/50 font-black uppercase tracking-widest">{product?.sku || 'N/A'}</span>
+                                                    </>
+                                                );
+                                            })()}
                                         </div>
                                     </TableCell>
                                     <TableCell>
@@ -163,7 +171,7 @@ export function MovementsClient({ activeWarehouseId }: { activeWarehouseId?: str
                                         <div className="flex flex-col items-end">
                                             <span className="text-xs text-muted-foreground/80 font-medium truncate max-w-[200px]">{move.notes || t("noNote")}</span>
                                             <span className="text-[9px] text-primary/40 font-black uppercase tracking-widest mt-1" suppressHydrationWarning>
-                                                {new Date(move.created_at).toLocaleString(locale, { dateStyle: 'short', timeStyle: 'short' })} • {move.profiles?.full_name || t("system")}
+                                                {new Date(move.created_at).toLocaleString(locale, { dateStyle: 'short', timeStyle: 'short' })} • {(Array.isArray(move.profiles) ? move.profiles[0]?.full_name : move.profiles?.full_name) || t("system")}
                                             </span>
                                         </div>
                                     </TableCell>

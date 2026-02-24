@@ -29,7 +29,7 @@ interface PurchaseItem {
     quantity: number;
     unit_cost: number;
     total_cost: number;
-    products: { name: string; sku: string } | null;
+    products: { name: string; sku: string } | { name: string; sku: string }[] | null;
 }
 
 interface Purchase {
@@ -38,8 +38,8 @@ interface Purchase {
     reference_number: string | null;
     total_amount: number;
     notes: string | null;
-    suppliers: { name: string } | null;
-    profiles: { full_name: string } | null;
+    suppliers: { name: string } | { name: string }[] | null;
+    profiles: { full_name: string } | { full_name: string }[] | null;
     purchase_items: PurchaseItem[];
 }
 
@@ -74,7 +74,8 @@ export function PurchasesListClient({ warehouseId }: { warehouseId: string }) {
             setPurchases((data as Purchase[]) || [])
         } catch (error) {
             console.error('Error fetching purchases:', error)
-            toast.error(error.message || "Impossible de charger les arrivages")
+            const message = error instanceof Error ? error.message : "Impossible de charger les arrivages"
+            toast.error(message)
         } finally {
             setIsLoading(false)
         }
@@ -86,10 +87,11 @@ export function PurchasesListClient({ warehouseId }: { warehouseId: string }) {
         }
     }, [warehouseId, fetchPurchases])
 
-    const filteredPurchases = purchases.filter(p =>
-        (p.reference_number?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-        (p.suppliers?.name?.toLowerCase() || "").includes(searchTerm.toLowerCase())
-    )
+    const filteredPurchases = purchases.filter(p => {
+        const supplier = Array.isArray(p.suppliers) ? p.suppliers[0] : p.suppliers
+        return (p.reference_number?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+            (supplier?.name?.toLowerCase() || "").includes(searchTerm.toLowerCase())
+    })
 
     return (
         <div className="flex-1 space-y-6 animate-in fade-in duration-700 pb-12">
@@ -166,7 +168,7 @@ export function PurchasesListClient({ warehouseId }: { warehouseId: string }) {
                                             <TableCell>
                                                 <div className="flex flex-col">
                                                     <span className="font-black text-sm uppercase tracking-tight text-foreground/90">
-                                                        {p.suppliers?.name || "Fournisseur Inconnu"}
+                                                        {(Array.isArray(p.suppliers) ? p.suppliers[0]?.name : p.suppliers?.name) || "Fournisseur Inconnu"}
                                                     </span>
                                                     <span className="text-[10px] text-muted-foreground/50 font-black uppercase tracking-widest mt-0.5 flex items-center gap-1">
                                                         <FileText className="h-3 w-3" /> {p.reference_number || "Sans Référence"}
@@ -175,7 +177,7 @@ export function PurchasesListClient({ warehouseId }: { warehouseId: string }) {
                                             </TableCell>
                                             <TableCell className="text-center">
                                                 <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80 bg-background px-3 py-1.5 rounded-xl border border-primary/5 inline-flex items-center gap-1.5">
-                                                    {p.profiles?.full_name || "Système"}
+                                                    {(Array.isArray(p.profiles) ? p.profiles[0]?.full_name : p.profiles?.full_name) || "Système"}
                                                 </span>
                                             </TableCell>
                                             <TableCell className="text-right px-6">
@@ -202,7 +204,7 @@ export function PurchasesListClient({ warehouseId }: { warehouseId: string }) {
                                                             {p.purchase_items?.map((item: PurchaseItem, idx: number) => (
                                                                 <div key={idx} className="bg-background border border-primary/10 rounded-xl p-4 shadow-sm flex items-center justify-between">
                                                                     <div>
-                                                                        <p className="font-black text-xs truncate max-w-[150px]" title={item.products?.name}>{item.products?.name}</p>
+                                                                        <p className="font-black text-xs truncate max-w-[150px]" title={(Array.isArray(item.products) ? item.products[0]?.name : item.products?.name)}>{(Array.isArray(item.products) ? item.products[0]?.name : item.products?.name)}</p>
                                                                         <p className="text-[9px] text-muted-foreground uppercase tracking-widest mt-1">Qté: {item.quantity} x {currency}{item.unit_cost}</p>
                                                                     </div>
                                                                     <div className="text-right">

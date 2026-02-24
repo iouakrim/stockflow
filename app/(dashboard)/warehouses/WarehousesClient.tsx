@@ -186,7 +186,7 @@ export function WarehousesClient({ initialWarehouses }: { initialWarehouses: War
                                                         </div>
                                                         <div className="space-y-3">
                                                             <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t("currentAddress")}</Label>
-                                                            <Input name="address" defaultValue={w.address} className="h-12 border-primary/20 rounded-xl bg-primary/5 font-medium focus-visible:ring-primary shadow-inner" required />
+                                                            <Input name="address" defaultValue={w.address || ""} className="h-12 border-primary/20 rounded-xl bg-primary/5 font-medium focus-visible:ring-primary shadow-inner" required />
                                                         </div>
                                                     </div>
                                                 </div>

@@ -45,7 +45,8 @@ export function ReportsBarChart({ data, color = "#3b82f6" }: ReportsBarChartProp
                         }}
                         cursor={{ fill: 'var(--primary)', opacity: 0.1 }}
                         itemStyle={{ fontWeight: 900, color: 'hsl(var(--foreground))' }}
-                        formatter={(value: number | string | undefined) => [`${(Number(value) || 0).toLocaleString()} ${currency}`, t("value")]}
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        formatter={(value: any) => [`${(Number(value) || 0).toLocaleString()} ${currency}`, t("value")]}
                     />
                     <Bar dataKey="value" radius={[6, 6, 0, 0]}>
                         {data.map((entry, index) => (
