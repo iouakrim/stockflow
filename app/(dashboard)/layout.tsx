@@ -38,12 +38,20 @@ import { WarehouseProvider, useWarehouse } from "@/components/providers/Warehous
 import { SettingsProvider } from "@/components/providers/SettingsProvider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslations } from "next-intl";
+import { useThemeStore, ThemePalette } from "@/store/useThemeStore";
 
 function DashboardContent({ children }: { children: ReactNode }) {
     const pathname = usePathname();
-    const [userProfile, setUserProfile] = useState<{ full_name: string; role: string } | null>(null);
+    const [userProfile, setUserProfile] = useState<{
+        full_name: string;
+        role: string;
+        preferred_palette?: string;
+        preferred_language?: string;
+        tenant_id?: string;
+    } | null>(null);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const supabase = createClient();
+    const { setPalette } = useThemeStore();
 
     useEffect(() => {
         async function getInitialData() {
@@ -52,12 +60,17 @@ function DashboardContent({ children }: { children: ReactNode }) {
                 // Fetch profile
                 const { data: profile } = await supabase
                     .from('profiles')
-                    .select('full_name, role, tenant_id, preferred_language')
+                    .select('full_name, role, tenant_id, preferred_language, preferred_palette')
                     .eq('id', user.id)
                     .single();
 
                 if (profile) {
                     setUserProfile(profile);
+
+                    // Sync theme if profile has one
+                    if (profile.preferred_palette) {
+                        setPalette(profile.preferred_palette as ThemePalette);
+                    }
 
                     // Sync preferred language to cookie if cookie is missing
                     const match = document.cookie.match(/(?:^|;)\s*NEXT_LOCALE=([^;]*)/);
@@ -69,7 +82,7 @@ function DashboardContent({ children }: { children: ReactNode }) {
             }
         }
         getInitialData();
-    }, [supabase]);
+    }, [supabase, setPalette]);
 
     const { activeWarehouse, warehouses, setActiveWarehouse, isLoading } = useWarehouse()
     const t = useTranslations("Sidebar");

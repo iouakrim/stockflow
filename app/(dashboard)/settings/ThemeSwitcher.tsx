@@ -6,6 +6,7 @@ import { Check, Palette } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+import { updateUserTheme } from "./actions";
 
 const palettes: { id: ThemePalette; name: string; color: string; labelKey: string }[] = [
     { id: 'default', name: 'Emerald', color: 'bg-[#11d473]', labelKey: 'optimal' },
@@ -44,7 +45,10 @@ export function ThemeSwitcher() {
                     {palettes.map((p) => (
                         <button
                             key={p.id}
-                            onClick={() => setPalette(p.id)}
+                            onClick={async () => {
+                                setPalette(p.id)
+                                await updateUserTheme(p.id)
+                            }}
                             className={cn(
                                 "group relative flex flex-col items-start p-4 rounded-[1.5rem] border-2 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]",
                                 currentPalette === p.id

@@ -204,3 +204,21 @@ export async function updateTenantName(name: string) {
     revalidatePath("/settings")
     return { success: true }
 }
+
+/**
+ * Updates the current user's preferred theme palette.
+ */
+export async function updateUserTheme(palette: string) {
+    const supabase = createClient()
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: "Non authentifié" }
+
+    const { error } = await supabase
+        .from("profiles")
+        .update({ preferred_palette: palette })
+        .eq("id", user.id)
+
+    if (error) return { error: error.message }
+    return { success: true }
+}

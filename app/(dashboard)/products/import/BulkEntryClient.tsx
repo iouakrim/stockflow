@@ -339,7 +339,7 @@ export function BulkEntryClient({
                         </thead>
                         <tbody>
                             {rows.map((row, rowIdx) => {
-                                const errors = isRowEmpty(row) ? {} : validateRow(row)
+                                const errors = isRowEmpty(row) ? {} : getRowErrors(row)
                                 const isEmpty = isRowEmpty(row)
                                 return (
                                     <tr
