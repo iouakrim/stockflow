@@ -159,7 +159,7 @@ export function MovementsClient({ activeWarehouseId }: { activeWarehouseId?: str
                                     </TableCell>
                                     <TableCell>
                                         <div className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-lg border text-[10px] uppercase font-black tracking-widest ${getMovementColor(move.type)}`}>
-                                            {getMovementIcon(move.type)} {move.type}
+                                            {getMovementIcon(move.type)} {t(`type_${move.type}`)}
                                         </div>
                                     </TableCell>
                                     <TableCell className="text-center">

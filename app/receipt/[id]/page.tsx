@@ -1,5 +1,5 @@
 import { createClient, getTenantSettings } from "@/lib/supabase/server"
-import { getTranslations } from "next-intl/server"
+import { getTranslations, getLocale } from "next-intl/server"
 import { notFound } from "next/navigation"
 import { Boxes, Truck } from "lucide-react"
 import { PrintActions } from "./PrintActions"
@@ -8,6 +8,7 @@ export default async function ReceiptPage({ params, searchParams }: { params: { 
     const supabase = createClient()
     const isPickup = searchParams?.type === 'pickup'
     const { currency } = await getTenantSettings()
+    const locale = await getLocale()
 
     // Fetch sale with nested items and customer
     const { data: sale } = await supabase
@@ -63,10 +64,10 @@ export default async function ReceiptPage({ params, searchParams }: { params: { 
                 {/* Sub-Header / Info Section */}
                 <div className={`text-[11px] grid grid-cols-2 gap-y-1 ${isPickup ? 'mb-3' : 'mb-6'} text-gray-800 font-medium`}>
                     <div className="text-gray-500 uppercase tracking-wider text-[9px] font-bold">{t("issueDate")}</div>
-                    <div className="text-right" suppressHydrationWarning>{new Date(sale.created_at).toLocaleDateString()}</div>
+                    <div className="text-right" suppressHydrationWarning>{new Date(sale.created_at).toLocaleDateString(locale)}</div>
 
                     <div className="text-gray-500 uppercase tracking-wider text-[9px] font-bold">{t("issueTime")}</div>
-                    <div className="text-right" suppressHydrationWarning>{new Date(sale.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                    <div className="text-right" suppressHydrationWarning>{new Date(sale.created_at).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}</div>
                 </div>
 
                 <div className={`bg-gray-100 ${isPickup ? 'p-2 mb-3' : 'p-3 mb-6'} rounded-lg text-center`}>

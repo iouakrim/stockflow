@@ -1,5 +1,5 @@
 import { createClient, getTenantSettings } from "@/lib/supabase/server"
-import { getTranslations } from "next-intl/server"
+import { getTranslations, getLocale } from "next-intl/server"
 import { cookies } from "next/headers"
 
 interface RecentSale {
@@ -38,6 +38,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     const { currency } = await getTenantSettings()
+    const locale = await getLocale()
 
     // Fetch profile and access
     const { data: profile } = await supabase
@@ -51,11 +52,13 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
 
     const isFullAccess = profile?.role === 'admin' || profile?.role === 'super-admin'
 
+    const ts = await getTranslations("Sidebar")
+
     // Access validation
     if (activeWarehouseId && !isFullAccess) {
         if (!profile?.warehouse_access?.includes(activeWarehouseId)) {
             // Redirect or error
-            return <div className="p-20 text-center font-black uppercase text-red-500 tracking-widest italic border-2 border-dashed border-red-500/20 rounded-3xl">Accès Depot Restreint</div>
+            return <div className="p-20 text-center font-black uppercase text-red-500 tracking-widest italic border-2 border-dashed border-red-500/20 rounded-3xl">{ts("restrictedAccess")}</div>
         }
     }
 
@@ -137,14 +140,14 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
     for (let i = 0; i < 7; i++) {
         const d = new Date(sevenDaysAgo);
         d.setDate(d.getDate() + i);
-        const dayStr = d.toLocaleDateString('fr-FR', { weekday: 'short' });
+        const dayStr = d.toLocaleDateString(locale, { weekday: 'short' });
         salesByDay[dayStr] = 0;
     }
 
     if (weekSales) {
         weekSales.forEach((s) => {
             const d = new Date(s.created_at);
-            const dayStr = d.toLocaleDateString('fr-FR', { weekday: 'short' });
+            const dayStr = d.toLocaleDateString(locale, { weekday: 'short' });
             if (salesByDay[dayStr] !== undefined) {
                 salesByDay[dayStr] += Number(s.total);
             }

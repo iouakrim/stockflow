@@ -111,6 +111,8 @@ function DashboardContent({ children }: { children: ReactNode }) {
     const displayWarehouse = activeWarehouse?.name || (isLoading ? t("syncing") : t("noDepotFound"));
     const displayWarehouseId = activeWarehouse?.id ? `#${activeWarehouse.id.slice(0, 5).toUpperCase()}` : "NULL";
 
+    const tc = useTranslations("Common");
+
     return (
         <div className="flex h-screen bg-background dark:bg-[#102219] overflow-hidden selection:bg-primary/30 selection:text-primary transition-colors duration-500">
             {/* Desktop Sidebar */}
@@ -121,8 +123,8 @@ function DashboardContent({ children }: { children: ReactNode }) {
                     </div>
                     {!isCollapsed && (
                         <div className="flex flex-col min-w-0">
-                            <h1 className="text-foreground text-lg font-black leading-tight tracking-tighter truncate">StockFlow Pro</h1>
-                            <p className="text-primary text-[10px] font-black uppercase tracking-widest opacity-80 truncate">Agri-Logistics OS</p>
+                            <h1 className="text-foreground text-lg font-black leading-tight tracking-tighter truncate">{tc("appName")}</h1>
+                            <p className="text-primary text-[10px] font-black uppercase tracking-widest opacity-80 truncate">{tc("appSubtitle")}</p>
                         </div>
                     )}
                 </div>
@@ -149,7 +151,7 @@ function DashboardContent({ children }: { children: ReactNode }) {
                         <div className="pt-2 flex justify-center items-center opacity-80 hover:opacity-100 transition-opacity">
                             <div className="px-3 py-1 rounded-full bg-primary/5 border border-primary/10 flex items-center gap-2">
                                 <div className="size-1.5 rounded-full bg-primary/40 animate-pulse" />
-                                <span className="font-mono text-[8px] font-black tracking-[0.2em] text-primary/60">V1.0.0</span>
+                                <span className="font-mono text-[8px] font-black tracking-[0.2em] text-primary/60">{tc("version")}</span>
                             </div>
                         </div>
                     )}
@@ -266,7 +268,7 @@ function DashboardContent({ children }: { children: ReactNode }) {
                                 <div className={`relative flex flex-col items-center justify-center p-1 rounded-full transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}>
                                     <item.icon className={`h-[22px] w-[22px] stroke-[1.5px] ${active ? "fill-primary/20 stroke-[2px]" : ""}`} />
                                     {/* Optional Notification Badge */}
-                                    {item.label === "Account" && (
+                                    {item.label === t("account") && (
                                         <span className="absolute top-1 right-0.5 size-2 bg-destructive rounded-full border border-background" />
                                     )}
                                 </div>

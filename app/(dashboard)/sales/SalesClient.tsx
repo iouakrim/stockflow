@@ -47,6 +47,8 @@ interface SaleWithCustomer {
     }[];
 }
 
+import { useLocale } from "next-intl"
+
 interface SalesClientProps {
     initialSales: SaleWithCustomer[];
     warehouseName: string;
@@ -55,6 +57,7 @@ interface SalesClientProps {
 export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
     const t = useTranslations("Ledger")
     const { currency } = useSettings()
+    const locale = useLocale()
 
     const [searchTerm, setSearchTerm] = useState("")
     const [timeFilter, setTimeFilter] = useState("all") // 'all', 'today', 'month'
@@ -220,9 +223,9 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                         </TableCell>
                                         <TableCell suppressHydrationWarning>
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-black tracking-tighter" suppressHydrationWarning>{new Date(sale.created_at).toLocaleDateString('fr-FR', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                                                <span className="text-sm font-black tracking-tighter" suppressHydrationWarning>{new Date(sale.created_at).toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                                                 <span className="text-[10px] text-muted-foreground/40 font-black uppercase tracking-widest mt-0.5 whitespace-nowrap" suppressHydrationWarning>
-                                                    {new Date(sale.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                                                    {new Date(sale.created_at).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
                                                 </span>
                                             </div>
                                         </TableCell>
@@ -255,7 +258,7 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-accent/80 border border-primary/5">
                                                 {sale.payment_method === 'cash' ? <Banknote className="h-3.5 w-3.5 text-emerald-600" /> : <CreditCard className="h-3.5 w-3.5 text-blue-600" />}
                                                 <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                                                    {sale.payment_method}
+                                                    {t(sale.payment_method)}
                                                 </span>
                                             </div>
                                         </TableCell>
@@ -274,7 +277,7 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                                     className="size-9 rounded-xl text-primary hover:bg-primary/10 hover:text-primary transition-all shrink-0 border border-primary/20 bg-primary/5"
                                                     onClick={() => {
                                                         setPreviewReceiptUrl(`/receipt/${sale.id}?type=pickup`)
-                                                        setPreviewReceiptTitle("Pickup Ticket Preview")
+                                                        setPreviewReceiptTitle(t("pickupPreview"))
                                                     }}
                                                 >
                                                     <Truck className="h-4 w-4" />
@@ -286,7 +289,7 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                                     className="size-9 rounded-xl text-primary hover:bg-primary/10 hover:text-primary transition-all shrink-0 border border-primary/10 bg-primary/5"
                                                     onClick={() => {
                                                         setPreviewReceiptUrl(`/receipt/${sale.id}`)
-                                                        setPreviewReceiptTitle("Transaction Receipt Preview")
+                                                        setPreviewReceiptTitle(t("receiptPreview"))
                                                     }}
                                                 >
                                                     <FileText className="h-4 w-4" />
@@ -298,7 +301,7 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                                     className="size-9 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-all shrink-0 border border-transparent"
                                                     onClick={() => {
                                                         setPreviewDetailsSale(sale)
-                                                        setPreviewReceiptTitle("Transaction Details")
+                                                        setPreviewReceiptTitle(t("detailsPreview"))
                                                     }}
                                                 >
                                                     <Info className="h-4 w-4" />
@@ -381,7 +384,7 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                     onClick={() => {
                                         setPreviewDetailsSale(null)
                                         setPreviewReceiptUrl(`/receipt/${previewDetailsSale.id}`)
-                                        setPreviewReceiptTitle("Transaction Receipt Preview")
+                                        setPreviewReceiptTitle(t("receiptPreview"))
                                     }}
                                     className="flex-1 h-12 bg-primary text-background font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95 rounded-2xl"
                                 >
@@ -392,7 +395,7 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                     onClick={() => {
                                         setPreviewDetailsSale(null)
                                         setPreviewReceiptUrl(`/receipt/${previewDetailsSale.id}?type=pickup`)
-                                        setPreviewReceiptTitle("Pickup Ticket Preview")
+                                        setPreviewReceiptTitle(t("pickupPreview"))
                                     }}
                                     className="flex-1 h-12 border-primary/20 hover:bg-primary/5 font-black uppercase tracking-[0.2em] text-emerald-600 border-emerald-500/20 bg-emerald-500/5 transition-all active:scale-95 rounded-2xl shadow-sm"
                                 >
@@ -454,7 +457,7 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                         </li>
                                         <li className="flex justify-between items-center text-sm font-bold">
                                             <span className="text-muted-foreground uppercase text-[10px] tracking-widest">{t("paymentMethod")}</span>
-                                            <span className="uppercase">{previewDetailsSale.payment_method}</span>
+                                            <span className="uppercase">{t(previewDetailsSale.payment_method)}</span>
                                         </li>
                                         {previewDetailsSale.discount ? (
                                             <li className="flex justify-between items-center text-sm font-bold">
@@ -465,7 +468,7 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                         <li className="flex justify-between items-center text-sm font-bold">
                                             <span className="text-muted-foreground uppercase text-[10px] tracking-widest">{t("dateProcessed")}</span>
                                             <span suppressHydrationWarning>
-                                                {new Date(previewDetailsSale.created_at).toLocaleDateString('fr-FR', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                {new Date(previewDetailsSale.created_at).toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' })}
                                             </span>
                                         </li>
                                     </ul>

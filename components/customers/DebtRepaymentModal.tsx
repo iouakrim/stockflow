@@ -80,7 +80,7 @@ export function DebtRepaymentModal({ customer, currency, labels }: DebtRepayment
                             <div className="text-left">
                                 <h2 className="text-xl font-black uppercase tracking-tight leading-none mb-1">{labels.paymentSuccess}</h2>
                                 <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">
-                                    {parseFloat(amount).toFixed(2)} {currency} enregistré
+                                    {labels.recorded.replace('{amount}', parseFloat(amount).toFixed(2)).replace('{currency}', currency)}
                                 </p>
                             </div>
                         </div>
@@ -108,7 +108,7 @@ export function DebtRepaymentModal({ customer, currency, labels }: DebtRepayment
                                 onClick={reset}
                                 className="h-14 rounded-2xl border-2 border-primary/10 font-black tracking-widest uppercase text-[10px]"
                             >
-                                Terminer
+                                {labels.finish}
                             </Button>
                         </div>
                     </div>
@@ -130,7 +130,7 @@ export function DebtRepaymentModal({ customer, currency, labels }: DebtRepayment
                             {/* Balance Card - More Compact */}
                             <div className="bg-card/50 backdrop-blur rounded-2xl border border-primary/10 p-4 shadow-sm flex items-center justify-between">
                                 <div>
-                                    <p className="text-[9px] text-muted-foreground font-black uppercase tracking-[0.2em] mb-1 opacity-60">Dette Actuelle</p>
+                                    <p className="text-[9px] text-muted-foreground font-black uppercase tracking-[0.2em] mb-1 opacity-60">{labels.currentDebt}</p>
                                     <div className="flex items-end gap-1.5">
                                         <h3 className="text-3xl font-black tracking-tighter text-destructive">
                                             {Number(customer.credit_balance).toFixed(2)}
@@ -143,7 +143,7 @@ export function DebtRepaymentModal({ customer, currency, labels }: DebtRepayment
                                     size="icon"
                                     onClick={() => window.open(`/receipt/customer/${customer.id}`, '_blank')}
                                     className="size-10 rounded-xl bg-primary/5 text-primary hover:bg-primary/10 transition-all"
-                                    title="Imprimer Relevé"
+                                    title={labels.printStatement}
                                 >
                                     <Printer className="size-4" />
                                 </Button>
@@ -194,18 +194,18 @@ export function DebtRepaymentModal({ customer, currency, labels }: DebtRepayment
                                         </div>
                                         <div>
                                             <p className="text-[8px] font-black uppercase tracking-widest text-emerald-600 opacity-70">Règlement</p>
-                                            <p className="text-xs font-black uppercase tracking-tight">Espèces (Cash)</p>
+                                            <p className="text-xs font-black uppercase tracking-tight">{labels.cash || "Espèces (Cash)"}</p>
                                         </div>
                                     </div>
                                     <div className="size-1.5 rounded-full bg-emerald-500"></div>
                                 </div>
 
                                 <div className="space-y-1.5">
-                                    <label className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-1">Notes / Référence</label>
+                                    <label className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-1">{labels.paymentNote}</label>
                                     <Textarea
                                         value={notes}
                                         onChange={(e) => setNotes(e.target.value)}
-                                        placeholder="Note optionnelle..."
+                                        placeholder={labels.optionalNote}
                                         className="bg-card/40 border-primary/10 rounded-xl min-h-[80px] p-3 text-xs font-bold"
                                     />
                                 </div>

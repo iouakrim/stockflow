@@ -64,7 +64,7 @@ export function WarehousesClient({ initialWarehouses }: { initialWarehouses: War
     }
 
     async function handleDelete(id: string) {
-        if (!confirm("Êtes-vous sûr de vouloir supprimer cet entrepôt ?")) return
+        if (!confirm(t("deleteWarehouseConfirm") || "Êtes-vous sûr de vouloir supprimer cet entrepôt ?")) return
         setIsDeleting(id)
         const res = await deleteWarehouse(id)
         setIsDeleting(null)
@@ -111,11 +111,11 @@ export function WarehousesClient({ initialWarehouses }: { initialWarehouses: War
                             <div className="flex-1 p-6 space-y-6 overflow-y-auto">
                                 <div className="space-y-3">
                                     <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t("depotName")}</Label>
-                                    <Input name="name" placeholder="e.g. Central Warehouse Paris" className="h-12 border-primary/20 rounded-xl bg-primary/5 font-bold focus-visible:ring-primary shadow-inner" required />
+                                    <Input name="name" placeholder={t("depotNamePlaceholder")} className="h-12 border-primary/20 rounded-xl bg-primary/5 font-bold focus-visible:ring-primary shadow-inner" required />
                                 </div>
                                 <div className="space-y-3">
                                     <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t("geographicCoordinates")}</Label>
-                                    <Input name="address" placeholder="e.g. 15 Rue de Rivoli, 75001 Paris" className="h-12 border-primary/20 rounded-xl bg-primary/5 font-medium focus-visible:ring-primary shadow-inner" required />
+                                    <Input name="address" placeholder={t("depotAddressPlaceholder")} className="h-12 border-primary/20 rounded-xl bg-primary/5 font-medium focus-visible:ring-primary shadow-inner" required />
                                 </div>
                             </div>
                             <div className="p-6 border-t border-primary/10 bg-accent/10">

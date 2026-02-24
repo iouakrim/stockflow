@@ -1,5 +1,5 @@
 import { createClient, getTenantSettings } from "@/lib/supabase/server"
-import { getTranslations } from "next-intl/server"
+import { getTranslations, getLocale } from "next-intl/server"
 import { notFound } from "next/navigation"
 import { Wallet, CheckCircle2 } from "lucide-react"
 import { PrintActions } from "../../[id]/PrintActions"
@@ -8,6 +8,7 @@ export default async function PaymentReceiptPage({ params, searchParams }: { par
     const isPreview = searchParams?.preview === "true"
     const supabase = createClient()
     const { currency } = await getTenantSettings()
+    const locale = await getLocale()
 
     const { data: payment } = await supabase
         .from("credit_payments")
@@ -46,15 +47,15 @@ export default async function PaymentReceiptPage({ params, searchParams }: { par
 
                 {/* Info Section */}
                 <div className="text-[11px] grid grid-cols-2 gap-y-2 mb-8 text-gray-800 font-medium bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                    <div className="text-gray-400 uppercase tracking-wider text-[9px] font-bold">{t("date") || "Date"}</div>
-                    <div className="text-right font-black" suppressHydrationWarning>{new Date(payment.created_at).toLocaleDateString()}</div>
+                    <div className="text-gray-400 uppercase tracking-wider text-[9px] font-bold">{t("date")}</div>
+                    <div className="text-right font-black" suppressHydrationWarning>{new Date(payment.created_at).toLocaleDateString(locale)}</div>
 
-                    <div className="text-gray-400 uppercase tracking-wider text-[9px] font-bold">{t("time") || "Heure"}</div>
-                    <div className="text-right font-black" suppressHydrationWarning>{new Date(payment.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                    <div className="text-gray-400 uppercase tracking-wider text-[9px] font-bold">{t("time")}</div>
+                    <div className="text-right font-black" suppressHydrationWarning>{new Date(payment.created_at).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}</div>
 
                     <div className="col-span-2 border-t border-gray-200/50 my-1"></div>
 
-                    <div className="text-gray-400 uppercase tracking-wider text-[9px] font-bold">{ct("customer") || "Client"}</div>
+                    <div className="text-gray-400 uppercase tracking-wider text-[9px] font-bold">{ct("customer")}</div>
                     <div className="text-right font-black uppercase text-[10px]">{payment.customers?.name}</div>
 
                     {payment.customers?.phone && (
@@ -67,7 +68,7 @@ export default async function PaymentReceiptPage({ params, searchParams }: { par
 
                 {/* Amount Section */}
                 <div className="border-y-2 border-black py-4 text-center mb-8">
-                    <span className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-1">{ct("capturedBalance") || "Montant Réglé"}</span>
+                    <span className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-1">{ct("capturedBalance")}</span>
                     <div className="text-2xl font-black tracking-tighter">
                         {Number(payment.amount).toFixed(2)}
                         <span className="text-lg opacity-60 ml-2 uppercase font-black">{currency}</span>
@@ -77,12 +78,12 @@ export default async function PaymentReceiptPage({ params, searchParams }: { par
                 {/* Payment Detail */}
                 <div className="space-y-4 mb-10 px-2">
                     <div className="flex justify-between items-center text-xs">
-                        <span className="text-gray-400 font-bold uppercase tracking-widest text-[9px]">{t("method") || "Mode"}</span>
-                        <span className="font-black uppercase tracking-tighter bg-gray-100 px-3 py-1 rounded-lg">{payment.payment_method}</span>
+                        <span className="text-gray-400 font-bold uppercase tracking-widest text-[9px]">{t("method")}</span>
+                        <span className="font-black uppercase tracking-tighter bg-gray-100 px-3 py-1 rounded-lg">{(payment.payment_method === 'cash' || payment.payment_method === 'credit') ? t(payment.payment_method) : payment.payment_method}</span>
                     </div>
                     {payment.notes && (
                         <div className="pt-4 border-t border-dashed border-gray-200">
-                            <span className="block text-gray-400 font-bold uppercase tracking-widest text-[9px] mb-2">{t("notes") || "Notes"}</span>
+                            <span className="block text-gray-400 font-bold uppercase tracking-widest text-[9px] mb-2">{t("notes")}</span>
                             <p className="text-xs font-black italic text-gray-600 leading-relaxed">{payment.notes}</p>
                         </div>
                     )}
@@ -95,8 +96,8 @@ export default async function PaymentReceiptPage({ params, searchParams }: { par
                             <CheckCircle2 className="size-6" />
                         </div>
                     </div>
-                    <p className="text-[10px] font-black uppercase tracking-widest mb-1">{t("thankYou") || "Merci pour votre confiance"}</p>
-                    <p className="text-[8px] text-gray-400 uppercase tracking-widest">{t("poweredBy") || "Powered by StockFlow Pro"}</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest mb-1">{t("thankYou")}</p>
+                    <p className="text-[8px] text-gray-400 uppercase tracking-widest">{t("poweredBy")}</p>
 
                     {/* Barcode Mockup */}
                     <div className="flex justify-center mt-6 opacity-30">

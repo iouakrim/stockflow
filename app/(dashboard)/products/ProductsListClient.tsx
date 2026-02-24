@@ -120,7 +120,7 @@ export function ProductsListClient({ products: initialProducts, currency, suppli
                                         : 'bg-card/40 text-muted-foreground border-primary/10 hover:border-primary/30 hover:text-primary'
                                         }`}
                                 >
-                                    Tous
+                                    {t("allSuppliers")}
                                 </button>
 
                                 {/* First 3 (or all if ≤5) pills */}
@@ -147,7 +147,7 @@ export function ProductsListClient({ products: initialProducts, currency, suppli
                                                 : 'bg-card/40 text-muted-foreground border-primary/10 hover:border-primary/30 hover:text-primary'
                                                 }`}
                                         >
-                                            {activeDropdownName ?? `+${suppliers.length - VISIBLE} autres`}
+                                            {activeDropdownName ?? t("moreSuppliers", { count: suppliers.length - VISIBLE })}
                                             <ChevronDown className={`h-3 w-3 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
                                         </button>
 
@@ -160,12 +160,12 @@ export function ProductsListClient({ products: initialProducts, currency, suppli
                                                         autoFocus
                                                         value={dropdownSearch}
                                                         onChange={e => setDropdownSearch(e.target.value)}
-                                                        placeholder="Rechercher..."
+                                                        placeholder={t("searchSuppliers")}
                                                         className="w-full pl-8 pr-3 py-1.5 text-[11px] font-medium bg-card/40 border border-primary/10 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary"
                                                     />
                                                 </div>
                                                 {dropdownSuppliers.length === 0 ? (
-                                                    <p className="text-[10px] text-muted-foreground text-center py-2 font-bold">Aucun résultat</p>
+                                                    <p className="text-[10px] text-muted-foreground text-center py-2 font-bold">{t("noResults")}</p>
                                                 ) : (
                                                     dropdownSuppliers.map(s => (
                                                         <button

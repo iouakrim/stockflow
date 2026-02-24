@@ -13,8 +13,7 @@ import {
     Building2,
     ArrowUpRight,
     Star,
-    ShieldCheck,
-    ListFilter
+    ShieldCheck
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"

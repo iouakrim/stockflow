@@ -56,6 +56,7 @@ export default async function CustomerDetailsPage({ params }: { params: { id: st
     const totalPurchases = (sales || []).reduce((acc, sale) => acc + Number(sale.total), 0)
     const hasDebt = Number(customer.credit_balance) > 0
     const t = await getTranslations("Customers")
+    const tl = await getTranslations("Ledger")
 
     // Merge and sort all transactions
     const allTransactions = [
@@ -106,7 +107,15 @@ export default async function CustomerDetailsPage({ params }: { params: { id: st
                                 halfPayment: t("halfPayment"),
                                 paymentSuccess: t("paymentSuccess"),
                                 printPaymentReceipt: t("printPaymentReceipt"),
-                                print: t("print")
+                                print: t("print"),
+                                recorded: t("recorded"),
+                                finish: t("finish"),
+                                currentDebt: t("currentDebt"),
+                                printStatement: t("printStatement"),
+                                paymentNote: t("paymentNote"),
+                                optionalNote: t("optionalNote"),
+                                cash: tl("cash"),
+                                credit: tl("credit")
                             }}
                         />
                     )}
@@ -169,7 +178,11 @@ export default async function CustomerDetailsPage({ params }: { params: { id: st
                         saleDetails: t("saleDetails"),
                         transactionTotal: t("transactionTotal"),
                         items: t("items"),
-                        totalAmount: t("totalAmount")
+                        totalAmount: t("totalAmount"),
+                        paymentReceived: t("paymentSettle"),
+                        cash: tl("cash"),
+                        notes: t("notes"),
+                        printReceipt: t("printPaymentReceipt")
                     }}
                 />
             </Card>

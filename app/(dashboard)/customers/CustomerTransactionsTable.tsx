@@ -46,11 +46,18 @@ interface Labels {
     transactionTotal: string;
     items: string;
     totalAmount: string;
+    paymentReceived: string;
+    cash: string;
+    notes: string;
+    printReceipt: string;
 }
+
+import { useLocale } from "next-intl"
 
 export function CustomerTransactionsTable({ transactions, currency, labels }: { transactions: Transaction[], currency: string, labels: Labels }) {
     const [selectedSale, setSelectedSale] = useState<Transaction | null>(null)
     const [isOpen, setIsOpen] = useState(false)
+    const locale = useLocale()
 
     const handleRowClick = (tx: Transaction) => {
         setSelectedSale(tx)
@@ -89,8 +96,8 @@ export function CustomerTransactionsTable({ transactions, currency, labels }: { 
                                                 {tx.type === 'payment' ? <ArrowUpCircle className="size-4" /> : <ArrowDownCircle className="size-4" />}
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-xs font-black uppercase">{new Date(tx.created_at).toLocaleDateString()}</span>
-                                                <span className="text-[10px] font-bold text-muted-foreground opacity-60">{new Date(tx.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                                <span className="text-xs font-black uppercase">{new Date(tx.created_at).toLocaleDateString(locale)}</span>
+                                                <span className="text-[10px] font-bold text-muted-foreground opacity-60">{new Date(tx.created_at).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}</span>
                                             </div>
                                         </div>
                                     </TableCell>
@@ -138,7 +145,7 @@ export function CustomerTransactionsTable({ transactions, currency, labels }: { 
                                 <div>
                                     <SheetTitle className="text-2xl font-black uppercase tracking-tight">{selectedSale.receipt_number}</SheetTitle>
                                     <SheetDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mt-1">
-                                        {labels.saleDetails} • {new Date(selectedSale.created_at).toLocaleDateString()}
+                                        {labels.saleDetails} • {new Date(selectedSale.created_at).toLocaleDateString(locale)}
                                     </SheetDescription>
                                 </div>
                             </SheetHeader>
@@ -152,13 +159,13 @@ export function CustomerTransactionsTable({ transactions, currency, labels }: { 
                                                     <ArrowUpCircle className="size-6" />
                                                 </div>
                                                 <div>
-                                                    <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 opacity-70">Règlement Reçu</p>
-                                                    <p className="text-sm font-black uppercase tracking-tight">Espèces (Cash)</p>
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 opacity-70">{labels.paymentSettle}</p>
+                                                    <p className="text-sm font-black uppercase tracking-tight">{labels.cash}</p>
                                                 </div>
                                             </div>
                                             {selectedSale.notes && (
                                                 <div className="pt-4 border-t border-dashed border-emerald-500/20">
-                                                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Notes</p>
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">{labels.notes}</p>
                                                     <p className="text-xs font-bold italic opacity-70">&quot;{selectedSale.notes}&quot;</p>
                                                 </div>
                                             )}
@@ -210,7 +217,7 @@ export function CustomerTransactionsTable({ transactions, currency, labels }: { 
                                     }}
                                     className="w-full h-14 rounded-2xl bg-black hover:bg-black/90 text-white font-black tracking-widest uppercase gap-3 shadow-xl shadow-black/10"
                                 >
-                                    <Printer className="size-5" /> Imprimer le Reçu
+                                    <Printer className="size-5" /> {labels.printReceipt}
                                 </Button>
                             </div>
                         </div>

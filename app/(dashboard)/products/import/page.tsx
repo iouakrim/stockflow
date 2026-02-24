@@ -3,11 +3,14 @@ import { redirect } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { BulkEntryClient } from "./BulkEntryClient"
+import { getTranslations } from "next-intl/server"
 
 export default async function ImportProductsPage() {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) redirect("/login")
+
+    const t = await getTranslations("BulkImport")
 
     const { data: profile } = await supabase
         .from("profiles")
@@ -32,10 +35,10 @@ export default async function ImportProductsPage() {
                 </Link>
                 <div>
                     <h1 className="text-3xl font-black tracking-tighter text-foreground leading-none">
-                        Saisie Rapide
+                        {t("title")}
                     </h1>
                     <p className="text-xs text-muted-foreground/50 font-bold uppercase tracking-widest mt-1">
-                        Remplissez plusieurs produits à la fois
+                        {t("hint")}
                     </p>
                 </div>
             </div>

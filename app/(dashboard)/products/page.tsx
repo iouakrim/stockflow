@@ -13,7 +13,6 @@ import {
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { ProductsListClient } from "./ProductsListClient"
-import { Product } from "@/types"
 
 export default async function ProductsPage() {
     const supabase = createClient()
@@ -100,7 +99,7 @@ export default async function ProductsPage() {
                     </Button>
                     <Button asChild variant="outline" className="border-primary/20 bg-primary/5 text-primary rounded-2xl h-12 px-6 font-black text-xs gap-2 transition-all hover:bg-primary hover:text-background active:scale-95">
                         <Link href="/products/import">
-                            <Zap className="h-4 w-4" /> Saisie rapide
+                            <Zap className="h-4 w-4" /> {t("bulkEntry")}
                         </Link>
                     </Button>
                     <Button asChild className="bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-xl shadow-primary/20 rounded-2xl gap-2 h-12 px-8 transition-all hover:scale-[1.02] active:scale-[0.98]">
