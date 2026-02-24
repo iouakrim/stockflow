@@ -34,7 +34,7 @@ export function ReportsPieChart({ data }: ReportsPieChartProps) {
                             boxShadow: '0 4px 20px -5px rgba(0,0,0,0.1)'
                         }}
                         itemStyle={{ fontWeight: 900, color: 'hsl(var(--foreground))' }}
-                        formatter={(value: number, name: string) => [`${value}%`, name]}
+                        formatter={(value: number | string | undefined, name: string) => [`${value ?? 0}%`, name]}
                     />
                 </PieChart>
             </ResponsiveContainer>

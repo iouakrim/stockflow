@@ -49,7 +49,7 @@ export function DashboardChart({ data }: DashboardChartProps) {
                             boxShadow: '0 4px 20px -5px rgba(0,0,0,0.1)'
                         }}
                         itemStyle={{ color: 'hsl(var(--primary))', fontWeight: 900 }}
-                        formatter={(value: number) => [`${value.toLocaleString()} ${currency}`, t("revenue")]}
+                        formatter={(value: number | string | undefined) => [`${(Number(value) || 0).toLocaleString()} ${currency}`, t("revenue")]}
                     />
                     <Line
                         type="monotone"

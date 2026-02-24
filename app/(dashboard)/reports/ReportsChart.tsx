@@ -53,7 +53,7 @@ export function ReportsChart({ data }: ReportsChartProps) {
                             boxShadow: '0 4px 20px -5px rgba(0,0,0,0.1)'
                         }}
                         itemStyle={{ fontWeight: 900 }}
-                        formatter={(value: number, name: string) => [`${value.toLocaleString()} ${currency}`, t(name.toLowerCase())]}
+                        formatter={(value: number | string | undefined, name: string) => [`${(Number(value) || 0).toLocaleString()} ${currency}`, t(name.toLowerCase())]}
                     />
                     <Area
                         type="monotone"
