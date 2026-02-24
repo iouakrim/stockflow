@@ -4,7 +4,8 @@ import { notFound } from "next/navigation"
 import { Wallet, CheckCircle2 } from "lucide-react"
 import { PrintActions } from "../../[id]/PrintActions"
 
-export default async function PaymentReceiptPage({ params }: { params: { id: string } }) {
+export default async function PaymentReceiptPage({ params, searchParams }: { params: { id: string }, searchParams?: { [key: string]: string | string[] | undefined } }) {
+    const isPreview = searchParams?.preview === "true"
     const supabase = createClient()
     const { currency } = await getTenantSettings()
 
@@ -26,21 +27,21 @@ export default async function PaymentReceiptPage({ params }: { params: { id: str
     const companyName = payment.tenants?.name || "StockFlow Pro"
 
     return (
-        <div className="bg-[#f0f0f0] text-black font-sans min-h-screen p-8 flex justify-center print:bg-white print:p-0">
-            <PrintActions />
-            <div className="w-[80mm] max-w-[320px] bg-white shadow-2xl p-6 border-t-[8px] border-emerald-500 receipt-container print:shadow-none print:border-none print:max-w-none print:w-[80mm]">
+        <div className={`${isPreview ? 'bg-white p-0' : 'bg-[#f0f0f0] p-8'} text-black font-sans min-h-screen flex justify-center print:bg-white print:p-0 transition-colors`}>
+            {!isPreview && <PrintActions />}
+            <div className={`w-[80mm] ${isPreview ? 'max-w-full shadow-none border-none p-4' : 'max-w-[320px] shadow-2xl p-6 border-t-[8px] border-black'} bg-white receipt-container print:shadow-none print:border-none print:max-w-none print:w-[80mm]`}>
 
                 {/* Header Section */}
                 <div className="text-center mb-8">
                     <div className="flex justify-center mb-4">
-                        <div className="bg-emerald-500 text-white p-3 rounded-2xl shadow-lg shadow-emerald-500/20">
+                        <div className="bg-black text-white p-3 rounded-2xl shadow-lg shadow-black/10">
                             <Wallet className="size-8" />
                         </div>
                     </div>
                     <h1 className="font-black text-xl uppercase tracking-widest mb-1">
                         {t("paymentReceipt") || "Reçu de Paiement"}
                     </h1>
-                    <h2 className="font-black text-xs uppercase tracking-widest text-emerald-600">{companyName}</h2>
+                    <h2 className="font-black text-xs uppercase tracking-widest text-gray-500">{companyName}</h2>
                 </div>
 
                 {/* Info Section */}
@@ -65,11 +66,11 @@ export default async function PaymentReceiptPage({ params }: { params: { id: str
                 </div>
 
                 {/* Amount Section */}
-                <div className="bg-emerald-500 text-white p-6 rounded-3xl text-center mb-8 shadow-xl shadow-emerald-500/20">
-                    <span className="block text-[10px] font-black uppercase tracking-[0.2em] opacity-60 mb-1">{ct("amountToPay") || "Montant Reçu"}</span>
-                    <div className="text-4xl font-black tracking-tighter">
+                <div className="border-y-2 border-black py-4 text-center mb-8">
+                    <span className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-1">{ct("capturedBalance") || "Montant Réglé"}</span>
+                    <div className="text-2xl font-black tracking-tighter">
                         {Number(payment.amount).toFixed(2)}
-                        <span className="text-sm opacity-60 ml-1 lowercase font-bold">{currency}</span>
+                        <span className="text-lg opacity-60 ml-2 uppercase font-black">{currency}</span>
                     </div>
                 </div>
 
@@ -90,7 +91,7 @@ export default async function PaymentReceiptPage({ params }: { params: { id: str
                 {/* Footer Section */}
                 <div className="text-center pt-6 border-t border-gray-100">
                     <div className="flex justify-center mb-4">
-                        <div className="size-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500">
+                        <div className="size-10 rounded-full bg-gray-100 flex items-center justify-center text-black">
                             <CheckCircle2 className="size-6" />
                         </div>
                     </div>

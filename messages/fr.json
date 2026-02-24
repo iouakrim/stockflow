@@ -2,12 +2,12 @@
     "Sidebar": {
         "dashboard": "Tableau de Bord",
         "inventory": "Inventaire",
-        "pos": "Caisse (POS)",
+        "pos": "Caisse",
         "suppliers": "Fournisseurs",
         "customers": "Clients",
         "reports": "Rapports",
         "settings": "Paramètres",
-        "ledger": "Grand Livre",
+        "ledger": "Ventes",
         "loading": "Chargement...",
         "operator": "Opérateur",
         "syncing": "Synchronisation...",
@@ -24,6 +24,8 @@
         "notifications": "Notifications",
         "appearance": "Apparence",
         "warehousesNetwork": "Dépôts",
+        "arrivals": "Arrivages",
+        "movements": "Audit",
         "signOut": "Déconnexion"
     },
     "Dashboard": {
@@ -91,7 +93,8 @@
         "un": "UN",
         "paymentMode": "Mode de Paiement",
         "paid": "Payé (Espèces)",
-        "credit": "Crédit (À payer)"
+        "credit": "Crédit (Non payé)",
+        "history": "Historique"
     },
     "Customers": {
         "title": "Annuaire des Clients",
@@ -112,6 +115,7 @@
         "settlementIndex": "Solde",
         "protocol": "État",
         "matrix": "Actions",
+        "customer": "Client",
         "noCustomers": "Aucun client ne correspond.",
         "onboardNewClient": "Créer un Nouveau Client",
         "registerNewVerifiedEntity": "Enregistrer un nouveau client dans le système",
@@ -171,7 +175,8 @@
         "printPaymentReceipt": "Imprimer le Reçu de Paiement",
         "kg": "kg",
         "ton": "tonne",
-        "un": "unité"
+        "un": "unité",
+        "print": "Imprimer"
     },
     "Suppliers": {
         "title": "Annuaire des Fournisseurs",
@@ -496,6 +501,7 @@
         "receiptNumber": "Numéro de Reçu",
         "itemsPurchased": "Articles Achetés",
         "itemsToLoad": "Articles à Charger",
+        "method": "Mode",
         "amount": "Montant",
         "subtotal": "Sous-total",
         "discount": "Remise",

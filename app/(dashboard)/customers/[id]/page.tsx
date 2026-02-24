@@ -105,7 +105,8 @@ export default async function CustomerDetailsPage({ params }: { params: { id: st
                                 fullPayment: t("fullPayment"),
                                 halfPayment: t("halfPayment"),
                                 paymentSuccess: t("paymentSuccess"),
-                                printPaymentReceipt: t("printPaymentReceipt")
+                                printPaymentReceipt: t("printPaymentReceipt"),
+                                print: t("print")
                             }}
                         />
                     )}

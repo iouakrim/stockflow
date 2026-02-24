@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-import { ArrowUpCircle, ArrowDownCircle, Clock, Package, ReceiptText, ChevronRight } from "lucide-react"
+import { ArrowUpCircle, ArrowDownCircle, Clock, Package, ReceiptText, ChevronRight, Printer } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import {
     Sheet,
     SheetContent,
@@ -17,10 +18,8 @@ export function CustomerTransactionsTable({ transactions, currency, labels }: { 
     const [isOpen, setIsOpen] = useState(false)
 
     const handleRowClick = (tx: any) => {
-        if (tx.type === 'sale') {
-            setSelectedSale(tx)
-            setIsOpen(true)
-        }
+        setSelectedSale(tx)
+        setIsOpen(true)
     }
 
     return (
@@ -47,7 +46,7 @@ export function CustomerTransactionsTable({ transactions, currency, labels }: { 
                                 <TableRow
                                     key={tx.id}
                                     onClick={() => handleRowClick(tx)}
-                                    className={`border-b border-primary/5 transition-colors group ${tx.type === 'sale' ? 'cursor-pointer hover:bg-primary/[0.03]' : 'opacity-60 bg-accent/[0.02]'}`}
+                                    className={`border-b border-primary/5 transition-colors group cursor-pointer hover:bg-primary/[0.03] ${tx.type === 'payment' ? 'bg-emerald-500/[0.02]' : ''}`}
                                 >
                                     <TableCell className="py-5 pl-8" suppressHydrationWarning>
                                         <div className="flex items-center gap-3">
@@ -111,25 +110,45 @@ export function CustomerTransactionsTable({ transactions, currency, labels }: { 
 
                             <ScrollArea className="flex-1 my-6 pr-4">
                                 <div className="space-y-4">
-                                    {selectedSale.sale_items?.map((item: any) => (
-                                        <div key={item.id} className="group p-4 rounded-2xl bg-primary/[0.02] border border-primary/5 hover:border-primary/10 transition-all">
-                                            <div className="flex justify-between items-start mb-2">
-                                                <span className="text-[11px] font-black uppercase tracking-tight leading-tight">{item.products?.name}</span>
-                                                <div className="flex items-baseline gap-1">
-                                                    <span className="text-xs font-black tracking-tighter tabular-nums">{Number(item.total_price).toFixed(2)}</span>
-                                                    <span className="text-[8px] font-black opacity-40 uppercase">{currency}</span>
+                                    {selectedSale.type === 'payment' ? (
+                                        <div className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 space-y-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="size-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center">
+                                                    <ArrowUpCircle className="size-6" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 opacity-70">Règlement Reçu</p>
+                                                    <p className="text-sm font-black uppercase tracking-tight">Espèces (Cash)</p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-3 text-[9px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">
-                                                <span className="flex items-center gap-1.5"><Package className="size-2.5" /> {item.quantity} {item.products?.unit?.toUpperCase() || 'UNIT'}</span>
-                                                <span>×</span>
-                                                <span className="flex items-baseline gap-0.5">
-                                                    {Number(item.unit_price).toFixed(2)}
-                                                    <span className="text-[7px] uppercase">{currency}</span>
-                                                </span>
-                                            </div>
+                                            {selectedSale.notes && (
+                                                <div className="pt-4 border-t border-dashed border-emerald-500/20">
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Notes</p>
+                                                    <p className="text-xs font-bold italic opacity-70">"{selectedSale.notes}"</p>
+                                                </div>
+                                            )}
                                         </div>
-                                    ))}
+                                    ) : (
+                                        selectedSale.sale_items?.map((item: any) => (
+                                            <div key={item.id} className="group p-4 rounded-2xl bg-primary/[0.02] border border-primary/5 hover:border-primary/10 transition-all">
+                                                <div className="flex justify-between items-start mb-2">
+                                                    <span className="text-[11px] font-black uppercase tracking-tight leading-tight">{item.products?.name}</span>
+                                                    <div className="flex items-baseline gap-1">
+                                                        <span className="text-xs font-black tracking-tighter tabular-nums">{Number(item.total_price).toFixed(2)}</span>
+                                                        <span className="text-[8px] font-black opacity-40 uppercase">{currency}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-3 text-[9px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">
+                                                    <span className="flex items-center gap-1.5"><Package className="size-2.5" /> {item.quantity} {item.products?.unit?.toUpperCase() || 'UNIT'}</span>
+                                                    <span>×</span>
+                                                    <span className="flex items-baseline gap-0.5">
+                                                        {Number(item.unit_price).toFixed(2)}
+                                                        <span className="text-[7px] uppercase">{currency}</span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
                                 </div>
                             </ScrollArea>
 
@@ -138,13 +157,26 @@ export function CustomerTransactionsTable({ transactions, currency, labels }: { 
                                     <span>{labels.transactionTotal}</span>
                                     <span>{selectedSale.sale_items?.length || 0} {labels.items}</span>
                                 </div>
-                                <div className="flex justify-between items-end bg-primary/5 p-6 rounded-3xl border border-primary/10">
-                                    <span className="text-xs font-black uppercase tracking-[0.2em] text-primary">{labels.totalAmount}</span>
-                                    <div className="flex items-baseline gap-1.5">
-                                        <span className="text-4xl font-black tracking-tighter leading-none tabular-nums">{Number(selectedSale.total).toFixed(2)}</span>
-                                        <span className="text-sm font-black opacity-30 uppercase">{currency}</span>
+                                {selectedSale.type !== 'payment' && (
+                                    <div className="flex justify-between items-end bg-primary/5 p-6 rounded-3xl border border-primary/10">
+                                        <span className="text-xs font-black uppercase tracking-[0.2em] text-primary">{labels.totalAmount}</span>
+                                        <div className="flex items-baseline gap-1.5">
+                                            <span className="text-4xl font-black tracking-tighter leading-none tabular-nums">{Number(selectedSale.total).toFixed(2)}</span>
+                                            <span className="text-sm font-black opacity-30 uppercase">{currency}</span>
+                                        </div>
                                     </div>
-                                </div>
+                                )}
+                                <Button
+                                    onClick={() => {
+                                        const url = selectedSale.type === 'payment'
+                                            ? `/receipt/payment/${selectedSale.id}`
+                                            : `/receipt/${selectedSale.id}`;
+                                        window.open(url, '_blank');
+                                    }}
+                                    className="w-full h-14 rounded-2xl bg-black hover:bg-black/90 text-white font-black tracking-widest uppercase gap-3 shadow-xl shadow-black/10"
+                                >
+                                    <Printer className="size-5" /> Imprimer le Reçu
+                                </Button>
                             </div>
                         </div>
                     )}

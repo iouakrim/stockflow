@@ -24,7 +24,10 @@ import {
     Loader2,
     Phone,
     Printer,
-    Truck
+    Truck,
+    History,
+    DollarSign,
+    Check
 } from "lucide-react"
 
 import {
@@ -383,8 +386,7 @@ export function POSClient({ products, customers }: POSClientProps) {
             <Button
                 onClick={handleCheckout}
                 disabled={items.length === 0 || isProcessing}
-                className={`w-full h-14 rounded-2xl shadow-xl font-black uppercase tracking-[0.2em] transition-all active:scale-[0.98] ${showSuccess ? 'bg-green-500 hover:bg-green-500' : 'bg-primary hover:bg-primary/90 text-background'
-                    }`}
+                className={`w-full h-14 rounded-2xl shadow-xl font-black uppercase tracking-[0.2em] transition-all active:scale-[0.98] ${showSuccess ? 'bg-green-500 hover:bg-green-500' : 'bg-primary hover:bg-primary/90 text-background'}`}
             >
                 {showSuccess ? (
                     <div className="flex items-center gap-3">
@@ -400,7 +402,14 @@ export function POSClient({ products, customers }: POSClientProps) {
                     </div>
                 )}
             </Button>
-        </div>
+            <Button
+                variant="ghost"
+                onClick={() => router.push('/sales')}
+                className="w-full h-10 rounded-xl text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all hidden lg:flex items-center justify-center gap-2"
+            >
+                <History className="size-3.5" /> {t("history")}
+            </Button>
+        </div >
     )
 
     return (
@@ -804,10 +813,17 @@ export function POSClient({ products, customers }: POSClientProps) {
             </div>
 
             {/* Mobile Order Bar */}
-            <div className="lg:hidden fixed bottom-6 left-6 right-6 z-50">
+            <div className="lg:hidden fixed bottom-6 left-6 right-6 z-50 flex gap-3">
+                <Button
+                    onClick={() => router.push('/sales')}
+                    className="h-18 w-18 shrink-0 rounded-3xl bg-zinc-950/90 backdrop-blur-xl border-b-4 border-primary/20 shadow-2xl flex items-center justify-center text-primary active:scale-95 transition-all"
+                    title={t("history")}
+                >
+                    <History className="size-6" />
+                </Button>
                 <Sheet>
                     <SheetTrigger asChild>
-                        <Button className="w-full h-18 text-base font-black uppercase tracking-[0.2em] flex justify-between px-8 rounded-3xl shadow-2xl shadow-primary/40 bg-zinc-950 border-b-4 border-primary/20 active:scale-[0.98] transition-all">
+                        <Button className="flex-1 h-18 text-base font-black uppercase tracking-[0.2em] flex justify-between px-8 rounded-3xl shadow-2xl shadow-primary/40 bg-zinc-950 border-b-4 border-primary/20 active:scale-[1.01] transition-all">
                             <div className="flex items-center gap-3">
                                 <div className="size-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
                                     <ShoppingCart className="h-4 w-4" />

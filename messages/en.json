@@ -7,7 +7,7 @@
         "customers": "Customers",
         "reports": "Reports",
         "settings": "Settings",
-        "ledger": "Ledger",
+        "ledger": "Sales",
         "loading": "Loading...",
         "operator": "Operator",
         "syncing": "Syncing...",
@@ -24,6 +24,8 @@
         "notifications": "Notifications",
         "appearance": "Appearance",
         "warehousesNetwork": "Warehouses",
+        "arrivals": "Arrivals",
+        "movements": "Audit",
         "signOut": "Sign Out"
     },
     "Dashboard": {
@@ -91,7 +93,8 @@
         "un": "UN",
         "paymentMode": "Payment Mode",
         "paid": "Paid (Cash)",
-        "credit": "Credit (Unpaid)"
+        "credit": "Credit (Unpaid)",
+        "history": "Sales History"
     },
     "Customers": {
         "title": "Client Hub",
@@ -112,6 +115,7 @@
         "settlementIndex": "Settlement Index",
         "protocol": "Protocol",
         "matrix": "Matrix",
+        "customer": "Customer",
         "noCustomers": "No customers found.",
         "onboardNewClient": "Onboard New Client",
         "registerNewVerifiedEntity": "Register a new verified entity into the matrix",
@@ -171,7 +175,8 @@
         "printPaymentReceipt": "Print Payment Receipt",
         "kg": "kg",
         "ton": "ton",
-        "un": "unit"
+        "un": "unit",
+        "print": "Print"
     },
     "Suppliers": {
         "title": "Supply Chain Matrix",
@@ -496,6 +501,7 @@
         "receiptNumber": "Receipt Number",
         "itemsPurchased": "Items Purchased",
         "itemsToLoad": "Items to Load",
+        "method": "Method",
         "amount": "Amount",
         "subtotal": "Subtotal",
         "discount": "Discount",

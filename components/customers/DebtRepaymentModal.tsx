@@ -72,26 +72,41 @@ export function DebtRepaymentModal({ customer, currency, labels }: DebtRepayment
             </SheetTrigger>
             <SheetContent className="sm:max-w-md border-l border-primary/10 glass-card p-0 flex flex-col h-full">
                 {isSuccess ? (
-                    <div className="flex-1 p-8 flex flex-col items-center justify-center text-center animate-in fade-in slide-in-from-right-4 duration-500">
-                        <div className="size-24 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 mb-8 shadow-inner">
-                            <CheckCircle2 className="size-12" />
+                    <div className="flex-1 p-6 flex flex-col animate-in fade-in slide-in-from-right-4 duration-500 overflow-hidden">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="size-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 shadow-inner shrink-0">
+                                <CheckCircle2 className="size-6" />
+                            </div>
+                            <div className="text-left">
+                                <h2 className="text-xl font-black uppercase tracking-tight leading-none mb-1">{labels.paymentSuccess}</h2>
+                                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">
+                                    {parseFloat(amount).toFixed(2)} {currency} enregistré
+                                </p>
+                            </div>
                         </div>
-                        <h2 className="text-3xl font-black uppercase tracking-tight mb-3">{labels.paymentSuccess}</h2>
-                        <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest opacity-60 mb-10">
-                            {parseFloat(amount).toFixed(2)} {currency} enregistré
-                        </p>
 
-                        <div className="w-full space-y-4">
+                        {/* Receipt Preview */}
+                        <div className="flex-1 bg-white rounded-3xl border-2 border-primary/10 overflow-hidden shadow-inner mb-6 relative group">
+                            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none z-10" />
+                            <iframe
+                                src={`/receipt/payment/${paymentId}?preview=true`}
+                                className="w-full h-full border-none scale-[0.9] origin-top"
+                                title="Receipt Preview"
+                            />
+                            <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
                             <Button
                                 onClick={() => window.open(`/receipt/payment/${paymentId}`, '_blank')}
-                                className="w-full h-16 rounded-2xl bg-black hover:bg-black/90 text-white font-black tracking-widest uppercase shadow-xl shadow-black/10 gap-3 text-sm"
+                                className="h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black tracking-widest uppercase shadow-xl shadow-primary/10 gap-2 text-[10px]"
                             >
-                                <Printer className="size-5" /> {labels.printPaymentReceipt}
+                                <Printer className="size-4" /> {labels.print}
                             </Button>
                             <Button
                                 variant="outline"
                                 onClick={reset}
-                                className="w-full h-16 rounded-2xl border-2 border-primary/10 font-black tracking-widest uppercase text-xs"
+                                className="h-14 rounded-2xl border-2 border-primary/10 font-black tracking-widest uppercase text-[10px]"
                             >
                                 Terminer
                             </Button>
@@ -113,14 +128,25 @@ export function DebtRepaymentModal({ customer, currency, labels }: DebtRepayment
 
                         <div className="flex-1 p-6 space-y-5 overflow-y-auto custom-scrollbar">
                             {/* Balance Card - More Compact */}
-                            <div className="bg-card/50 backdrop-blur rounded-2xl border border-primary/10 p-4 shadow-sm">
-                                <p className="text-[9px] text-muted-foreground font-black uppercase tracking-[0.2em] mb-1 opacity-60">Dette Actuelle</p>
-                                <div className="flex items-end gap-1.5">
-                                    <h3 className="text-3xl font-black tracking-tighter text-destructive">
-                                        {Number(customer.credit_balance).toFixed(2)}
-                                    </h3>
-                                    <span className="text-[10px] font-black mb-1 opacity-30 lowercase">{currency}</span>
+                            <div className="bg-card/50 backdrop-blur rounded-2xl border border-primary/10 p-4 shadow-sm flex items-center justify-between">
+                                <div>
+                                    <p className="text-[9px] text-muted-foreground font-black uppercase tracking-[0.2em] mb-1 opacity-60">Dette Actuelle</p>
+                                    <div className="flex items-end gap-1.5">
+                                        <h3 className="text-3xl font-black tracking-tighter text-destructive">
+                                            {Number(customer.credit_balance).toFixed(2)}
+                                        </h3>
+                                        <span className="text-[10px] font-black mb-1 opacity-30 lowercase">{currency}</span>
+                                    </div>
                                 </div>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => window.open(`/receipt/customer/${customer.id}`, '_blank')}
+                                    className="size-10 rounded-xl bg-primary/5 text-primary hover:bg-primary/10 transition-all"
+                                    title="Imprimer Relevé"
+                                >
+                                    <Printer className="size-4" />
+                                </Button>
                             </div>
 
                             {/* Amount Input - Optimized Height */}
