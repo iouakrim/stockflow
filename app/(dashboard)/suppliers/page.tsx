@@ -96,24 +96,13 @@ export default async function SuppliersPage() {
 
             {/* Supplier Directory Table */}
             <div className="space-y-6 pb-20">
-                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar w-full md:w-auto">
-                        <Button variant="secondary" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black bg-primary text-background uppercase tracking-widest shadow-lg shadow-primary/20">{t("allPartners")}</Button>
-                        <Button variant="ghost" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black text-muted-foreground hover:text-primary uppercase tracking-widest transition-all">{t("wholesalers")}</Button>
-                        <Button variant="ghost" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black text-muted-foreground hover:text-primary uppercase tracking-widest transition-all">{t("farmers")}</Button>
-                    </div>
-
-                    <div className="flex items-center gap-3 w-full md:w-auto">
-                        <div className="relative flex-1 md:w-80 group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                            <input
-                                className="w-full bg-card/40 border-primary/10 rounded-2xl pl-11 pr-4 py-2.5 text-sm font-medium focus:ring-1 focus:ring-primary transition-all placeholder:text-muted-foreground/30 border"
-                                placeholder={t("search")}
-                            />
-                        </div>
-                        <Button variant="outline" size="icon" className="size-11 rounded-2xl border-primary/10 bg-card/40 transition-all hover:bg-primary/10 hover:text-primary active:scale-95">
-                            <ListFilter className="h-4 w-4" />
-                        </Button>
+                <div className="flex items-center gap-3">
+                    <div className="relative flex-1 md:max-w-sm group">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                        <input
+                            className="w-full bg-card/40 border border-primary/10 rounded-2xl pl-11 pr-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary transition-all placeholder:text-muted-foreground/30"
+                            placeholder={t("search")}
+                        />
                     </div>
                 </div>
 

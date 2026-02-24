@@ -9,6 +9,7 @@ import {
     AlertCircle,
     Boxes,
     BarChart2,
+    Zap,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { ProductsListClient } from "./ProductsListClient"
@@ -96,6 +97,11 @@ export default async function ProductsPage() {
                 <div className="flex items-center gap-3">
                     <Button variant="outline" className="border-primary/10 bg-card/40 backdrop-blur rounded-2xl h-12 px-6 font-bold text-xs gap-2 transition-all hover:bg-primary/5 active:scale-95">
                         <Download className="h-4 w-4 text-primary" /> {t("exportCsv")}
+                    </Button>
+                    <Button asChild variant="outline" className="border-primary/20 bg-primary/5 text-primary rounded-2xl h-12 px-6 font-black text-xs gap-2 transition-all hover:bg-primary hover:text-background active:scale-95">
+                        <Link href="/products/import">
+                            <Zap className="h-4 w-4" /> Saisie rapide
+                        </Link>
                     </Button>
                     <Button asChild className="bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-xl shadow-primary/20 rounded-2xl gap-2 h-12 px-8 transition-all hover:scale-[1.02] active:scale-[0.98]">
                         <Link href="/products/new">

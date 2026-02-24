@@ -81,22 +81,14 @@ export default async function CustomersPage() {
                 </Card>
             </div>
 
-            {/* Search & Filters */}
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-                <div className="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0 no-scrollbar w-full lg:w-auto">
-                    <Button variant="secondary" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black bg-primary text-background uppercase tracking-widest shadow-lg shadow-primary/20">{t("allDirectory")}</Button>
-                    <Button variant="ghost" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black text-muted-foreground hover:text-primary uppercase tracking-widest transition-all">{t("debtorsOnly")}</Button>
-                    <Button variant="ghost" size="sm" className="rounded-2xl h-10 px-6 text-xs font-black text-muted-foreground hover:text-primary uppercase tracking-widest transition-all">{t("vipAccounts")}</Button>
-                </div>
-
-                <div className="flex items-center gap-3 w-full lg:w-auto">
-                    <div className="relative flex-1 lg:w-96 group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                        <input
-                            className="w-full bg-card/40 border-primary/10 rounded-2xl pl-11 pr-4 py-2.5 text-sm font-medium focus:ring-1 focus:ring-primary transition-all placeholder:text-muted-foreground/30 border"
-                            placeholder={t("search")}
-                        />
-                    </div>
+            {/* Search Hub */}
+            <div className="flex items-center gap-3">
+                <div className="relative flex-1 md:max-w-sm group">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <input
+                        className="w-full bg-card/40 border border-primary/10 rounded-2xl pl-11 pr-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary transition-all placeholder:text-muted-foreground/30"
+                        placeholder={t("search")}
+                    />
                 </div>
             </div>
 
