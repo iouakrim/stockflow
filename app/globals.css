@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Force re-compilation of styles */
+
 @layer base {
   :root {
     --background: 148 20% 98%;

@@ -3,7 +3,13 @@ import { cookies } from 'next/headers';
 
 export default getRequestConfig(async () => {
     // Determine locale from cookie or fallback to French (Morocco default)
-    const locale = cookies().get('NEXT_LOCALE')?.value || 'fr';
+    let locale = cookies().get('NEXT_LOCALE')?.value || 'fr';
+
+    // Support only allowed locales
+    const locales = ['en', 'fr', 'ar'];
+    if (!locales.includes(locale)) {
+        locale = 'fr';
+    }
 
     return {
         locale,

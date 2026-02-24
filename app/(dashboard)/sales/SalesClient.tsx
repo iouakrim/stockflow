@@ -273,7 +273,7 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    title={t("previewPickup")}
+                                                    title={t("pickupPreview")}
                                                     className="size-9 rounded-xl text-primary hover:bg-primary/10 hover:text-primary transition-all shrink-0 border border-primary/20 bg-primary/5"
                                                     onClick={() => {
                                                         setPreviewReceiptUrl(`/receipt/${sale.id}?type=pickup`)
@@ -285,7 +285,7 @@ export function SalesClient({ initialSales, warehouseName }: SalesClientProps) {
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    title={t("previewReceipt")}
+                                                    title={t("receiptPreview")}
                                                     className="size-9 rounded-xl text-primary hover:bg-primary/10 hover:text-primary transition-all shrink-0 border border-primary/10 bg-primary/5"
                                                     onClick={() => {
                                                         setPreviewReceiptUrl(`/receipt/${sale.id}`)
