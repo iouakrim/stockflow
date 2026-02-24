@@ -132,6 +132,12 @@ export default async function ReceiptPage({ params, searchParams }: { params: { 
                             <span className="uppercase tracking-widest text-[11px]">{t("total")}</span>
                             <span className="font-mono">{Number(sale.total).toFixed(2)} <span className="text-xs opacity-50 ml-1">{currency}</span></span>
                         </div>
+                        <div className="flex justify-between items-center pt-1">
+                            <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">{t("paymentMethod")}</span>
+                            <span className="text-[9px] font-black uppercase tracking-widest border border-black px-2 py-0.5 rounded">
+                                {sale.payment_method === 'credit' ? t("credit") : t("cash")}
+                            </span>
+                        </div>
                     </div>
                 ) : (
                     <div className="border-t-[3px] border-black pt-2 mb-1 text-center bg-gray-100 p-2 rounded-xl mt-2">

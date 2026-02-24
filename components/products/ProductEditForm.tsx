@@ -26,6 +26,7 @@ import {
     Truck,
     Loader2
 } from "lucide-react"
+import { Product } from "@/types"
 
 const productSchema = z.object({
     name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
@@ -46,7 +47,12 @@ interface Supplier {
     name: string
 }
 
-export function ProductForm({ suppliers, tenantId }: { suppliers: Supplier[], tenantId: string }) {
+interface ProductEditFormProps {
+    product: Product
+    suppliers: Supplier[]
+}
+
+export function ProductEditForm({ product, suppliers }: ProductEditFormProps) {
     const router = useRouter()
     const { currency } = useSettings()
     const supabase = createClient()
@@ -56,47 +62,43 @@ export function ProductForm({ suppliers, tenantId }: { suppliers: Supplier[], te
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         resolver: zodResolver(productSchema) as any,
         defaultValues: {
-            name: "",
-            category: "",
-            unit: "KG",
-            supplier_id: "none",
-            sku: "",
-            barcode: "",
-            description: "",
-            cost_price: 0,
-            selling_price: 0,
+            name: product.name ?? "",
+            category: product.category ?? "",
+            unit: product.unit ?? "KG",
+            supplier_id: product.supplier_id ?? "none",
+            sku: product.sku ?? "",
+            barcode: product.barcode ?? "",
+            description: product.description ?? "",
+            cost_price: product.cost_price ?? 0,
+            selling_price: product.selling_price ?? 0,
         }
     })
 
     const onSubmit = async (data: ProductFormValues) => {
         setIsSubmitting(true)
         try {
-            const { error } = await supabase.from("products").insert({
-                tenant_id: tenantId,
+            const { error } = await supabase.from("products").update({
                 name: data.name,
                 category: data.category || null,
                 supplier_id: data.supplier_id === "none" ? null : data.supplier_id,
                 description: data.description || null,
-                unit: data.unit || 'kg',
+                unit: data.unit,
                 sku: data.sku || null,
                 barcode: data.barcode || null,
                 cost_price: data.cost_price,
                 selling_price: data.selling_price,
-            })
+            }).eq("id", product.id)
 
             if (error) {
-                if (error.code === '23505') {
-                    throw new Error("Un produit avec ce code-barres ou SKU existe déjà.")
-                }
+                if (error.code === '23505') throw new Error("Un produit avec ce code-barres ou SKU existe déjà.")
                 throw new Error(error.message)
             }
 
-            toast.success("Produit ajouté au catalogue avec succès")
+            toast.success("Produit mis à jour avec succès")
             router.push("/products")
             router.refresh()
         } catch (error: unknown) {
-            console.error(error)
-            const message = error instanceof Error ? error.message : "Erreur lors de la création du produit"
+            const message = error instanceof Error ? error.message : "Erreur lors de la mise à jour"
             toast.error(message)
         } finally {
             setIsSubmitting(false)
@@ -107,7 +109,7 @@ export function ProductForm({ suppliers, tenantId }: { suppliers: Supplier[], te
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-3 gap-5 pb-20">
             <div className="lg:col-span-2 space-y-5">
                 {/* Section Base */}
-                <div className="glass-card rounded-2xl p-5 space-y-4 relative overflow-hidden">
+                <div className="glass-card rounded-2xl p-5 space-y-4">
                     <div className="flex items-center gap-3 mb-1">
                         <div className="size-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
                             <Tag className="h-4 w-4" />
@@ -122,7 +124,6 @@ export function ProductForm({ suppliers, tenantId }: { suppliers: Supplier[], te
                                 id="name"
                                 {...form.register("name")}
                                 className="h-10 bg-card/40 border-primary/10 rounded-xl px-4 font-bold focus:ring-primary focus:border-primary/30 transition-all"
-                                placeholder="ex: Ciphone 15 Pro Max"
                             />
                             {form.formState.errors.name && (
                                 <p className="text-xs text-red-500 font-bold ml-1">{form.formState.errors.name.message}</p>
@@ -217,7 +218,6 @@ export function ProductForm({ suppliers, tenantId }: { suppliers: Supplier[], te
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Cost Price */}
                         <div className="space-y-1.5 p-4 rounded-2xl bg-amber-500/5 border border-amber-500/20">
                             <Label htmlFor="cost_price" className="text-[10px] font-black uppercase tracking-widest text-amber-600/60 ml-1 flex items-center justify-between">
                                 Prix d&apos;achat <span className="bg-amber-500/20 text-amber-600 px-1.5 py-0.5 rounded text-[8px]">PUMP</span>
@@ -229,7 +229,6 @@ export function ProductForm({ suppliers, tenantId }: { suppliers: Supplier[], te
                                     step="0.01"
                                     {...form.register("cost_price")}
                                     className="h-10 bg-background/50 border-amber-500/20 rounded-xl pl-4 pr-12 font-mono font-black focus:ring-amber-500 transition-all text-amber-500"
-                                    placeholder="0.00"
                                 />
                                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-black opacity-30 select-none">{currency}</span>
                             </div>
@@ -238,7 +237,6 @@ export function ProductForm({ suppliers, tenantId }: { suppliers: Supplier[], te
                             )}
                         </div>
 
-                        {/* Selling Price */}
                         <div className="space-y-1.5 p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/20">
                             <Label htmlFor="selling_price" className="text-[10px] font-black uppercase tracking-widest text-emerald-600/60 ml-1 flex items-center justify-between">
                                 Prix de vente public <span className="bg-emerald-500/20 text-emerald-600 px-1.5 py-0.5 rounded text-[8px]">PVP</span>
@@ -250,7 +248,6 @@ export function ProductForm({ suppliers, tenantId }: { suppliers: Supplier[], te
                                     step="0.01"
                                     {...form.register("selling_price")}
                                     className="h-10 bg-background/50 border-emerald-500/20 rounded-xl pl-4 pr-12 font-mono font-black focus:ring-emerald-500 transition-all text-emerald-500"
-                                    placeholder="0.00"
                                 />
                                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-black opacity-30 select-none">{currency}</span>
                             </div>
@@ -282,7 +279,6 @@ export function ProductForm({ suppliers, tenantId }: { suppliers: Supplier[], te
                                 id="sku"
                                 {...form.register("sku")}
                                 className="h-10 bg-card/40 border-primary/10 rounded-xl px-4 font-mono font-black focus:ring-blue-500 transition-all uppercase tracking-widest"
-                                placeholder="PROD-XXX-000"
                             />
                         </div>
 
@@ -291,17 +287,11 @@ export function ProductForm({ suppliers, tenantId }: { suppliers: Supplier[], te
                                 Code-Barres EAN/UPC
                                 <span className="text-[8px] bg-primary/10 text-primary px-1.5 py-0.5 rounded opacity-50">OPTIONNEL</span>
                             </Label>
-                            <div className="relative">
-                                <Input
-                                    id="barcode"
-                                    {...form.register("barcode")}
-                                    className="h-10 bg-card/40 border-primary/10 rounded-xl pl-4 pr-10 font-mono font-black focus:ring-blue-500 transition-all tracking-widest"
-                                    placeholder="0000000000000"
-                                />
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center opacity-30">
-                                    <ScanLineIcon className="h-4 w-4" />
-                                </div>
-                            </div>
+                            <Input
+                                id="barcode"
+                                {...form.register("barcode")}
+                                className="h-10 bg-card/40 border-primary/10 rounded-xl px-4 font-mono font-black focus:ring-blue-500 transition-all tracking-widest"
+                            />
                         </div>
 
                         <div className="space-y-1.5">
@@ -310,7 +300,6 @@ export function ProductForm({ suppliers, tenantId }: { suppliers: Supplier[], te
                                 id="description"
                                 {...form.register("description")}
                                 className="h-10 bg-card/40 border-primary/10 rounded-xl px-4 font-medium focus:ring-blue-500 transition-all"
-                                placeholder="Notes de produit"
                             />
                         </div>
                     </div>
@@ -324,33 +313,10 @@ export function ProductForm({ suppliers, tenantId }: { suppliers: Supplier[], te
                     {isSubmitting ? (
                         <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Enregistrement...</>
                     ) : (
-                        <><Save className="mr-2 h-4 w-4" /> Confirmer la Création</>
+                        <><Save className="mr-2 h-4 w-4" /> Enregistrer les modifications</>
                     )}
                 </Button>
             </div>
         </form>
-    )
-}
-
-function ScanLineIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg
-            {...props}
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <path d="M3 7V5a2 2 0 0 1 2-2h2" />
-            <path d="M17 3h2a2 2 0 0 1 2 2v2" />
-            <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
-            <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
-            <line x1="7" x2="17" y1="12" y2="12" />
-        </svg>
     )
 }

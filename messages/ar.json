@@ -529,7 +529,10 @@
         "endOfDayAudit": "تدقيق نهاية اليوم",
         "date": "التاريخ",
         "time": "الوقت",
-        "transactions": "المعاملات"
+        "transactions": "المعاملات",
+        "paymentMethod": "طريقة الدفع",
+        "cash": "نقداً",
+        "credit": "آجل"
     },
     "Reports": {
         "title": "مركز الذكاء",

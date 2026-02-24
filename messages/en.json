@@ -529,6 +529,9 @@
         "endOfDayAudit": "End of Day Audit",
         "date": "Date",
         "time": "Time",
-        "transactions": "Transactions"
+        "transactions": "Transactions",
+        "paymentMethod": "Payment",
+        "cash": "Cash",
+        "credit": "Credit"
     }
 }

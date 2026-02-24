@@ -529,7 +529,10 @@
         "endOfDayAudit": "Audit de Fin de Journée",
         "date": "Date",
         "time": "Heure",
-        "transactions": "Transactions"
+        "transactions": "Transactions",
+        "paymentMethod": "Règlement",
+        "cash": "Espèces",
+        "credit": "Crédit"
     },
     "Reports": {
         "title": "Centre d'Intelligence",

@@ -83,6 +83,7 @@ export function POSClient({ products, customers }: POSClientProps) {
     const [newCustomerName, setNewCustomerName] = useState("")
     const [newCustomerPhone, setNewCustomerPhone] = useState("")
     const [isCreatingCustomer, setIsCreatingCustomer] = useState(false)
+    const [showDiscount, setShowDiscount] = useState(false)
 
     useEffect(() => setLocalCustomers(customers), [customers])
 
@@ -292,53 +293,79 @@ export function POSClient({ products, customers }: POSClientProps) {
     const CheckoutPanel = () => (
         <div className="pt-4 border-t border-primary/10 space-y-4">
             {/* Smart Discount Toggle */}
-            <div className="bg-primary/[0.02] p-4 rounded-3xl border border-primary/5 space-y-3">
-                <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t("applyDiscount")}</span>
-                    {discount > 0 && (
-                        <button
-                            onClick={() => setDiscount(0, 'percentage')}
-                            className="text-[9px] font-bold text-destructive hover:underline uppercase tracking-widest"
-                        >
-                            {t("clear")}
-                        </button>
-                    )}
-                </div>
+            <div className="space-y-2">
+                <button
+                    onClick={() => setShowDiscount(!showDiscount)}
+                    className={`w-full h-10 rounded-2xl text-[10px] font-black uppercase tracking-widest border transition-all flex items-center justify-between px-4 ${discount > 0
+                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500'
+                        : showDiscount
+                            ? 'bg-primary/10 border-primary/30 text-primary'
+                            : 'bg-card/40 border-primary/10 text-muted-foreground hover:border-primary/30 hover:text-primary'
+                        }`}
+                >
+                    <span className="flex items-center gap-2">
+                        <span className="text-sm">%</span>
+                        {t("applyDiscount")}
+                    </span>
+                    <span className="flex items-center gap-2">
+                        {discount > 0 && (
+                            <span className="text-[9px] font-black px-2 py-0.5 bg-emerald-500/20 rounded-lg">
+                                -{discountAmount.toFixed(2)} {currency}
+                            </span>
+                        )}
+                        <span className={`transition-transform duration-200 ${showDiscount ? 'rotate-180' : ''}`}>▾</span>
+                    </span>
+                </button>
 
-                <div className="flex gap-2">
-                    {[5, 10, 15].map((pct) => (
-                        <button
-                            key={pct}
-                            onClick={() => setDiscount(pct, 'percentage')}
-                            className={`flex-1 h-9 rounded-xl text-xs font-black transition-all border ${discount === pct && discountType === 'percentage'
-                                ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20'
-                                : 'bg-background text-muted-foreground border-primary/10 hover:border-primary/30 hover:bg-primary/5'
-                                }`}
-                        >
-                            -{pct}%
-                        </button>
-                    ))}
-                    <div className="relative flex-1">
-                        <Input
-                            type="number"
-                            placeholder="$$"
-                            className={`h-9 rounded-xl text-xs font-black px-2 pr-6 text-right transition-all border ${discount > 0 && discountType === 'fixed'
-                                ? 'border-primary ring-1 ring-primary/20 bg-primary/5'
-                                : 'border-primary/10 hover:border-primary/30'
-                                }`}
-                            value={discountType === 'fixed' && discount > 0 ? discount : ''}
-                            onChange={(e) => {
-                                const val = parseFloat(e.target.value) || 0
-                                setDiscount(val, 'fixed')
-                            }}
-                        />
-                        <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[9px] font-black text-muted-foreground pointer-events-none">{currency}</span>
+                {showDiscount && (
+                    <div className="bg-primary/[0.02] p-4 rounded-3xl border border-primary/5 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t("applyDiscount")}</span>
+                            {discount > 0 && (
+                                <button
+                                    onClick={() => { setDiscount(0, 'percentage'); }}
+                                    className="text-[9px] font-bold text-destructive hover:underline uppercase tracking-widest"
+                                >
+                                    {t("clear")}
+                                </button>
+                            )}
+                        </div>
+
+                        <div className="flex gap-2">
+                            {[5, 10, 15].map((pct) => (
+                                <button
+                                    key={pct}
+                                    onClick={() => setDiscount(pct, 'percentage')}
+                                    className={`flex-1 h-9 rounded-xl text-xs font-black transition-all border ${discount === pct && discountType === 'percentage'
+                                        ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20'
+                                        : 'bg-background text-muted-foreground border-primary/10 hover:border-primary/30 hover:bg-primary/5'
+                                        }`}
+                                >
+                                    -{pct}%
+                                </button>
+                            ))}
+                            <div className="relative flex-1">
+                                <Input
+                                    type="number"
+                                    placeholder="$$"
+                                    className={`h-9 rounded-xl text-xs font-black px-2 pr-6 text-right transition-all border ${discount > 0 && discountType === 'fixed'
+                                        ? 'border-primary ring-1 ring-primary/20 bg-primary/5'
+                                        : 'border-primary/10 hover:border-primary/30'
+                                        }`}
+                                    value={discountType === 'fixed' && discount > 0 ? discount : ''}
+                                    onChange={(e) => {
+                                        const val = parseFloat(e.target.value) || 0
+                                        setDiscount(val, 'fixed')
+                                    }}
+                                />
+                                <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[9px] font-black text-muted-foreground pointer-events-none">{currency}</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
 
-            <div className="bg-primary/[0.02] p-4 rounded-3xl border border-primary/5 space-y-3">
-                <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t("paymentMode")}</span>
+            <div className="bg-primary/[0.02] p-3 rounded-3xl border border-primary/5">
                 <div className="flex gap-2">
                     <button
                         onClick={() => setPaymentMode('cash')}
@@ -406,14 +433,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                     </div>
                 )}
             </Button>
-            <Button
-                variant="ghost"
-                onClick={() => router.push('/sales')}
-                className="w-full h-10 rounded-xl text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all hidden lg:flex items-center justify-center gap-2"
-            >
-                <History className="size-3.5" /> {t("history")}
-            </Button>
-        </div >
+        </div>
     )
 
     return (
@@ -704,7 +724,7 @@ export function POSClient({ products, customers }: POSClientProps) {
 
                                                 {/* Price Moved to Right */}
                                                 <div className="flex flex-col items-end">
-                                                    {product.selling_price.toFixed(2)} <span className="text-xs ml-0.5 opacity-60">{currency}</span>
+                                                    <span className="font-black text-sm tabular-nums">{product.selling_price.toFixed(2)} <span className="text-xs font-bold opacity-60">{currency}</span></span>
                                                     <span className="text-[9px] uppercase font-black text-muted-foreground/50 mt-1">/ {product.unit ? t(product.unit.toLowerCase()) : t("un")}</span>
                                                 </div>
                                             </div>

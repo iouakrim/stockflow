@@ -46,12 +46,7 @@ export default async function NewProductPage() {
                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary underline underline-offset-4 decoration-primary/30">{t("backToWarehouse")}</span>
                     </div>
                     <h1 className="text-4xl font-black tracking-tighter text-foreground leading-none">{t("initializeSku")}</h1>
-                    <div className="flex items-center gap-3 mt-3">
-                        <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest border border-primary/20">
-                            {t("inventoryProtocolEntry")}
-                        </span>
-                        <span className="text-muted-foreground/40 text-xs font-medium tracking-tight">{t("definingParameters")}</span>
-                    </div>
+
                 </div>
 
                 <div className="flex items-center gap-3">
