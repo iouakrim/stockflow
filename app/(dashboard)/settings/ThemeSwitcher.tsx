@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { updateUserTheme } from "./actions";
+import { toast } from "sonner";
 
 const palettes: { id: ThemePalette; name: string; color: string; labelKey: string }[] = [
     { id: 'default', name: 'Emerald', color: 'bg-[#11d473]', labelKey: 'optimal' },
@@ -47,7 +48,12 @@ export function ThemeSwitcher() {
                             key={p.id}
                             onClick={async () => {
                                 setPalette(p.id)
-                                await updateUserTheme(p.id)
+                                const result = await updateUserTheme(p.id)
+                                if (result.success) {
+                                    toast.success(t("themeSaved"))
+                                } else {
+                                    toast.error(result.error)
+                                }
                             }}
                             className={cn(
                                 "group relative flex flex-col items-start p-4 rounded-[1.5rem] border-2 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]",

@@ -81,13 +81,7 @@ export default async function NewSupplierPage() {
                         </Link>
                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary underline underline-offset-4 decoration-primary/30">{t("backToMatrix")}</span>
                     </div>
-                    <h1 className="text-4xl font-black tracking-tighter text-foreground leading-none">{t("onboardPartner")}</h1>
-                    <div className="flex items-center gap-3 mt-3">
-                        <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest border border-primary/20">
-                            {t("logisticsIntegration")}
-                        </span>
-                        <span className="text-muted-foreground/40 text-xs font-medium tracking-tight">{t("registeringNewEntity")}</span>
-                    </div>
+                    <h1 className="text-3xl font-black tracking-tighter text-foreground leading-none">{t("onboardPartner")}</h1>
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -207,12 +201,9 @@ export default async function NewSupplierPage() {
 
                     <Button
                         type="submit"
-                        className="w-full bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-2xl shadow-primary/30 rounded-[2.5rem] p-8 h-auto flex flex-col gap-1 transition-all hover:scale-[1.02] active:scale-[0.98] group relative overflow-hidden"
+                        className="w-full bg-primary hover:bg-primary/90 text-background font-black shadow-xl shadow-primary/20 rounded-2xl h-14 transition-all hover:scale-[1.02] active:scale-[0.98] uppercase tracking-widest"
                     >
-                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                        <Save className="h-6 w-6 stroke-[3px] mb-1 group-hover:rotate-12 transition-transform" />
-                        <span className="text-sm uppercase tracking-[0.2em]">{t("validatePartner")}</span>
-                        <span className="text-[9px] opacity-40 uppercase tracking-widest font-black">{t("syncingToLogisticsMatrix")}</span>
+                        {t("validatePartner")}
                     </Button>
                 </div>
             </form>

@@ -4,16 +4,12 @@ import { Supplier } from "@/types"
 import {
     Plus,
     Search,
-    Download,
-    MoreVertical,
     Phone,
     Mail,
     MapPin,
     Truck,
     Building2,
-    ArrowUpRight,
-    Star,
-    ShieldCheck
+    ArrowUpRight
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -43,9 +39,6 @@ export default async function SuppliersPage() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" className="border-primary/10 bg-card/40 backdrop-blur rounded-2xl h-12 px-6 font-bold text-xs gap-2 transition-all hover:bg-primary/5 active:scale-95">
-                        <Download className="h-4 w-4 text-primary" /> {t("exportReports")}
-                    </Button>
                     <Link href="/suppliers/new">
                         <Button className="bg-primary hover:bg-primary/90 text-[#102219] font-black shadow-xl shadow-primary/20 rounded-2xl gap-2 h-12 px-8 transition-all hover:scale-[1.02] active:scale-[0.98]">
                             <Plus className="h-5 w-5 stroke-[3px]" /> {t("onboardPartner")}
@@ -54,44 +47,6 @@ export default async function SuppliersPage() {
                 </div>
             </div>
 
-            {/* Hub Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="glass-card group hover:scale-[1.02] transition-all duration-300">
-                    <CardContent className="p-7 flex items-center gap-5">
-                        <div className="size-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-background transition-all shadow-lg shadow-black/10">
-                            <Building2 className="h-7 w-7" />
-                        </div>
-                        <div>
-                            <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">{t("totalPartners")}</p>
-                            <p className="text-3xl font-black tracking-tighter">{totalSuppliers}</p>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="glass-card group hover:scale-[1.02] transition-all duration-300">
-                    <CardContent className="p-7 flex items-center gap-5">
-                        <div className="size-14 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-background transition-all shadow-lg shadow-black/10">
-                            <Truck className="h-7 w-7" />
-                        </div>
-                        <div>
-                            <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">{t("activeDeliveries")}</p>
-                            <p className="text-3xl font-black tracking-tighter">04</p>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="glass-card group hover:scale-[1.02] transition-all duration-300">
-                    <CardContent className="p-7 flex items-center gap-5">
-                        <div className="size-14 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-background transition-all shadow-lg shadow-black/10">
-                            <ShieldCheck className="h-7 w-7" />
-                        </div>
-                        <div>
-                            <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1">{t("qualityCertified")}</p>
-                            <p className="text-3xl font-black tracking-tighter">{Math.floor(totalSuppliers * 0.8)}</p>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
 
             {/* Supplier Directory Table */}
             <div className="space-y-6 pb-20">
@@ -113,14 +68,13 @@ export default async function SuppliersPage() {
                                 <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">{t("mainContact")}</TableHead>
                                 <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">{t("communications")}</TableHead>
                                 <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">{t("classification")}</TableHead>
-                                <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5">{t("reliability")}</TableHead>
                                 <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] py-5 text-right px-8">{t("actions")}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {(!suppliers || suppliers.length === 0) ? (
                                 <TableRow>
-                                    <TableCell colSpan={6} className="text-center py-24 text-muted-foreground italic opacity-50">
+                                    <TableCell colSpan={5} className="text-center py-24 text-muted-foreground italic opacity-50">
                                         <div className="flex flex-col items-center gap-4">
                                             <Building2 className="h-10 w-10 opacity-20" />
                                             <div className="space-y-1">
@@ -175,25 +129,12 @@ export default async function SuppliersPage() {
                                                 {supplier.category || t("generalSupply")}
                                             </span>
                                         </TableCell>
-                                        <TableCell>
-                                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/5 border border-primary/10 w-fit">
-                                                {[1, 2, 3, 4, 5].map((star) => (
-                                                    <Star key={star} className={`h-2.5 w-2.5 ${star <= 4 ? 'fill-primary text-primary' : 'text-primary/20'}`} />
-                                                ))}
-                                                <span className="text-[10px] font-black text-primary ml-1">4.0</span>
-                                            </div>
-                                        </TableCell>
                                         <TableCell className="text-right px-8">
-                                            <div className="flex items-center justify-end gap-3">
-                                                <Link href={`/suppliers/${supplier.id}`}>
-                                                    <Button variant="ghost" size="sm" className="h-9 px-4 rounded-xl text-[9px] font-black uppercase tracking-widest bg-primary/5 text-primary opacity-0 group-hover:opacity-100 transition-all hover:bg-primary/20 border border-primary/10">
-                                                        {t("logistics")} <ArrowUpRight className="ml-1 h-3 w-3" />
-                                                    </Button>
-                                                </Link>
-                                                <Button variant="ghost" size="icon" className="size-10 rounded-xl text-muted-foreground hover:bg-accent transition-all shrink-0">
-                                                    <MoreVertical className="h-4 w-4" />
+                                            <Link href={`/suppliers/${supplier.id}`}>
+                                                <Button variant="ghost" size="sm" className="h-9 px-4 rounded-xl text-[9px] font-black uppercase tracking-widest bg-primary/20 text-primary hover:bg-primary transition-all hover:text-background border border-primary/10">
+                                                    {t("logistics")} <ArrowUpRight className="ml-1 h-3 w-3" />
                                                 </Button>
-                                            </div>
+                                            </Link>
                                         </TableCell>
                                     </TableRow>
                                 ))

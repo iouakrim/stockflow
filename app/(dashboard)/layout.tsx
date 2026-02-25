@@ -48,6 +48,7 @@ function DashboardContent({ children }: { children: ReactNode }) {
         preferred_palette?: string;
         preferred_language?: string;
         tenant_id?: string;
+        tenant_name?: string;
     } | null>(null);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const supabase = createClient();
@@ -57,15 +58,19 @@ function DashboardContent({ children }: { children: ReactNode }) {
         async function getInitialData() {
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
-                // Fetch profile
+                // Fetch profile with tenant name
                 const { data: profile } = await supabase
                     .from('profiles')
-                    .select('full_name, role, tenant_id, preferred_language, preferred_palette')
+                    .select('full_name, role, tenant_id, preferred_language, preferred_palette, tenants(name)')
                     .eq('id', user.id)
                     .single();
 
                 if (profile) {
-                    setUserProfile(profile);
+                    const profileWithTenant = {
+                        ...profile,
+                        tenant_name: (profile.tenants as any)?.name
+                    };
+                    setUserProfile(profileWithTenant);
 
                     // Sync theme if profile has one
                     if (profile.preferred_palette) {
@@ -130,19 +135,21 @@ function DashboardContent({ children }: { children: ReactNode }) {
         <div className="flex h-screen bg-background dark:bg-[#102219] overflow-hidden selection:bg-primary/30 selection:text-primary transition-colors duration-500">
             {/* Desktop Sidebar */}
             <aside className={`hidden md:flex flex-col border-r border-primary/10 bg-white dark:bg-[#0a140f] z-30 transition-all duration-300 ${isCollapsed ? 'w-24' : 'w-64'}`}>
-                <div className={`p-8 flex items-center ${isCollapsed ? 'justify-center px-4' : 'gap-3'}`}>
+                <div className={`pt-8 px-8 pb-4 flex items-center ${isCollapsed ? 'justify-center px-4' : 'gap-3'}`}>
                     <div className="size-11 shrink-0 rounded-xl bg-primary flex items-center justify-center text-[#102219] shadow-lg shadow-primary/20 animate-float">
                         <Leaf className="h-6 w-6 fill-current" />
                     </div>
                     {!isCollapsed && (
                         <div className="flex flex-col min-w-0">
                             <h1 className="text-foreground text-lg font-black leading-tight tracking-tighter truncate">{tc("appName")}</h1>
-                            <p className="text-primary text-[10px] font-black uppercase tracking-widest opacity-80 truncate">{tc("appSubtitle")}</p>
+                            <p className="text-primary text-[10px] font-black uppercase tracking-widest opacity-80 truncate">
+                                {userProfile?.tenant_name || tc("appSubtitle")}
+                            </p>
                         </div>
                     )}
                 </div>
 
-                <nav className={`flex-1 space-y-1.5 py-6 overflow-y-auto custom-scrollbar ${isCollapsed ? 'px-4' : 'px-6'}`}>
+                <nav className={`flex-1 space-y-1 py-1 overflow-y-auto custom-scrollbar ${isCollapsed ? 'px-4' : 'px-6'}`}>
                     {navItems.map((item) => (
                         <Link
                             key={item.href}
