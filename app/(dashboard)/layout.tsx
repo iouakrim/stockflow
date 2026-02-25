@@ -69,7 +69,7 @@ function DashboardContent({ children }: { children: ReactNode }) {
                 if (profile) {
                     const profileWithTenant = {
                         ...profile,
-                        tenant_name: (profile.tenants as any)?.name
+                        tenant_name: (profile.tenants as { name: string })?.name
                     };
                     setUserProfile(profileWithTenant);
 

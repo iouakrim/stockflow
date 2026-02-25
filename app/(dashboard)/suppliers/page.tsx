@@ -7,13 +7,11 @@ import {
     Phone,
     Mail,
     MapPin,
-    Truck,
     Building2,
     ArrowUpRight
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
 
 export default async function SuppliersPage() {
@@ -24,9 +22,6 @@ export default async function SuppliersPage() {
         .from("suppliers")
         .select("*")
         .order("name", { ascending: true })
-
-    // Calculations for header stats
-    const totalSuppliers = suppliers?.length || 0
 
     const t = await getTranslations("Suppliers")
 

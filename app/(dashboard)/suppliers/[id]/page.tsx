@@ -2,7 +2,6 @@ import { createClient, getTenantSettings } from "@/lib/supabase/server"
 import { getTranslations } from "next-intl/server"
 import { notFound, redirect } from "next/navigation"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
     ArrowLeft,
@@ -41,11 +40,10 @@ export default async function SupplierDetailsPage({ params }: { params: { id: st
 
     const products = productsData?.map(p => ({
         ...p,
-        stock_quantity: p.warehouse_stock?.reduce((acc: number, ws: any) => acc + ws.stock_quantity, 0) || 0,
+        stock_quantity: p.warehouse_stock?.reduce((acc: number, ws: { stock_quantity: number }) => acc + ws.stock_quantity, 0) || 0,
         low_stock_threshold: p.warehouse_stock?.[0]?.low_stock_threshold || 0
     }))
 
-    const totalStockValue = products?.reduce((acc, p) => acc + (p.cost_price * p.stock_quantity), 0) || 0
     const t = await getTranslations("Suppliers")
 
     return (
