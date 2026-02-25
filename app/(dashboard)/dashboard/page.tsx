@@ -26,7 +26,12 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { DashboardChart } from "./DashboardChart"
+import dynamic from "next/dynamic"
+
+const DashboardChart = dynamic(() => import("./DashboardChart").then(mod => mod.DashboardChart), {
+    ssr: false,
+    loading: () => <div className="h-[320px] w-full mt-4 bg-muted/20 animate-pulse rounded-3xl" />
+})
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -80,61 +85,65 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
         filterLabel = t("allTime");
     }
 
-    // 1. Filtered Revenue - Localized by Warehouse
-    let revenueQuery = supabase.from("sales").select("total").gte("created_at", startDate.toISOString())
-    if (activeWarehouseId) {
-        revenueQuery = revenueQuery.eq("warehouse_id", activeWarehouseId)
-    }
-    const { data: salesData } = await revenueQuery
+    // Parallelize all data fetching to eliminate waterfalls
+    const [
+        { data: salesData },
+        { count: productCount },
+        { data: lowStockItems },
+        { data: customers },
+        { data: recentSales },
+        { data: weekSales }
+    ] = await Promise.all([
+        // 1. Filtered Revenue
+        (() => {
+            let q = supabase.from("sales").select("total").gte("created_at", startDate.toISOString());
+            if (activeWarehouseId) q = q.eq("warehouse_id", activeWarehouseId);
+            return q;
+        })(),
+        // 2. Current Stock
+        (() => {
+            let q = supabase.from("warehouse_stock").select("*", { count: "exact", head: true });
+            if (activeWarehouseId) q = q.eq("warehouse_id", activeWarehouseId);
+            return q;
+        })(),
+        // 3. Low Stock Alerts
+        (() => {
+            let q = supabase.from("warehouse_stock").select("id").lte("stock_quantity", 5);
+            if (activeWarehouseId) q = q.eq("warehouse_id", activeWarehouseId);
+            return q;
+        })(),
+        // 4. Outstanding Credits
+        supabase.from("customers").select("credit_balance"),
+        // 5. Recent Activity
+        (() => {
+            let q = supabase.from("sales").select(`
+                id, 
+                receipt_number, 
+                total, 
+                created_at,
+                customers ( name )
+            `);
+            if (activeWarehouseId) q = q.eq("warehouse_id", activeWarehouseId);
+            return q.order("created_at", { ascending: false }).limit(5);
+        })(),
+        // 6. Last 7 Days Sales for Chart
+        (() => {
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+            sevenDaysAgo.setHours(0, 0, 0, 0);
+            let q = supabase.from("sales").select("total, created_at").gte("created_at", sevenDaysAgo.toISOString());
+            if (activeWarehouseId) q = q.eq("warehouse_id", activeWarehouseId);
+            return q.order("created_at", { ascending: true });
+        })()
+    ]);
 
     const totalRevenue = salesData?.reduce((acc, sale) => acc + Number(sale.total), 0) || 0
-
-    // 2. Current Stock - Filtered by Warehouse
-    let stockCountQuery = supabase.from("warehouse_stock").select("*", { count: "exact", head: true })
-    if (activeWarehouseId) {
-        stockCountQuery = stockCountQuery.eq("warehouse_id", activeWarehouseId)
-    }
-    const { count: productCount } = await stockCountQuery
-
-    // 3. Low Stock Alerts - Filtered by Warehouse
-    let lowStockQuery = supabase.from("warehouse_stock").select("id").lte("stock_quantity", 5)
-    if (activeWarehouseId) {
-        lowStockQuery = lowStockQuery.eq("warehouse_id", activeWarehouseId)
-    }
-    const { data: lowStockItems } = await lowStockQuery
-
     const lowStockCount = lowStockItems?.length || 0
-
-    // 4. Outstanding Credits (Remains global/tenant-wide as customers are global)
-    const { data: customers } = await supabase
-        .from("customers")
-        .select("credit_balance")
-
     const totalCredits = customers?.reduce((acc, c) => acc + Number(c.credit_balance), 0) || 0
 
-    // 5. Recent Activity - Filtered by Warehouse
-    let recentSalesQuery = supabase.from("sales").select(`
-            id, 
-            receipt_number, 
-            total, 
-            created_at,
-            customers ( name )
-        `)
-    if (activeWarehouseId) {
-        recentSalesQuery = recentSalesQuery.eq("warehouse_id", activeWarehouseId)
-    }
-    const { data: recentSales } = await recentSalesQuery.order("created_at", { ascending: false }).limit(5)
-
-    // 6. Last 7 Days Sales for Chart - Filtered by Warehouse
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
     sevenDaysAgo.setHours(0, 0, 0, 0);
-
-    let weekSalesQuery = supabase.from("sales").select("total, created_at").gte("created_at", sevenDaysAgo.toISOString())
-    if (activeWarehouseId) {
-        weekSalesQuery = weekSalesQuery.eq("warehouse_id", activeWarehouseId)
-    }
-    const { data: weekSales } = await weekSalesQuery.order("created_at", { ascending: true });
 
     const salesByDay: Record<string, number> = {};
     for (let i = 0; i < 7; i++) {

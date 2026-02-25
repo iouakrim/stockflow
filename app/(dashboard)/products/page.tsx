@@ -39,39 +39,26 @@ export default async function ProductsPage() {
         )
     }
 
-    // Fetch warehouse info
-    let warehouse = null;
-    if (activeWarehouseId) {
-        const { data } = await supabase.from('warehouses').select('name').eq('id', activeWarehouseId).single()
-        warehouse = data;
-    } else {
-        const { data } = await supabase.from('warehouses').select('name, id').limit(1).maybeSingle();
-        warehouse = data;
-    }
+    // Parallelize inventory data fetching
+    const [
+        { data: globalProducts },
+        { data: localStockParams },
+        { data: suppliers },
+        { data: warehouseData }
+    ] = await Promise.all([
+        supabase.from("products").select("*").neq("status", "deleted").order("created_at", { ascending: false }),
+        supabase.from("warehouse_stock").select("product_id, stock_quantity").eq("warehouse_id", activeWarehouseId || ''),
+        supabase.from("suppliers").select("id, name").order("name", { ascending: true }),
+        activeWarehouseId
+            ? supabase.from('warehouses').select('name').eq('id', activeWarehouseId).single()
+            : supabase.from('warehouses').select('name, id').limit(1).maybeSingle()
+    ]);
 
+    const warehouse = warehouseData;
     const t = await getTranslations("Inventory")
     const warehouseName = warehouse?.name || t("globalNetwork");
 
-    // Fetch real products (Global Dictionary) — exclude soft-deleted
-    const { data: globalProducts } = await supabase
-        .from("products")
-        .select("*")
-        .neq("status", "deleted")
-        .order("created_at", { ascending: false })
-
-    // Fetch Local Stock for this specific Warehouse
-    const { data: localStockParams } = await supabase
-        .from("warehouse_stock")
-        .select("product_id, stock_quantity")
-        .eq("warehouse_id", activeWarehouseId || '')
-
     const localStockMap = new Map((localStockParams || []).map(s => [s.product_id, s.stock_quantity]));
-
-    // Fetch suppliers for filter
-    const { data: suppliers } = await supabase
-        .from("suppliers")
-        .select("id, name")
-        .order("name", { ascending: true })
 
     // Merge global products with local stock
     const products = globalProducts?.map(p => ({

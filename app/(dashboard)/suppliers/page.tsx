@@ -17,13 +17,14 @@ import Link from "next/link"
 export default async function SuppliersPage() {
     const supabase = createClient()
 
-    // Fetch suppliers (using a fallback since the table might not exist in the DB yet until user runs migration)
-    const { data: suppliers } = await supabase
-        .from("suppliers")
-        .select("*")
-        .order("name", { ascending: true })
-
-    const t = await getTranslations("Suppliers")
+    // Parallelize data fetching
+    const [
+        { data: suppliers },
+        t
+    ] = await Promise.all([
+        supabase.from("suppliers").select("*").order("name", { ascending: true }),
+        getTranslations("Suppliers")
+    ]);
 
     return (
         <div className="flex-1 space-y-6 animate-in fade-in duration-700 pb-20">
