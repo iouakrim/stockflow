@@ -101,7 +101,8 @@
         "paymentMode": "Mode de Paiement",
         "paid": "Payé (Espèces)",
         "credit": "Crédit (Non payé)",
-        "history": "Historique"
+        "history": "Historique",
+        "outOfStock": "STOCK ÉPUISÉ"
     },
     "Customers": {
         "title": "Annuaire des Clients",

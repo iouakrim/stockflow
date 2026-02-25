@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import { useThemeStore } from '@/store/useThemeStore';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
@@ -22,7 +23,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         }
     }, [palette, mounted]);
 
-    // Prevent flash of unstyled content by not rendering until mounted
-    // or use a clever script in layout.tsx
-    return <>{children}</>;
+    return (
+        <NextThemesProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+        >
+            {children}
+        </NextThemesProvider>
+    );
 }

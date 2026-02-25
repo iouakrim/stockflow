@@ -68,7 +68,7 @@ export default async function SupplierDetailsPage({ params }: { params: { id: st
                                 <Badge variant="outline" className="text-[9px] font-black tracking-widest bg-primary/5 uppercase border-primary/20 text-primary">
                                     {supplier.category || t("generalSupply")}
                                 </Badge>
-                                <span className="text-muted-foreground/40 text-[10px] font-black uppercase tracking-widest">
+                                <span className="text-label">
                                     ID: {params.id.slice(0, 8).toUpperCase()}
                                 </span>
                             </div>
@@ -81,7 +81,7 @@ export default async function SupplierDetailsPage({ params }: { params: { id: st
                                 <Mail className="h-4 w-4" />
                             </div>
                             <div className="min-w-0">
-                                <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/40">{t("emailProtocol")}</p>
+                                <p className="text-label mb-0.5">{t("emailProtocol")}</p>
                                 <p className="font-bold truncate">{supplier.email || "---"}</p>
                             </div>
                         </div>
@@ -90,7 +90,7 @@ export default async function SupplierDetailsPage({ params }: { params: { id: st
                                 <Phone className="h-4 w-4" />
                             </div>
                             <div className="min-w-0">
-                                <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/40">{t("voiceLine")}</p>
+                                <p className="text-label mb-0.5">{t("voiceLine")}</p>
                                 <p className="font-bold truncate">{supplier.phone || "---"}</p>
                             </div>
                         </div>

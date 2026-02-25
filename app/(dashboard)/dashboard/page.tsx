@@ -212,7 +212,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
                                 </span>
                             </div>
                         </div>
-                        <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1.5">{t("revenue")}</p>
+                        <p className="text-label mb-2 opacity-100">{t("revenue")}</p>
                         <div className="flex items-baseline gap-1">
                             <h3 className="text-2xl font-black tracking-tighter" suppressHydrationWarning>{totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-xs opacity-40 ml-1">{currency}</span></h3>
                         </div>
@@ -233,7 +233,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
                                 <span className="text-[10px] font-black text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded-lg border border-blue-500/20">{t("liveUnit")}</span>
                             </div>
                         </div>
-                        <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1.5">{t("inventoryCount")}</p>
+                        <p className="text-label mb-2 opacity-100">{t("inventoryCount")}</p>
                         <div className="flex items-baseline gap-1">
                             <h3 className="text-2xl font-black tracking-tighter">{productCount || 0}</h3>
                             <span className="text-xs font-bold text-blue-500/40 leading-none">{t("skus")}</span>
@@ -255,10 +255,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
                                 {lowStockCount > 0 ? t("criticalAlerts") : t("optimal")}
                             </span>
                         </div>
-                        <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1.5">{t("criticalAlerts")}</p>
+                        <p className="text-label mb-2 opacity-100">{t("criticalAlerts")}</p>
                         <div className="flex items-baseline gap-1">
                             <h3 className={`text-2xl font-black tracking-tighter ${lowStockCount > 0 ? 'text-destructive' : ''}`}>{lowStockCount}</h3>
-                            <span className="text-xs font-bold opacity-30 leading-none">{t("items")}</span>
+                            <span className="text-[10px] font-black uppercase text-primary/30 leading-none">{t("items")}</span>
                         </div>
                     </CardContent>
                 </Card>
@@ -272,7 +272,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
                             </div>
                             <span className="text-[10px] font-black text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-lg border border-amber-500/20">{t("stable")}</span>
                         </div>
-                        <p className="text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.15em] mb-1.5">{t("outstandingDebt")}</p>
+                        <p className="text-label mb-2 opacity-100">{t("outstandingDebt")}</p>
                         <div className="flex items-baseline gap-1">
                             <h3 className="text-2xl font-black tracking-tighter" suppressHydrationWarning>{totalCredits.toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-xs opacity-40 ml-1">{currency}</span></h3>
                         </div>
@@ -292,7 +292,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
                             <CardTitle className="text-xl font-black flex items-center gap-2">
                                 <Activity className="h-5 w-5 text-primary" /> {t("performanceMatrix")}
                             </CardTitle>
-                            <p className="text-xs text-muted-foreground mt-1 font-bold uppercase tracking-wider opacity-60">{t("revenueTrend")}</p>
+                            <p className="text-description mt-1 opacity-100">{t("revenueTrend")}</p>
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-accent/50 border border-primary/10">

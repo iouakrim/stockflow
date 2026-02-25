@@ -101,7 +101,8 @@
         "paymentMode": "Payment Mode",
         "paid": "Paid (Cash)",
         "credit": "Credit (Unpaid)",
-        "history": "Sales History"
+        "history": "Sales History",
+        "outOfStock": "OUT OF STOCK"
     },
     "Customers": {
         "title": "Client Hub",

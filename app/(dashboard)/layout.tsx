@@ -37,6 +37,7 @@ import { createClient } from "@/lib/supabase/client";
 import { WarehouseProvider, useWarehouse } from "@/components/providers/WarehouseProvider";
 import { SettingsProvider } from "@/components/providers/SettingsProvider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTranslations } from "next-intl";
 import { useThemeStore, ThemePalette } from "@/store/useThemeStore";
 
@@ -245,6 +246,7 @@ function DashboardContent({ children }: { children: ReactNode }) {
                     </div>
 
                     <div className="flex items-center gap-3 md:gap-5">
+                        <ThemeToggle />
                         <LanguageSwitcher />
 
                         <Button variant="ghost" size="icon" className="relative size-10 md:size-11 rounded-xl md:rounded-2xl bg-accent/30 hover:bg-primary/10 hover:text-primary transition-all border border-transparent hover:border-primary/10">

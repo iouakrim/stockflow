@@ -110,7 +110,7 @@ export default async function NewSupplierPage() {
 
                         <div className="space-y-6 relative">
                             <div className="space-y-3">
-                                <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">{t("companyName")} *</Label>
+                                <Label htmlFor="name" className="text-label ml-1">{t("companyName")} *</Label>
                                 <Input
                                     id="name"
                                     name="name"
@@ -121,7 +121,7 @@ export default async function NewSupplierPage() {
                             </div>
 
                             <div className="space-y-3">
-                                <Label htmlFor="category" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">{t("primaryCommoditiesHub")}</Label>
+                                <Label htmlFor="category" className="text-label ml-1">{t("primaryCommoditiesHub")}</Label>
                                 <div className="relative group/input">
                                     <Layers className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within/input:text-primary transition-colors" />
                                     <Input
@@ -134,7 +134,7 @@ export default async function NewSupplierPage() {
                             </div>
 
                             <div className="space-y-3">
-                                <Label htmlFor="address" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">{t("geographicHeadquarters")}</Label>
+                                <Label htmlFor="address" className="text-label ml-1">{t("geographicHeadquarters")}</Label>
                                 <div className="relative group/input">
                                     <MapPin className="absolute left-5 top-6 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within/input:text-primary transition-colors" />
                                     <textarea
@@ -162,7 +162,7 @@ export default async function NewSupplierPage() {
 
                         <div className="space-y-6">
                             <div className="space-y-3">
-                                <Label htmlFor="contact_name" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">{t("accountManager")}</Label>
+                                <Label htmlFor="contact_name" className="text-label ml-1">{t("accountManager")}</Label>
                                 <Input
                                     id="contact_name"
                                     name="contact_name"
@@ -171,7 +171,7 @@ export default async function NewSupplierPage() {
                                 />
                             </div>
                             <div className="space-y-3">
-                                <Label htmlFor="phone" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">{t("voiceProtocol")}</Label>
+                                <Label htmlFor="phone" className="text-label ml-1">{t("voiceProtocol")}</Label>
                                 <div className="relative group/input">
                                     <Phone className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within/input:text-blue-500 transition-colors" />
                                     <Input
@@ -184,7 +184,7 @@ export default async function NewSupplierPage() {
                                 </div>
                             </div>
                             <div className="space-y-3">
-                                <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">{t("digitalTransmission")}</Label>
+                                <Label htmlFor="email" className="text-label ml-1">{t("digitalTransmission")}</Label>
                                 <div className="relative group/input">
                                     <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within/input:text-blue-500 transition-colors" />
                                     <Input
