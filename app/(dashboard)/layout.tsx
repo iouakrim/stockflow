@@ -67,9 +67,10 @@ function DashboardContent({ children }: { children: ReactNode }) {
                     .single();
 
                 if (profile) {
+                    const tenants = profile.tenants as { name: string } | { name: string }[] | null;
                     const profileWithTenant = {
                         ...profile,
-                        tenant_name: (profile.tenants as { name: string })?.name
+                        tenant_name: (Array.isArray(tenants) ? tenants[0]?.name : tenants?.name)
                     };
                     setUserProfile(profileWithTenant);
 
