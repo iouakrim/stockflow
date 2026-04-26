@@ -19,14 +19,5 @@ export function PrintActions() {
         }
     }, [])
 
-    return (
-        <div className="fixed top-4 right-4 flex gap-2 print:hidden z-50">
-            <button
-                onClick={() => window.print()}
-                className="bg-black text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 shadow-xl hover:scale-105 transition-transform"
-            >
-                <Printer className="size-4" /> Imprimer via USB/Bluetooth
-            </button>
-        </div>
-    )
+    return null
 }

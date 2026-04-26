@@ -50,7 +50,7 @@ import {
     CommandItem,
     CommandList,
 } from "@/components/ui/command"
-import { processSaleCheckout, quickCreateCustomer } from "@/app/(dashboard)/sales/actions"
+import { processSaleCheckout, quickCreateCustomer, cancelAndRevertSale } from "@/app/(dashboard)/sales/actions"
 import { useRouter } from "next/navigation"
 import { useSettings } from "@/components/providers/SettingsProvider"
 
@@ -76,6 +76,7 @@ export function POSClient({ products, customers }: POSClientProps) {
     const [showSuccess, setShowSuccess] = useState(false)
     const [completedSaleId, setCompletedSaleId] = useState<string | null>(null)
     const [paymentMode, setPaymentMode] = useState<'cash' | 'credit'>('cash')
+    const [isCancelling, setIsCancelling] = useState(false)
 
     // Quick Create Customer State
     const [localCustomers, setLocalCustomers] = useState(customers)
@@ -196,6 +197,28 @@ export function POSClient({ products, customers }: POSClientProps) {
         clearCart()
         setSelectedCustomerId("walk-in")
         router.refresh()
+    }
+
+    const handleRevertSale = async () => {
+        if (!completedSaleId) return
+        if (!confirm("Voulez-vous vraiment annuler cette vente et restaurer les stocks pour la modifier ?")) return
+
+        setIsCancelling(true)
+        try {
+            const res = await cancelAndRevertSale(completedSaleId)
+            if (res && res.success) {
+                setCompletedSaleId(null)
+                setShowSuccess(false)
+                toast.success("Vente annulée avec succès ! Vous pouvez modifier le panier.")
+                router.refresh()
+            } else {
+                toast.error("Erreur d'annulation.")
+            }
+        } catch (e) {
+            toast.error("Erreur lors de l'annulation de la vente.")
+        } finally {
+            setIsCancelling(false)
+        }
     }
 
     const CartHeader = () => {
@@ -441,7 +464,7 @@ export function POSClient({ products, customers }: POSClientProps) {
 
             <div className="flex-1 flex flex-col md:flex-row gap-4 overflow-hidden min-h-0">
                 {/* Left Side: Controls & Product Catalog */}
-                <div className="flex-1 flex flex-col min-w-0 gap-4">
+                <div className={`flex-1 flex flex-col min-w-0 gap-4 ${completedSaleId ? 'pointer-events-none opacity-50 grayscale transition-all duration-500' : ''}`}>
 
                     {/* Stacked Controls: Customer & Search */}
                     <div className="flex flex-col gap-3">
@@ -839,6 +862,9 @@ export function POSClient({ products, customers }: POSClientProps) {
                                 <Button onClick={handleNewSale} variant="outline" className="w-full h-12 rounded-xl border-2 border-primary/20 hover:bg-primary/5 text-primary font-black tracking-widest uppercase text-xs">
                                     {t("nextCustomer")}
                                 </Button>
+                                <Button onClick={handleRevertSale} disabled={isCancelling} variant="ghost" className="w-full h-10 rounded-xl text-destructive hover:bg-destructive/10 hover:text-destructive font-black tracking-widest uppercase text-[10px]">
+                                    {isCancelling ? <Loader2 className="h-4 w-4 animate-spin" /> : "ANNULER LA VENTE & MODIFIER"}
+                                </Button>
                             </div>
                         </div>
                     ) : (
@@ -908,6 +934,9 @@ export function POSClient({ products, customers }: POSClientProps) {
                                     </Button>
                                     <Button onClick={handleNewSale} variant="outline" className="w-full h-12 rounded-xl border-2 border-primary/20 hover:bg-primary/5 text-primary font-black tracking-widest uppercase text-xs">
                                         {t("nextCustomer")}
+                                    </Button>
+                                    <Button onClick={handleRevertSale} disabled={isCancelling} variant="ghost" className="w-full h-10 rounded-xl text-destructive hover:bg-destructive/10 hover:text-destructive font-black tracking-widest uppercase text-[10px]">
+                                        {isCancelling ? <Loader2 className="h-4 w-4 animate-spin" /> : "ANNULER LA VENTE & MODIFIER"}
                                     </Button>
                                 </div>
                             </div>

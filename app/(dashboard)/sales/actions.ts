@@ -85,3 +85,78 @@ export async function quickCreateCustomer(name: string, phone: string) {
 
     return { success: true, id: data.id }
 }
+
+export async function cancelAndRevertSale(saleId: string) {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error("Unauthorized")
+
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("tenant_id")
+        .eq("id", user.id)
+        .single()
+
+    if (!profile?.tenant_id) throw new Error("Missing tenant profile")
+
+    const { data: sale } = await supabase
+        .from("sales")
+        .select("*")
+        .eq("id", saleId)
+        .eq("tenant_id", profile.tenant_id)
+        .single()
+
+    if (!sale) throw new Error("Sale not found")
+
+    const { data: items } = await supabase
+        .from("sale_items")
+        .select("*")
+        .eq("sale_id", saleId)
+        .eq("tenant_id", profile.tenant_id)
+
+    if (items && items.length > 0) {
+        for (const item of items) {
+            const { data: p } = await supabase
+                .from("products")
+                .select("stock_quantity")
+                .eq("id", item.product_id)
+                .single()
+
+            if (p) {
+                await supabase
+                    .from("products")
+                    .update({ stock_quantity: p.stock_quantity + item.quantity })
+                    .eq("id", item.product_id)
+
+                await supabase.from("stock_movements").insert({
+                    tenant_id: profile.tenant_id,
+                    product_id: item.product_id,
+                    type: "return",
+                    quantity: item.quantity,
+                    reference_id: saleId,
+                    created_by: user.id,
+                    notes: "Sale cancelled from POS"
+                })
+            }
+        }
+    }
+
+    if (sale.payment_method === 'credit' && sale.customer_id) {
+        const { data: c } = await supabase
+            .from("customers")
+            .select("credit_balance")
+            .eq("id", sale.customer_id)
+            .single()
+        if (c) {
+            await supabase
+                .from("customers")
+                .update({ credit_balance: c.credit_balance - sale.total })
+                .eq("id", sale.customer_id)
+        }
+    }
+
+    await supabase.from("sale_items").delete().eq("sale_id", saleId)
+    await supabase.from("sales").delete().eq("id", saleId)
+
+    return { success: true }
+}
