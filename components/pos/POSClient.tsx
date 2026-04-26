@@ -816,6 +816,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                                 </h2>
                             </div>
                             <iframe id="receipt-iframe" src={`/receipt/${completedSaleId}`} className="flex-1 w-full bg-white relative z-0" />
+                            <iframe id="pickup-iframe" src={`/receipt/${completedSaleId}?type=pickup`} className="hidden" />
                             <div className="p-4 bg-card border-t border-primary/10 flex flex-col gap-3">
                                 <div className="flex items-center gap-2 mb-1 justify-center bg-emerald-500/10 text-emerald-600 rounded-xl py-1.5 border border-emerald-500/20">
                                     <span className="relative flex h-2 w-2">
@@ -825,13 +826,15 @@ export function POSClient({ products, customers }: POSClientProps) {
                                     <p className="text-[10px] font-black uppercase tracking-widest">Imprimante Système Détectée</p>
                                 </div>
                                 <Button onClick={() => {
-                                    const iframe = document.getElementById('receipt-iframe') as HTMLIFrameElement;
-                                    if (iframe && iframe.contentWindow) iframe.contentWindow.print();
-                                }} className="w-full h-12 rounded-xl bg-black hover:bg-black/90 text-white font-black tracking-widest uppercase shadow-xl shadow-black/10 text-xs gap-2">
-                                    <Printer className="w-4 h-4" /> {t("printReceipt")}
-                                </Button>
-                                <Button onClick={() => window.open(`/receipt/${completedSaleId}?print=true&type=pickup`, '_blank')} className="w-full h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-black tracking-widest uppercase shadow-xl shadow-emerald-500/20 text-xs gap-2">
-                                    <Truck className="w-4 h-4" /> {t("printPickup")}
+                                    const rFrame = document.getElementById('receipt-iframe') as HTMLIFrameElement;
+                                    if (rFrame && rFrame.contentWindow) rFrame.contentWindow.print();
+                                    setTimeout(() => {
+                                        const pFrame = document.getElementById('pickup-iframe') as HTMLIFrameElement;
+                                        if (pFrame && pFrame.contentWindow) pFrame.contentWindow.print();
+                                    }, 1500);
+                                }} className="w-full h-14 rounded-xl bg-black hover:bg-black/90 text-white font-black tracking-widest uppercase shadow-xl shadow-black/10 text-[11px] gap-2 flex-col justify-center">
+                                    <div className="flex items-center gap-2 mb-0.5"><Printer className="w-4 h-4" /> IMPRIMER TOUT</div>
+                                    <span className="text-[8px] text-white/50 tracking-normal normal-case font-bold">(Ticket + Bon de Livraison)</span>
                                 </Button>
                                 <Button onClick={handleNewSale} variant="outline" className="w-full h-12 rounded-xl border-2 border-primary/20 hover:bg-primary/5 text-primary font-black tracking-widest uppercase text-xs">
                                     {t("nextCustomer")}
@@ -883,6 +886,7 @@ export function POSClient({ products, customers }: POSClientProps) {
                                     </h2>
                                 </div>
                                 <iframe id="receipt-iframe-mobile" src={`/receipt/${completedSaleId}`} className="flex-1 w-full bg-white relative z-0" />
+                                <iframe id="pickup-iframe-mobile" src={`/receipt/${completedSaleId}?type=pickup`} className="hidden" />
                                 <div className="p-4 bg-card border-t border-primary/10 flex flex-col gap-3">
                                     <div className="flex items-center gap-2 mb-1 justify-center bg-emerald-500/10 text-emerald-600 rounded-xl py-1.5 border border-emerald-500/20">
                                         <span className="relative flex h-2 w-2">
@@ -892,13 +896,15 @@ export function POSClient({ products, customers }: POSClientProps) {
                                         <p className="text-[10px] font-black uppercase tracking-widest">Imprimante Système Détectée</p>
                                     </div>
                                     <Button onClick={() => {
-                                        const iframe = document.getElementById('receipt-iframe-mobile') as HTMLIFrameElement;
-                                        if (iframe && iframe.contentWindow) iframe.contentWindow.print();
-                                    }} className="w-full h-12 rounded-xl bg-black hover:bg-black/90 text-white font-black tracking-widest uppercase shadow-xl shadow-black/10 text-xs gap-2">
-                                        <Printer className="w-4 h-4" /> {t("printReceipt")}
-                                    </Button>
-                                    <Button onClick={() => window.open(`/receipt/${completedSaleId}?print=true&type=pickup`, '_blank')} className="w-full h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-black tracking-widest uppercase shadow-xl shadow-emerald-500/20 text-xs gap-2">
-                                        <Truck className="w-4 h-4" /> {t("printPickup")}
+                                        const rFrame = document.getElementById('receipt-iframe-mobile') as HTMLIFrameElement;
+                                        if (rFrame && rFrame.contentWindow) rFrame.contentWindow.print();
+                                        setTimeout(() => {
+                                            const pFrame = document.getElementById('pickup-iframe-mobile') as HTMLIFrameElement;
+                                            if (pFrame && pFrame.contentWindow) pFrame.contentWindow.print();
+                                        }, 1500);
+                                    }} className="w-full h-14 rounded-xl bg-black hover:bg-black/90 text-white font-black tracking-widest uppercase shadow-xl shadow-black/10 text-[11px] gap-2 flex-col justify-center">
+                                        <div className="flex items-center gap-2 mb-0.5"><Printer className="w-4 h-4" /> IMPRIMER TOUT</div>
+                                        <span className="text-[8px] text-white/50 tracking-normal normal-case font-bold">(Ticket + Bon de Livraison)</span>
                                     </Button>
                                     <Button onClick={handleNewSale} variant="outline" className="w-full h-12 rounded-xl border-2 border-primary/20 hover:bg-primary/5 text-primary font-black tracking-widest uppercase text-xs">
                                         {t("nextCustomer")}
