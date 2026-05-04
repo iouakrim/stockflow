@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect } from "react"
-import { Printer } from "lucide-react"
 
 export function PrintActions() {
     useEffect(() => {

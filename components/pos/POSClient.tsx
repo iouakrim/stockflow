@@ -24,7 +24,6 @@ import {
     Loader2,
     Phone,
     Printer,
-    Truck,
     History
 } from "lucide-react"
 
@@ -214,8 +213,12 @@ export function POSClient({ products, customers }: POSClientProps) {
             } else {
                 toast.error("Erreur d'annulation.")
             }
-        } catch (e) {
-            toast.error("Erreur lors de l'annulation de la vente.")
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                toast.error("Erreur lors de l'annulation de la vente." + error.message)
+            } else {
+                toast.error("Erreur lors de l'annulation de la vente.")
+            }
         } finally {
             setIsCancelling(false)
         }
