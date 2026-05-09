@@ -66,10 +66,15 @@ export function POSCustomerSelect({
                             >
                                 <div className="flex items-center">
                                     <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-primary opacity-40 group-focus-within:opacity-100 transition-opacity" />
-                                    <span className="truncate">
+                                    <span className="truncate flex items-center gap-2">
                                         {selectedCustomerId === "walk-in"
                                             ? t("walkIn")
                                             : localCustomers.find((c) => c.id === selectedCustomerId)?.name?.toUpperCase() || t("selectCustomer")}
+                                        {selectedCustomerId !== "walk-in" && localCustomers.find((c) => c.id === selectedCustomerId)?.loyalty_points !== undefined && (
+                                            <span className="text-[10px] font-black text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded-lg border border-amber-500/20">
+                                                ⭐ {localCustomers.find((c) => c.id === selectedCustomerId)?.loyalty_points}
+                                            </span>
+                                        )}
                                     </span>
                                 </div>
                                 <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -109,7 +114,12 @@ export function POSCustomerSelect({
                                                 )}
                                                 <div className="flex flex-col">
                                                     <span>{c.name.toUpperCase()}</span>
-                                                    {c.phone && <span className="text-[9px] text-muted-foreground/60">{c.phone}</span>}
+                                                    <div className="flex items-center gap-2 mt-0.5">
+                                                        {c.phone && <span className="text-[9px] text-muted-foreground/60">{c.phone}</span>}
+                                                        {c.loyalty_points !== undefined && (
+                                                            <span className="text-[9px] font-bold text-amber-500 bg-amber-500/10 px-1 rounded border border-amber-500/20">⭐ {c.loyalty_points} pts</span>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </CommandItem>
                                         ))}

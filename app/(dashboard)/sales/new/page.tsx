@@ -54,7 +54,7 @@ export default async function NewSalePage() {
     ] = await Promise.all([
         supabase.from("products").select(`*, suppliers(name)`).order("name", { ascending: true }),
         supabase.from("warehouse_stock").select("product_id, stock_quantity").eq("warehouse_id", activeWarehouseId || ''),
-        supabase.from("customers").select("id, name, phone").order("name", { ascending: true })
+        supabase.from("customers").select("id, name, phone, loyalty_points").order("name", { ascending: true })
     ]);
 
     const localStockMap = new Map((localStockParams || []).map(s => [s.product_id, s.stock_quantity]));

@@ -94,6 +94,7 @@ CREATE TABLE customers (
   phone TEXT,
   address TEXT,
   credit_balance DECIMAL(12, 2) NOT NULL DEFAULT 0.0,
+  loyalty_points INT NOT NULL DEFAULT 0,
   status TEXT DEFAULT 'active',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -307,11 +308,18 @@ BEGIN
     );
   END LOOP;
 
-  -- Handle customer credit if applicable
-  IF p_payment_method = 'credit' AND p_customer_id IS NOT NULL THEN
-    UPDATE customers 
-    SET credit_balance = credit_balance + v_total 
-    WHERE id = p_customer_id AND tenant_id = p_tenant_id;
+  -- Handle customer credit and loyalty points if applicable
+  IF p_customer_id IS NOT NULL THEN
+    IF p_payment_method = 'credit' THEN
+      UPDATE customers 
+      SET credit_balance = credit_balance + v_total,
+          loyalty_points = loyalty_points + FLOOR(v_total)::INT
+      WHERE id = p_customer_id AND tenant_id = p_tenant_id;
+    ELSE
+      UPDATE customers 
+      SET loyalty_points = loyalty_points + FLOOR(v_total)::INT
+      WHERE id = p_customer_id AND tenant_id = p_tenant_id;
+    END IF;
   END IF;
 
   RETURN v_sale_id;

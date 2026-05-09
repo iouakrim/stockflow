@@ -64,7 +64,7 @@ export interface ProductWithSupplier extends Product {
 
 interface POSClientProps {
     products: ProductWithSupplier[]
-    customers: { id: string; name: string; phone: string | null }[]
+    customers: { id: string; name: string; phone: string | null; loyalty_points?: number }[]
 }
 
 export function POSClient({ products, customers }: POSClientProps) {
