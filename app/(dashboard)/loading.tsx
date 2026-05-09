@@ -2,7 +2,13 @@ import { Loader2 } from "lucide-react"
 
 export default function DashboardLoading() {
     return (
-        <div className="flex-1 flex flex-col pt-12">
+        <div className="flex-1 flex flex-col pt-12 opacity-0 animate-[fadeIn_0.5s_ease-in-out_0.3s_forwards]">
+            <style dangerouslySetInnerHTML={{__html: `
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+            `}} />
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
                 <div className="space-y-2">
                     <div className="h-8 w-48 bg-primary/10 animate-pulse rounded-xl"></div>
