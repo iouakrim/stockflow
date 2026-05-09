@@ -48,21 +48,6 @@ CREATE TABLE suppliers (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 3.5. Suppliers
-CREATE TABLE suppliers (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  tenant_id UUID REFERENCES tenants(id) ON DELETE CASCADE NOT NULL,
-  name TEXT NOT NULL,
-  contact_name TEXT,
-  email TEXT,
-  phone TEXT,
-  address TEXT,
-  category TEXT,
-  status TEXT DEFAULT 'active',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
 -- 4. Products
 CREATE TABLE products (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -72,7 +57,6 @@ CREATE TABLE products (
   name TEXT NOT NULL,
   description TEXT,
   category TEXT,
-  supplier_id UUID REFERENCES suppliers(id) ON DELETE SET NULL,
   supplier_id UUID REFERENCES suppliers(id) ON DELETE SET NULL,
   cost_price DECIMAL(12, 2) NOT NULL DEFAULT 0.0,
   selling_price DECIMAL(12, 2) NOT NULL DEFAULT 0.0,
