@@ -7,9 +7,19 @@ export async function signInUser(formData: {
     password: string;
 }) {
     const supabase = createClient()
+    let loginEmail = formData.email.trim()
+
+    // If input doesn't look like an email, assume it's a username and fetch the mapped email
+    if (!loginEmail.includes('@')) {
+        const { data, error } = await supabase.rpc('get_email_by_username', { p_username: loginEmail })
+        if (error || !data) {
+             return { error: "Identifiant introuvable." }
+        }
+        loginEmail = data
+    }
 
     const { error } = await supabase.auth.signInWithPassword({
-        email: formData.email,
+        email: loginEmail,
         password: formData.password,
     })
 

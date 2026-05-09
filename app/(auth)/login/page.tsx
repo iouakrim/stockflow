@@ -10,7 +10,8 @@ import {
     ArrowLeft,
     ShieldCheck,
     Loader2,
-    CheckCircle2
+    CheckCircle2,
+    Check
 } from "lucide-react"
 import Link from "next/link"
 
@@ -20,45 +21,62 @@ export default function LoginPage() {
     const [view, setView] = useState<'login' | 'forgot-password'>('login')
     const [isSuccess, setIsSuccess] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
-    const [error, setError] = useState<string | null>(null)
+    const [errors, setErrors] = useState<{email?: string, password?: string, general?: string}>({})
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [rememberMe, setRememberMe] = useState(false)
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
+        setErrors({})
+
+        if (!email) {
+            setErrors(prev => ({ ...prev, email: "L'identifiant est requis." }))
+            return
+        }
+        if (!password) {
+            setErrors(prev => ({ ...prev, password: "Le mot de passe est requis." }))
+            return
+        }
+
         setIsLoading(true)
-        setError(null)
 
         try {
             const result = await signInUser({ email, password })
             if (result.error) {
-                setError("Identifiants incorrects. Veuillez réessayer.")
+                setErrors({ password: "Email ou mot de passe incorrect." })
                 setIsLoading(false)
             } else {
                 window.location.href = "/dashboard"
             }
         } catch {
-            setError("Échec de l'authentification. Veuillez vérifier votre connexion.")
+            setErrors({ general: "Échec de l'authentification. Veuillez vérifier votre connexion." })
             setIsLoading(false)
         }
     }
 
     const handleResetPassword = async (e: React.FormEvent) => {
         e.preventDefault()
+        setErrors({})
+
+        if (!email) {
+            setErrors(prev => ({ ...prev, email: "L'identifiant est requis." }))
+            return
+        }
+
         setIsLoading(true)
-        setError(null)
 
         try {
             const result = await resetPassword(email)
             if (result.error) {
-                setError("Échec de l'envoi. Veuillez vérifier l'adresse email.")
+                setErrors({ email: "Impossible d'envoyer le lien à cette adresse." })
                 setIsLoading(false)
             } else {
                 setIsSuccess(true)
                 setIsLoading(false)
             }
         } catch {
-            setError("Erreur système. Veuillez réessayer plus tard.")
+            setErrors({ general: "Erreur système. Veuillez réessayer plus tard." })
             setIsLoading(false)
         }
     }
@@ -90,44 +108,59 @@ export default function LoginPage() {
                                     <p className="text-xs font-medium text-white/40 leading-relaxed">Authentification requise pour accéder à votre espace de travail.</p>
                                 </div>
 
-                                {error && (
+                                {errors.general && (
                                     <div className="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest text-center animate-in fade-in zoom-in">
-                                        Accès Refusé : {error}
+                                        Accès Refusé : {errors.general}
                                     </div>
                                 )}
 
-                                <form onSubmit={handleLogin} className="space-y-4">
-                                    <div className="space-y-1.5 group">
-                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 ml-1 group-focus-within:text-primary transition-colors">Adresse Email</label>
+                                <form onSubmit={handleLogin} className="space-y-4" noValidate>
+                                    <div className="space-y-1 group">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 ml-1 group-focus-within:text-primary transition-colors">Email ou Nom d'utilisateur</label>
                                         <div className="relative">
                                             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/20 group-focus-within:text-primary transition-colors" />
                                             <input
-                                                type="email"
-                                                placeholder="contact@entreprise.com"
-                                                className="w-full bg-[#102219] border-white/5 rounded-xl h-12 pl-12 pr-4 text-sm font-bold text-white focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-white/10 outline-none border"
-                                                required
+                                                type="text"
+                                                placeholder="contact@entreprise.com ou admin"
+                                                className={`w-full bg-[#102219] rounded-xl h-12 pl-12 pr-4 text-sm font-bold text-white focus:ring-1 transition-all placeholder:text-white/10 outline-none border ${errors.email ? "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/20" : "border-white/5 focus:border-primary/50 focus:ring-primary/20"}`}
                                                 value={email}
-                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setEmail(e.target.value); if (errors.email) setErrors(prev => ({ ...prev, email: undefined })) }}
                                             />
                                         </div>
+                                        {errors.email && (
+                                            <p className="text-[10px] text-red-400 font-bold ml-1 mt-1 animate-in fade-in slide-in-from-top-1">{errors.email}</p>
+                                        )}
                                     </div>
 
-                                    <div className="space-y-1.5 group">
+                                    <div className="space-y-1 group">
                                         <div className="flex justify-between items-center ml-1">
                                             <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 group-focus-within:text-primary transition-colors">Mot de passe</label>
-                                            <button type="button" onClick={() => { setView('forgot-password'); setError(null); }} className="text-[9px] font-black uppercase tracking-[0.2em] text-primary/60 hover:text-primary transition-colors">Mot de passe oublié ?</button>
+                                            <button type="button" onClick={() => { setView('forgot-password'); setErrors({}); }} className="text-[9px] font-black uppercase tracking-[0.2em] text-primary/60 hover:text-primary transition-colors">Mot de passe oublié ?</button>
                                         </div>
                                         <div className="relative">
                                             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/20 group-focus-within:text-primary transition-colors" />
                                             <input
                                                 type="password"
                                                 placeholder="••••••••••••"
-                                                className="w-full bg-[#102219] border-white/5 rounded-xl h-12 pl-12 pr-4 text-sm font-bold text-white focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-white/10 outline-none border"
-                                                required
+                                                className={`w-full bg-[#102219] rounded-xl h-12 pl-12 pr-4 text-sm font-bold text-white focus:ring-1 transition-all placeholder:text-white/10 outline-none border ${errors.password ? "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/20" : "border-white/5 focus:border-primary/50 focus:ring-primary/20"}`}
                                                 value={password}
-                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setPassword(e.target.value); if (errors.password) setErrors(prev => ({ ...prev, password: undefined })) }}
                                             />
                                         </div>
+                                        {errors.password && (
+                                            <p className="text-[10px] text-red-400 font-bold ml-1 mt-1 animate-in fade-in slide-in-from-top-1">{errors.password}</p>
+                                        )}
+                                    </div>
+
+                                    <div className="flex items-center gap-2 ml-1 py-1">
+                                        <button 
+                                            type="button"
+                                            onClick={() => setRememberMe(!rememberMe)}
+                                            className={`size-4 rounded-md border transition-all flex items-center justify-center ${rememberMe ? 'bg-primary border-primary' : 'bg-white/5 border-white/10 hover:border-white/20'}`}
+                                        >
+                                            {rememberMe && <Check className="h-2.5 w-2.5 text-[#102219] stroke-[4]" />}
+                                        </button>
+                                        <span className="text-[10px] font-bold text-white/40 cursor-pointer select-none" onClick={() => setRememberMe(!rememberMe)}>Rester connecté</span>
                                     </div>
 
                                     <Button
@@ -165,9 +198,9 @@ export default function LoginPage() {
                                     <p className="text-xs font-medium text-white/40 leading-relaxed">Entrez votre adresse email pour recevoir un lien de réinitialisation.</p>
                                 </div>
 
-                                {error && (
+                                {errors.general && (
                                     <div className="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest text-center animate-in fade-in zoom-in">
-                                        Erreur : {error}
+                                        Erreur : {errors.general}
                                     </div>
                                 )}
 
@@ -180,7 +213,7 @@ export default function LoginPage() {
                                             </p>
                                         </div>
                                         <Button
-                                            onClick={() => { setView('login'); setIsSuccess(false); setError(null); }}
+                                            onClick={() => { setView('login'); setIsSuccess(false); setErrors({}); }}
                                             variant="outline"
                                             className="w-full bg-transparent border-white/10 hover:bg-white/5 text-white font-bold rounded-xl h-12 text-xs tracking-widest uppercase mt-4"
                                         >
@@ -188,20 +221,22 @@ export default function LoginPage() {
                                         </Button>
                                     </div>
                                 ) : (
-                                    <form onSubmit={handleResetPassword} className="space-y-4">
-                                        <div className="space-y-1.5 group">
+                                    <form onSubmit={handleResetPassword} className="space-y-4" noValidate>
+                                        <div className="space-y-1 group">
                                             <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 ml-1 group-focus-within:text-primary transition-colors">Adresse Email</label>
                                             <div className="relative">
                                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/20 group-focus-within:text-primary transition-colors" />
                                                 <input
                                                     type="email"
                                                     placeholder="contact@entreprise.com"
-                                                    className="w-full bg-[#102219] border-white/5 rounded-xl h-12 pl-12 pr-4 text-sm font-bold text-white focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-white/10 outline-none border"
-                                                    required
+                                                    className={`w-full bg-[#102219] rounded-xl h-12 pl-12 pr-4 text-sm font-bold text-white focus:ring-1 transition-all placeholder:text-white/10 outline-none border ${errors.email ? "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/20" : "border-white/5 focus:border-primary/50 focus:ring-primary/20"}`}
                                                     value={email}
-                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setEmail(e.target.value); if (errors.email) setErrors(prev => ({ ...prev, email: undefined })) }}
                                                 />
                                             </div>
+                                            {errors.email && (
+                                                <p className="text-[10px] text-red-400 font-bold ml-1 mt-1 animate-in fade-in slide-in-from-top-1">{errors.email}</p>
+                                            )}
                                         </div>
 
                                         <div className="pt-2 space-y-3">
@@ -220,7 +255,7 @@ export default function LoginPage() {
                                             </Button>
                                             <Button
                                                 type="button"
-                                                onClick={() => { setView('login'); setError(null); }}
+                                                onClick={() => { setView('login'); setErrors({}); }}
                                                 variant="ghost"
                                                 className="w-full hover:bg-white/5 text-white/60 hover:text-white font-bold rounded-xl h-12 text-xs tracking-widest uppercase"
                                             >
